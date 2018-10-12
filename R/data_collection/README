@@ -1,0 +1,2 @@
+This directory will contain scripts that collect data from the database.
+The collected data will be placed in ../_cases/<user>/

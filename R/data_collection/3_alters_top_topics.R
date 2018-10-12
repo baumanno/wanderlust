@@ -18,7 +18,6 @@
 
 library(DBI)
 library(glue)
-library(data.table)
 suppressPackageStartupMessages(library(tidyverse))
 
 # 1: parse command line arguments -----------------------------------------
@@ -150,7 +149,7 @@ run <- function(user, year, month) {
   
   filename <- glue("{data_dir}/edgelist-{year}-{month}.csv")
   
-  edgelist <- fread(filename, colClasses=c("source"="character", "sink"="character"))
+  edgelist <- read.csv(filename)
   
   # alters <-
   #   tibble("author" = unique(c(edgelist$source, edgelist$sink))) %>%

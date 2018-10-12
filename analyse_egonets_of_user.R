@@ -1,6 +1,5 @@
 library(tidyverse)
 library(glue)
-library(data.table)
 library(gridExtra)
 library(igraph)
 library(lubridate)
@@ -27,10 +26,10 @@ topic_metadata <-
   glue_data(df, "_cases/{user}/alters-topics-{year}-{month}.csv")
 
 # read each edgelist into a list item...
-edgelists <- lapply(edgelist_names, fread)
+edgelists <- lapply(edgelist_names, read.csv)
 
 topic_metadata_df <- lapply(topic_metadata, function(x) {
-  t <- fread(x)
+  t <- read_csv(x)
   t$subreddit <- NULL
   t$maxcount <- NULL
   t <- rbind(t, list(author = users, topic = -1))

@@ -1,6 +1,5 @@
 # Create topic distributions for users and alters.
 
-library(data.table)
 library(tidyverse)
 library(glue)
 library(lubridate)
@@ -38,13 +37,13 @@ alters_topics_files <-
 # read in the data files, and dynamically add columns for the date
 # (these are missing in the data).
 ego_topics <- lapply(ego_topics_files, function(x) {
-  frame <- fread(x)
+  frame <- read_csv(x)
   frame$year <- as.integer(str_extract(x, "\\d{4}"))
   frame$month <- as.integer(str_extract(x, "\\d{1,2}(?=\\.)"))
   frame
 })
 alters_topics <- lapply(alters_topics_files, function(x) {
-  frame <- fread(x)
+  frame <- read_csv(x)
   frame$year <- as.integer(str_extract(x, "\\d{4}"))
   frame$month <- as.integer(str_extract(x, "\\d{1,2}(?=\\.)"))
   frame

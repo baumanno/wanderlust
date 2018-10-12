@@ -38,3 +38,7 @@ vignettes/*.pdf
 
 # exuberant CTags
 tags
+
+# output directories
+output/*
+figs/*

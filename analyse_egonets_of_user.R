@@ -4,10 +4,10 @@ library(gridExtra)
 library(igraph)
 library(lubridate)
 
-source("10_build_egonetworks/build_from_edgelist.R")
-source("05_network_measures/katz_powell.R")
-source("05_network_measures/weighted_mutuality.R")
-source("05_network_measures/krackhardt.R")
+source("R/network_construction/build_from_edgelist.R")
+source("R/network_measures/katz_powell.R")
+source("R/network_measures/weighted_mutuality.R")
+source("R/network_measures/krackhardt.R")
 
 years <- 2007:2018
 months <- 1:12
@@ -20,10 +20,10 @@ df <- df[-which(df$month < 11 & df$year == 2007),]
 df <- df[-which(df$month > 2 & df$year == 2018),]
 
 edgelist_names <-
-  glue_data(df, "_cases/{user}/edgelist-{year}-{month}.csv")
+  glue_data(df, "data/{user}/edgelist-{year}-{month}.csv")
 
 topic_metadata <- 
-  glue_data(df, "_cases/{user}/alters-topics-{year}-{month}.csv")
+  glue_data(df, "data/{user}/alters-topics-{year}-{month}.csv")
 
 # read each edgelist into a list item...
 edgelists <- lapply(edgelist_names, read.csv)
@@ -42,7 +42,7 @@ list_of_graphs <- build_egonet_from_edgelist(edgelists, topic_metadata_df)
 # name each graph by the date it represents
 names(list_of_graphs) <- edgelist_names
 
-save(list_of_graphs, file = "list_of_graphs.rda")
+save(list_of_graphs, file = "output/list_of_graphs.rda")
 
 graph_store <- as.tibble(df) %>%
   transmute(
@@ -53,7 +53,7 @@ graph_store <- as.tibble(df) %>%
     weighted = mapply(weighted_mutuality, list_of_graphs, author)
   )
 
-save(graph_store, file = "graph_store.rda")
+save(graph_store, file = "output/graph_store.rda")
 
 a <-
   ggplot(graph_store, mapping = aes(x = make_date(year, month), y = vertices)) +

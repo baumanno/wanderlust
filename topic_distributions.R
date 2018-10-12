@@ -15,7 +15,7 @@ fill_palette <- "Blues"
 # 1: setup global state -----------------------------------------------------
 
 # where data is stored
-data_dir <- glue("~/Masterarbeit 2/_cases/{user}")
+data_dir <- glue("data/{user}")
 
 years <- 2007:2018
 months <- 1:12
@@ -29,10 +29,10 @@ df <- df[-which(df$month < 11 & df$year == 2007), ]
 df <- df[-which(df$month > 2 & df$year == 2018), ]
 
 ego_topics_files <-
-  glue_data(df, "_cases/{user}/ego-topics-{year}-{month}.csv")
+  glue_data(df, "{data_dir}/ego-topics-{year}-{month}.csv")
 
 alters_topics_files <-
-  glue_data(df, "_cases/{user}/alters-topics-{year}-{month}.csv")
+  glue_data(df, "{data_dir}/alters-topics-{year}-{month}.csv")
 
 # read in the data files, and dynamically add columns for the date
 # (these are missing in the data).
@@ -107,7 +107,7 @@ alters_agg %>%
 aligned_data <- ego_agg %>%
   left_join(alters_agg, by = c("year", "month", "topic"))
 
-save(aligned_data, file = "aligned_data.rda")
+save(aligned_data, file = "output/aligned_data.rda")
 
 # plot the proportions to identify possible correlations
 ggplot(aligned_data,

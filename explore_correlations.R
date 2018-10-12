@@ -22,7 +22,7 @@ user <- c("monocasa")
 ego_topics <-
   read_monthly_snapshot_data(
     user = user,
-    path = "_cases/{user}/ego-topics-{year}-{month}.csv",
+    path = "data/{user}/ego-topics-{year}-{month}.csv",
     cols = cols(
       year = col_integer(),
       month = col_integer(),
@@ -87,7 +87,9 @@ df %>%
   geom_point() +
   geom_smooth() +
   scale_y_continuous(limits = c(-1, 1)) +
-  labs(x = "", y = "topical edges",title = "Ratio of topical edges over time")
+  labs(x = "", y = "prop. topical edges",title = "Ratio of topical edges over time")
+
+ggsave(filename = glue("figs/{user}-1-ratio-topical-edges.png"))
 
 df %>% 
   ggplot(mapping = aes(date, topical_edges)) +
@@ -97,6 +99,8 @@ df %>%
   scale_y_continuous(limits = c(-1, 1)) +
   labs(x = "", y = "topical edges",title = "Ratio of mutual topical edges over time")
 
+ggsave(filename = glue("figs/{user}-2-ratio-mutual-topical-edges.png"))
+
 df %>% 
   ggplot(mapping = aes(date, kp_subgraph)) +
   geom_hline(yintercept = 0) +
@@ -104,6 +108,8 @@ df %>%
   geom_smooth() +
   scale_y_continuous(limits = c(-1, 1)) +
   labs(x = "", y = "kp", title = "Katz-Powell index of the topical subgraph over time")
+
+ggsave(filename = glue("figs/{user}-3-katz-powell.png"))
 
 df %>%
   ggplot(mapping = aes(topical_edges, kp_subgraph)) +
@@ -113,6 +119,7 @@ df %>%
   scale_y_continuous(limits = c(-1, 1)) + 
   labs(x = "topical edges", y = "kp", title = "Topical edges vs Katz-Powell index of subgraph")
 
+ggsave(filename = glue("figs/{user}-4-topical-edges-vs-katz-powell.png"))
 
 # plot shows similarity of reciprocity and Katz-Powell-Index
 df %>% ggplot(mapping = aes(x = date)) +
@@ -124,6 +131,8 @@ df %>% ggplot(mapping = aes(x = date)) +
   geom_smooth(mapping = aes(y = unlist(map(topical_subgraph, katz_powell_mutuality)), colour = "Katz-Powell index")) +
   labs(x = "", y = "value", colour = "measure", title = "Different reciprocity measures of the topical subgraph, over time")
 
+ggsave(filename = glue("figs/{user}-5-rec-subgraph-1.png"))
+
 df %>% ggplot(mapping = aes(x = date)) +
   scale_y_continuous(limits = c(-1, 1)) +
   geom_hline(yintercept = 0) +
@@ -133,7 +142,7 @@ df %>% ggplot(mapping = aes(x = date)) +
   geom_smooth(mapping = aes(y = topical_edges, colour = "topical")) +
   labs(x = "", y = "value", colour = "measure", title = "Different reciprocity measures of the topical subgraph, over time")
 
-
+ggsave(filename = glue("figs/{user}-6-rec-subgraph-2.png"))
 
 g <- df$graph[[12]]
 f <- df$topical_subgraph[[12]]

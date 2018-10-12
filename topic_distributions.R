@@ -56,7 +56,6 @@ alters_topics_consolidated <- do.call(rbind, alters_topics)
 # This can include 0-values if a user starts participating in a topic
 # e.g. in 2011, but has not been active prior to that date.
 ego_agg <- ego_topics_consolidated %>%
-  filter(year != 2007 & year != 2018) %>%
   spread(key = topic, value = count, fill = 0) %>%
   gather(key = topic,
          value = count,
@@ -71,7 +70,6 @@ ego_agg <- ego_topics_consolidated %>%
 # Compute proportions of topics that the alters are active in.
 # See above.
 alters_agg <- alters_topics_consolidated %>%
-  filter(year != 2007 & year != 2018) %>%
   group_by(year, month, topic) %>%
   summarise(num_users = n()) %>%
   spread(key = topic, value = num_users, fill = 0) %>%

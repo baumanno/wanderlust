@@ -36,16 +36,21 @@ alters_topics_files <-
 
 # read in the data files, and dynamically add columns for the date
 # (these are missing in the data).
-ego_topics <- lapply(ego_topics_files, function(x) {
-  frame <- read_csv(x)
-  frame$year <- as.integer(str_extract(x, "\\d{4}"))
-  frame$month <- as.integer(str_extract(x, "\\d{1,2}(?=\\.)"))
-  frame
-})
+ego_topics <- lapply(ego_topics_files, read_csv)
 alters_topics <- lapply(alters_topics_files, function(x) {
-  frame <- read_csv(x)
-  frame$year <- as.integer(str_extract(x, "\\d{4}"))
-  frame$month <- as.integer(str_extract(x, "\\d{1,2}(?=\\.)"))
+  frame <- read_csv(x, col_types = cols(
+    author = col_character(),
+    subreddit = col_character(),
+    maxcount = col_integer(),
+    topic = col_integer()
+  ))
+  
+  if (!"year" %in% colnames(frame) || !"month" %in% colnames(frame)) {
+    date <- str_extract(string = x, pattern = "\\d{4}-\\d{1,2}")
+    date <- str_split(date, "-")
+    frame <- add_column(frame, "year" = as.integer(date[[1]][1]), "month" = as.integer(date[[1]][2]))
+  }
+  
   frame
 })
 

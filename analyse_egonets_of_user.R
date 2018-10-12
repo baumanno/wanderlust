@@ -4,47 +4,37 @@ library(gridExtra)
 library(igraph)
 library(lubridate)
 
+source("R/reading_data/read_snapshot_file.R")
 source("R/network_construction/build_from_edgelist.R")
 source("R/network_measures/katz_powell.R")
 source("R/network_measures/weighted_mutuality.R")
 source("R/network_measures/krackhardt.R")
 
-years <- 2007:2018
-months <- 1:12
-users <- c("monocasa")#, "formido", "cavedave", "IronWolve")
+user <- c("monocasa")#, "formido", "cavedave", "IronWolve")
 
-# cross product of dates
-df <- cross_df(list(month = months, year = years, user = users))
-# filter out months not covered in collected data
-df <- df[-which(df$month < 11 & df$year == 2007),]
-df <- df[-which(df$month > 2 & df$year == 2018),]
+# factor out into read_edgelist() etc.
+edgelists <- read_monthly_snapshot_data(user, path = "data/{user}/edgelist-{year}-{month}.csv")
 
-edgelist_names <-
-  glue_data(df, "data/{user}/edgelist-{year}-{month}.csv")
+# TODO: nest dataframes after grouping by month, year
+# 
+# edgelists <- edgelists %>% 
+#   group_by(year, month) %>% 
+#   nest()
 
-topic_metadata <- 
-  glue_data(df, "data/{user}/alters-topics-{year}-{month}.csv")
+topic_metadata_df <- read_monthly_snapshot_data(user, path = "data/{user}/alters-topics-{year}-{month}.csv")
 
-# read each edgelist into a list item...
-edgelists <- lapply(edgelist_names, read.csv)
-
-topic_metadata_df <- lapply(topic_metadata, function(x) {
-  t <- read_csv(x)
-  t$subreddit <- NULL
-  t$maxcount <- NULL
-  t <- rbind(t, list(author = users, topic = -1))
-  t
+topic_metadata_df <- lapply(topic_metadata_df, function(x) {
+  x %>% 
+    select(-subreddit, -maxcount, -year, -month) %>% 
+    add_row(author = user, topic = -1)
 })
 
 # ... and construct a network from it
 list_of_graphs <- build_egonet_from_edgelist(edgelists, topic_metadata_df)
 
-# name each graph by the date it represents
-names(list_of_graphs) <- edgelist_names
-
 save(list_of_graphs, file = "output/list_of_graphs.rda")
 
-graph_store <- as.tibble(df) %>%
+graph_store <- 
   transmute(
     month, year,
     author = user,
@@ -81,4 +71,5 @@ e <-
 
 g_b <- grid.arrange(d, e, nrow = 2)
 
-grid.arrange(g_a, g_b, ncol = 2)
+p<- grid.arrange(g_a, g_b, ncol = 2)
+ggsave("figs/foo.png", p)

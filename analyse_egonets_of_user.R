@@ -4,7 +4,7 @@ library(gridExtra)
 library(igraph)
 library(lubridate)
 
-source("R/reading_data/read_snapshot_file.R")
+source("R/reading_data/read_snapshots.R")
 source("R/network_construction/build_from_edgelist.R")
 source("R/network_measures/katz_powell.R")
 source("R/network_measures/weighted_mutuality.R")
@@ -12,14 +12,9 @@ source("R/network_measures/krackhardt.R")
 
 user <- c("monocasa")#, "formido", "cavedave", "IronWolve")
 
-# factor out into read_edgelist() etc.
-edgelists <- read_monthly_snapshot_data(user, path = "data/{user}/edgelist-{year}-{month}.csv")
+edgelists <- read_edgelist(user)
 
-# TODO: nest dataframes after grouping by month, year
-# 
-# edgelists <- edgelists %>% 
-#   group_by(year, month) %>% 
-#   nest()
+topic_metadata_df <- read_alters_topics(user)
 
 topic_metadata_df <- read_monthly_snapshot_data(user, path = "data/{user}/alters-topics-{year}-{month}.csv")
 

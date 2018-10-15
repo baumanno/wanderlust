@@ -70,33 +70,59 @@ graph_analysis <- df %>%
     weighted = map_dbl(graph, weighted_mutuality, node = author)
   )
 
-save(graph_store, file = "output/graph_store.rda")
+# 6: store result objects -------------------------------------------------
 
-a <-
-  ggplot(graph_store, mapping = aes(x = make_date(year, month), y = vertices)) +
-  geom_point(alpha = 1 / 10) +
-  geom_smooth()
-b <-
-  ggplot(graph_store, mapping = aes(x = make_date(year, month), y = katz_powell)) +
-  geom_point(aes(colour = katz_powell), alpha = 1 / 10) +
-  geom_smooth()
-c <-
-  ggplot(graph_store, mapping = aes(x = make_date(year, month), y = weighted)) +
-  geom_point(aes(colour = weighted), alpha = 1 / 10) +
-  geom_smooth() +
-  scale_y_continuous(limits = c(-1, 1))
+save(df, file = glue("output/{user}-graph_df.rda"))
+save(graph_analysis, file = glue("output/{user}-graph_analysis.rda"))
+
+# 7: plot data ------------------------------------------------------------
+
+(
+  a <- graph_analysis %>%
+    filter(vertices > 0) %>%
+    ggplot(mapping = aes(make_date(year, month), vertices)) +
+    geom_point(alpha = 1 / 10) +
+    geom_smooth() +
+    labs(x = "", y = "#vertices", title = user)
+)
+
+(
+  b <- graph_analysis %>%
+    ggplot(mapping = aes(make_date(year, month), katz_powell)) +
+    geom_point(aes(colour = katz_powell), alpha = 1 / 10) +
+    geom_smooth() +
+    labs(x = "", y = "Katz-Powell-index")
+)
+
+(
+  c <- graph_analysis %>%
+    ggplot(mapping = aes(make_date(year, month), weighted)) +
+    geom_point(aes(colour = weighted), alpha = 1 / 10) +
+    geom_smooth() +
+    scale_y_continuous(limits = c(-1, 1)) +
+    labs(x = "", y = "weighted mututality", colour = "")
+)
+
 g_a <- grid.arrange(a, b, c, nrow = 3)
 
-d <-
-  ggplot(graph_store, mapping = aes(x = vertices, y = katz_powell)) +
-  geom_point(colour = "blue", alpha = 1 / 10) +
-  geom_smooth()
-e <-
-  ggplot(graph_store, mapping = aes(x = vertices, y = weighted)) +
-  geom_point(colour = "blue", alpha = 1 / 10) +
-  geom_smooth()
+(
+  d <- graph_analysis %>%
+    ggplot(mapping = aes(vertices, katz_powell)) +
+    geom_point(colour = "blue", alpha = 1 / 10) +
+    geom_smooth() +
+    labs(x = "#vertices", y = "Katz-Powell-index")
+)
+
+(
+  e <- graph_analysis %>%
+    ggplot(mapping = aes(vertices, weighted)) +
+    geom_point(colour = "blue", alpha = 1 / 10) +
+    geom_smooth() +
+    scale_y_continuous(limits = c(-1, 1)) +
+    labs(x = "#vertices", y = "weighted mutuality")
+)
 
 g_b <- grid.arrange(d, e, nrow = 2)
 
 p <- grid.arrange(g_a, g_b, ncol = 2)
-ggsave("figs/foo.png", p)
+ggsave(glue("figs/{user}-graph-analysis.png"), p)

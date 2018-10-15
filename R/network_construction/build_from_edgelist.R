@@ -10,18 +10,15 @@ library(tidyverse)
 #'
 #' @return An igraph graph object.
 #' @export
-#' 
-build_egonet_from_edgelist <- function (edgelist, vertices = NULL) {
-  mapply(function (es, vs) {
-    if (nrow(es) <= 0) {
-      return(make_empty_graph())
-    }
-    
-    g <- graph_from_data_frame(es, vertices = vs)
-    
-    assertthat::assert_that(is.igraph(g))
-    
-    g
-  },
-  edgelist, vertices, SIMPLIFY = FALSE) # "simplify" is required to return a list of lists!
+egonet_from_edgelist <- function(edgelist, vertices = NULL) {
+
+  if (nrow(edgelist) == 0) {
+    return(make_empty_graph())
+  }
+
+  g <- graph_from_data_frame(edgelist, vertices = vertices)
+
+  assertthat::assert_that(is.igraph(g))
+
+  g
 }

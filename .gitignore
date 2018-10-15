@@ -40,5 +40,5 @@ vignettes/*.pdf
 tags
 
 # output directories
-output/*
+output/
 figs/*

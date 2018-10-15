@@ -25,13 +25,15 @@ topic_metadata_df <- lapply(topic_metadata_df, function(x) {
 })
 
 # ... and construct a network from it
-list_of_graphs <- build_egonet_from_edgelist(edgelists, topic_metadata_df)
+list_of_graphs <-
+  build_egonet_from_edgelist(edgelists, topic_metadata_df)
 
 save(list_of_graphs, file = "output/list_of_graphs.rda")
 
-graph_store <- 
+graph_store <-
   transmute(
-    month, year,
+    month,
+    year,
     author = user,
     vertices = sapply(list_of_graphs, vcount),
     katz_powell = sapply(list_of_graphs, katz_powell_mutuality),
@@ -42,29 +44,29 @@ save(graph_store, file = "output/graph_store.rda")
 
 a <-
   ggplot(graph_store, mapping = aes(x = make_date(year, month), y = vertices)) +
-  geom_point(alpha=1/10) +
+  geom_point(alpha = 1 / 10) +
   geom_smooth()
 b <-
   ggplot(graph_store, mapping = aes(x = make_date(year, month), y = katz_powell)) +
-  geom_point(aes(colour = katz_powell), alpha = 1/10) +
+  geom_point(aes(colour = katz_powell), alpha = 1 / 10) +
   geom_smooth()
 c <-
   ggplot(graph_store, mapping = aes(x = make_date(year, month), y = weighted)) +
-  geom_point(aes(colour = weighted), alpha = 1/10) +
+  geom_point(aes(colour = weighted), alpha = 1 / 10) +
   geom_smooth() +
   scale_y_continuous(limits = c(-1, 1))
 g_a <- grid.arrange(a, b, c, nrow = 3)
 
 d <-
   ggplot(graph_store, mapping = aes(x = vertices, y = katz_powell)) +
-  geom_point(colour = "blue", alpha = 1/10) +
+  geom_point(colour = "blue", alpha = 1 / 10) +
   geom_smooth()
 e <-
   ggplot(graph_store, mapping = aes(x = vertices, y = weighted)) +
-  geom_point(colour = "blue", alpha = 1/10) +
+  geom_point(colour = "blue", alpha = 1 / 10) +
   geom_smooth()
 
 g_b <- grid.arrange(d, e, nrow = 2)
 
-p<- grid.arrange(g_a, g_b, ncol = 2)
+p <- grid.arrange(g_a, g_b, ncol = 2)
 ggsave("figs/foo.png", p)

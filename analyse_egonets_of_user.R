@@ -1,6 +1,4 @@
 
-
-
 # 0: Libraries ------------------------------------------------------------
 
 library(tidyverse)
@@ -8,7 +6,6 @@ library(glue)
 library(gridExtra)
 library(igraph)
 library(lubridate)
-
 
 # 1: External functions ---------------------------------------------------
 
@@ -18,10 +15,9 @@ source("R/network_measures/katz_powell.R")
 source("R/network_measures/weighted_mutuality.R")
 source("R/network_measures/krackhardt.R")
 
-
 # 2: global constants -----------------------------------------------------
 
-#user <- c("monocasa", "formido", "cavedave", "IronWolve")
+# monocasa formido cavedave IronWolve
 user <- "IronWolve"
 
 # 3: Read data from snapshots ---------------------------------------------
@@ -42,7 +38,6 @@ fix_missing_ego <- function(df) {
 topics_of_alters <-
   topics_of_alters %>%
   mutate(data = map(data, fix_missing_ego))
-
 
 # 4: aggregate data into single dataframe ---------------------------------
 
@@ -125,4 +120,5 @@ g_a <- grid.arrange(a, b, c, nrow = 3)
 g_b <- grid.arrange(d, e, nrow = 2)
 
 p <- grid.arrange(g_a, g_b, ncol = 2)
+
 ggsave(glue("figs/{user}-graph-analysis.png"), p)

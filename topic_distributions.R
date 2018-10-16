@@ -1,54 +1,57 @@
 # Create topic distributions for users and alters.
 
+# 0: Libraries ------------------------------------------------------------
+
 library(tidyverse)
 library(glue)
 library(lubridate)
 
-source("R/reading_data/read_snapshot_file.R")
+# 1: external function definitions ----------------------------------------
 
-# 0: Module constants ------------------------------------------------------
+source("R/reading_data/read_snapshots.R")
+
+# 2: Module constants ------------------------------------------------------
+
 stroke_color <- "black"
 stroke_size  <- .1
 fill_alpha   <- .6
 fill_palette <- "Blues"
 
-# 1: setup global state -----------------------------------------------------
-user <- "monocasa" # , "formido", "cavedave", "IronWolve"
-data_dir <- glue("data/{user}")
+# "formido" "cavedave" "IronWolve"
+user <- "monocasa"
 
-ego_topics <- read_monthly_snapshot_data(user, path = "{data_dir}/ego-topics-{year}-{month}.csv")
-alters_topics <- read_monthly_snapshot_data(user, path = "{data_dir}/alters-topics-{year}-{month}.csv")
+# 3: read data from snapshot files ----------------------------------------
 
-ego_topics_consolidated <- do.call(rbind, ego_topics)
-alters_topics_consolidated <- do.call(rbind, alters_topics)
+ego_topics <- read_ego_topics(user)
+alters_topics <- read_alters_topics(user)
+
+# 4: transform and plot ego data ------------------------------------------
 
 # Compute proportions of a topic an ego is active in.
 # This can include 0-values if a user starts participating in a topic
 # e.g. in 2011, but has not been active prior to that date.
-ego_agg <- ego_topics_consolidated %>%
-  spread(key = topic, value = count, fill = 0) %>%
-  gather(key = topic,
+ego_proportions <- ego_topics %>%
+  unnest() %>%
+  spread(key = topic,
          value = count,
-         -year,
-         -month,
-         -author,
-         -subreddit) %>%
+         fill = 0) %>%
+  gather(
+    key = topic,
+    value = count,
+    factor_key = TRUE,
+    -year,
+    -month,
+    -author,
+    -subreddit
+  ) %>%
   group_by(year, month, topic) %>%
   summarise(num_posts = sum(count)) %>%
-  mutate(topics_rel = num_posts / sum(num_posts))
+  mutate(prop = num_posts / sum(num_posts)) %>%
+  ungroup()
 
-# Compute proportions of topics that the alters are active in.
-# See above.
-alters_agg <- alters_topics_consolidated %>%
-  group_by(year, month, topic) %>%
-  summarise(num_users = n()) %>%
-  spread(key = topic, value = num_users, fill = 0) %>%
-  gather(key = topic, value = num_users,-year,-month) %>%
-  mutate(users_rel = num_users / sum(num_users))
-
-# Plot topic distributions and facet by topic.
-ego_agg %>%
-  ggplot(mapping = aes(make_date(year, month), topics_rel, fill = factor(topic))) +
+# Plot topic distributions
+ego_proportions %>%
+  ggplot(mapping = aes(make_date(year, month), prop, fill = topic)) +
   geom_area(
     size = stroke_size,
     colour = stroke_color,
@@ -57,7 +60,26 @@ ego_agg %>%
   ) +
   labs(title = "Distribution of the ego's posts across topics",
        x = "",
-       y = "# posts, relative") #+ facet_wrap(. ~ year, scales = "free")
+       y = "# posts, relative",
+       fill = "Topic") # +
+# facet_wrap(. ~ year, scales = "free")
+
+# Plot the cumsum of the absolute number of posts
+ego_proportions %>%
+  group_by(topic) %>%
+  mutate(cs = cumsum(num_posts)) %>%
+  ggplot(mapping = aes(make_date(year, month), cs)) +
+  geom_line(mapping = aes(colour = topic))
+
+# Plot the cumsum of the absolute number of posts for the user's first two years
+# of activity to see early developments.
+ego_proportions %>%
+  filter(year < 2010) %>%
+  group_by(topic) %>%
+  mutate(cs = cumsum(num_posts)) %>%
+  ggplot(mapping = aes(make_date(year, month), cs)) +
+  geom_line(mapping = aes(colour = topic))
+
 
 alters_agg %>%
   ggplot(mapping = aes(make_date(year, month), users_rel, fill = factor(topic))) +
@@ -79,7 +101,7 @@ save(aligned_data, file = "output/aligned_data.rda")
 
 # plot the proportions to identify possible correlations
 ggplot(aligned_data,
-       mapping = aes(users_rel, topics_rel, colour = factor(topic))) +
+       mapping = aes(users_rel, prop, colour = factor(topic))) +
   geom_point(alpha = .15) +
   geom_abline() +
   facet_wrap(. ~ topic)

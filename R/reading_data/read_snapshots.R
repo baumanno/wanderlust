@@ -75,6 +75,13 @@ read_edgelist <-
 #' @examples
 read_ego_topics <-
   function(user, ...) {
+    
+    # helper function for removing dates from the stored snapshot
+    drop_cols <- function(df) {
+      df %>%
+        select(-year, -month, -author)
+    }
+
     read_snapshot(
       user = user,
       path = "data/{user}/ego-topics-{year}-{month}.csv",
@@ -87,7 +94,8 @@ read_ego_topics <-
         count = col_integer()
       ),
       ...
-    )
+    ) %>%
+      mutate(data = map(data, drop_cols))
   }
 
 

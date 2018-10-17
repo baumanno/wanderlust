@@ -139,10 +139,10 @@ alters_proportions %>%
 plot_topical_cumsums <- function(ego, alters, t) {
   a <- alters %>%
     filter(topic == t) %>%
-    mutate(cs = cumsum(num_users))
+    mutate(cs = cumsum(prop))
   e <- ego %>%
     filter(topic == t) %>%
-    mutate(cs = cumsum(num_posts))
+    mutate(cs = cumsum(prop))
 
   ggplot() +
     geom_line(data = a, aes(make_date(year, month), cs, colour = "Alters")) +

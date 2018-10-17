@@ -82,9 +82,28 @@ ego_proportions %>%
   geom_line(mapping = aes(colour = topic)) +
   labs(x = "", y = "cum.sum of #posts", colour = "Topic")
 
+# 5: transform and plot alters data ---------------------------------------
 
-alters_agg %>%
-  ggplot(mapping = aes(make_date(year, month), users_rel, fill = factor(topic))) +
+# Compute proportions of topics that the alters are active in.
+# See above.
+alters_proportions <- alters_topics %>%
+  unnest() %>%
+  group_by(year, month, topic) %>%
+  summarise(num_users = n()) %>%
+  spread(key = topic,
+         value = num_users,
+         fill = 0) %>%
+  gather(key = topic,
+         value = num_users,
+         factor_key = TRUE,
+         -year,
+         -month) %>%
+  mutate(prop = num_users / sum(num_users)) %>%
+  ungroup()
+
+# Plot the distribution of alters by the topic they are most active in.
+alters_proportions %>%
+  ggplot(mapping = aes(make_date(year, month), prop, fill = topic)) +
   geom_area(
     size = stroke_size,
     colour = stroke_color,

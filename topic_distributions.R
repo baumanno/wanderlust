@@ -69,7 +69,8 @@ ego_proportions %>%
   group_by(topic) %>%
   mutate(cs = cumsum(num_posts)) %>%
   ggplot(mapping = aes(make_date(year, month), cs)) +
-  geom_line(mapping = aes(colour = topic))
+  geom_line(mapping = aes(colour = topic)) +
+  labs(x = "", y = "cum.sum of #posts", colour = "Topic")
 
 # Plot the cumsum of the absolute number of posts for the user's first two years
 # of activity to see early developments.
@@ -78,7 +79,8 @@ ego_proportions %>%
   group_by(topic) %>%
   mutate(cs = cumsum(num_posts)) %>%
   ggplot(mapping = aes(make_date(year, month), cs)) +
-  geom_line(mapping = aes(colour = topic))
+  geom_line(mapping = aes(colour = topic)) +
+  labs(x = "", y = "cum.sum of #posts", colour = "Topic")
 
 
 alters_agg %>%

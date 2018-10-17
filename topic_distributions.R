@@ -112,17 +112,77 @@ alters_proportions %>%
   ) +
   labs(title = "Distribution of the alters' posts across topics",
        x = "",
-       y = "# posts, relative") #+  facet_wrap(. ~ year, scales = "free")
+       y = "# posts, relative",
+       fill = "Topic") #+  facet_wrap(. ~ year, scales = "free")
+
+# Plot the cumsum of the absolute number of users
+alters_proportions %>%
+  group_by(topic) %>%
+  mutate(cs = cumsum(num_users)) %>%
+  ggplot(mapping = aes(make_date(year, month), cs)) +
+  geom_line(mapping = aes(colour = topic)) +
+  labs(x = "", y = "cum.sum of #users", colour = "Topic")
+
+# Plot the cumsum of the absolute number of users for the user's first two years
+# of activity to see early developments.
+alters_proportions %>%
+  filter(year < 2010) %>%
+  group_by(topic) %>%
+  mutate(cs = cumsum(num_users)) %>%
+  ggplot(mapping = aes(make_date(year, month), cs)) +
+  geom_line(mapping = aes(colour = topic)) +
+  labs(x = "", y = "cum.sum of #users", colour = "Topic")
+
+# 6: investigate cumsums --------------------------------------------------
+
+# Filter out one topic, and plot the two cumsums
+plot_topical_cumsums <- function(ego, alters, t) {
+  a <- alters %>%
+    filter(topic == t) %>%
+    mutate(cs = cumsum(num_users))
+  e <- ego %>%
+    filter(topic == t) %>%
+    mutate(cs = cumsum(num_posts))
+
+  ggplot() +
+    geom_line(data = a, aes(make_date(year, month), cs, colour = "Alters")) +
+    geom_line(data = e, aes(make_date(year, month), cs, colour = "Ego")) +
+    labs(
+      x = "",
+      y = "proportion",
+      colour = "Data",
+      title = glue("Topic {t}")
+    )
+}
+
+plot_topical_cumsums(ego_proportions, alters_proportions, 239)
+plot_topical_cumsums(ego_proportions, alters_proportions, 235)
+plot_topical_cumsums(ego_proportions, alters_proportions, 69)
+
+# 7: analyze corr. of distributions ---------------------------------------
 
 # join ego and alter data into one dataframe
-aligned_data <- ego_agg %>%
-  left_join(alters_agg, by = c("year", "month", "topic"))
+corr_df <-
+  left_join(ego_proportions,
+            alters_proportions,
+            by = c("month", "year", "topic")) %>%
+  rename(prop_ego = prop.x, prop_alters = prop.y)
 
-save(aligned_data, file = "output/aligned_data.rda")
+save(corr_df, file = glue("output/{user}_corr-df.rda"))
+
+# filter out 0-0 rows; these occur a lot due to the spread-gather operations
+corr_df <- corr_df %>%
+  filter(prop_alters != 0 & prop_ego != 0 & topic != "<NA>")
 
 # plot the proportions to identify possible correlations
-ggplot(aligned_data,
-       mapping = aes(users_rel, prop, colour = factor(topic))) +
-  geom_point(alpha = .15) +
-  geom_abline() +
+corr_df %>%
+  ggplot(mapping = aes(prop_ego, prop_alters, colour = topic)) +
+  geom_point(alpha = .3) +
+  geom_smooth(method = "lm") +
+  labs(
+    x = "prop. of posts",
+    y = "prop. of users",
+    title = user,
+    colour = "Topic"
+  ) +
   facet_wrap(. ~ topic)

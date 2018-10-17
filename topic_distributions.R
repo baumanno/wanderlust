@@ -144,7 +144,7 @@ plot_topical_cumsums <- function(ego, alters, t) {
     filter(topic == t) %>%
     mutate(cs = cumsum(prop))
 
-  ggplot() +
+  p <- ggplot() +
     geom_line(data = a, aes(make_date(year, month), cs, colour = "Alters")) +
     geom_line(data = e, aes(make_date(year, month), cs, colour = "Ego")) +
     labs(
@@ -153,6 +153,8 @@ plot_topical_cumsums <- function(ego, alters, t) {
       colour = "Data",
       title = glue("Topic {t}")
     )
+  ggsave(filename = glue("figs/cumsum_{t}.png"), plot = p)
+  p
 }
 
 plot_topical_cumsums(ego_proportions, alters_proportions, 239)
@@ -167,8 +169,6 @@ corr_df <-
             alters_proportions,
             by = c("month", "year", "topic")) %>%
   rename(prop_ego = prop.x, prop_alters = prop.y)
-
-save(corr_df, file = glue("output/{user}_corr-df.rda"))
 
 # filter out 0-0 rows; these occur a lot due to the spread-gather operations
 corr_df <- corr_df %>%
@@ -186,3 +186,5 @@ corr_df %>%
     colour = "Topic"
   ) +
   facet_wrap(. ~ topic)
+
+save(corr_df, file = glue("output/{user}_corr-df.rda"))

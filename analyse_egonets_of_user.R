@@ -42,7 +42,7 @@ topics_of_alters <-
 # 4: aggregate data into single dataframe ---------------------------------
 
 # store edgelists and topic metadata in a frame
-df <-
+graph_data <-
   left_join(edgelists, topics_of_alters, by = c("month", "year", "author")) %>%
   select(year,
          month,
@@ -55,10 +55,10 @@ rm(edgelists, topics_of_alters)
 
 # 5: analysis of egonetwork -----------------------------------------------
 
-df <- df %>%
+graph_data <- graph_data %>%
   mutate(graph = map2(edgelist, alters_topics, egonet_from_edgelist))
 
-graph_analysis <- df %>%
+graph_analysis <- graph_data %>%
   mutate(
     vertices = map_int(graph, vcount),
     katz_powell = map_dbl(graph, katz_powell_mutuality),
@@ -67,7 +67,7 @@ graph_analysis <- df %>%
 
 # 6: store result objects -------------------------------------------------
 
-save(df, file = glue("output/{user}-graph_df.rda"))
+save(graph_data, file = glue("output/{user}-graph_df.rda"))
 save(graph_analysis, file = glue("output/{user}-graph_analysis.rda"))
 
 # 7: plot data ------------------------------------------------------------

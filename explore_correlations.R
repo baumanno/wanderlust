@@ -21,48 +21,45 @@ load(glue("output/{user}-graph_analysis.rda"))
 # all snapshots for one ego
 ego_topics <- read_ego_topics(user)
 
-rm(graph_store)
-rm(list_of_graphs)
+# join graphs and topic data
+df <-
+  left_join(graph_data, ego_topics, by = c("year", "month", "author")) %>%
+  rename(ego_topics = data)
 
 filter_graph_wrapper <- function(graph, ego) {
   filter_graph(graph, ego$topic)
 }
 
-# Store the topical subgraph in the tibble
-df <- df %>% mutate(
-  topical_subgraph = map2(graph, ego, filter_graph_wrapper)
-)
-
 # Compute a measure over the reciprocal edges in the subgraph.
 # This is the ratio of incoming - outgoing edges to all edges.
-df <- df %>% mutate(
-  topical_edges = map2_dbl(df$topical_subgraph, df$graph, function(subg, fullg) {
-    
-    if(vcount(subg) == 0 || vcount(fullg) == 0) {
-      return(NA)
-    }
-    
-    in_subg <- length(incident(subg, user, mode = "in"))
-    out_subg <- length(incident(subg, user, mode = "out"))
-    
-    (in_subg - out_subg) / ecount(fullg)
-  })
-)
+relative_reciprocity <- function(subg, fullg) {
+  if (vcount(subg) == 0 || vcount(fullg) == 0) {
+    return(NA)
+  }
+  
+  in_subg <- length(incident(subg, user, mode = "in"))
+  out_subg <- length(incident(subg, user, mode = "out"))
+  
+  (in_subg - out_subg) / ecount(fullg)
+}
 
-df <- df %>% mutate(
-  date = make_date(year, month),
-  kp_subgraph = map_dbl(df$topical_subgraph, katz_powell_mutuality)
-)
+ratio_edges <- function(sg, g) {
+  if (vcount(g) == 0 || vcount(sg) == 0) {
+    return(NA)
+  }
+  
+  ecount(sg) / ecount(g)
+}
 
-df <- df %>% mutate(
-  rat_topical_edges = map2_dbl(topical_subgraph, graph,function (sg, g) {
-    if(vcount(g) == 0 || vcount(sg) == 0) {
-      return(NA)
-    }
-    
-    ecount(sg) / ecount(g)
-  })
-)
+df <-
+  df %>%
+  mutate(
+    date = make_date(year, month),
+    topical_subgraph = map2(graph, ego_topics, filter_graph_wrapper),
+    topical_edges = map2_dbl(topical_subgraph, graph, relative_reciprocity),
+    rat_topical_edges = map2_dbl(topical_subgraph, graph, ratio_edges),
+    kp_subgraph = map_dbl(topical_subgraph, katz_powell_mutuality)
+    )
 
 df %>%
   ggplot(mapping = aes(date, rat_topical_edges)) +

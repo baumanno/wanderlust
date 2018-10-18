@@ -9,34 +9,17 @@ library(stringr)
 source("R/network_measures/katz_powell.R")
 source("R/network_measures/weighted_mutuality.R")
 source("R/network_construction/filter_graph.R")
-source("R/reading_data/read_snapshot_file.R")
-
-load("output/graph_store.rda")
-load("output/aligned_data.rda")
-load("output/list_of_graphs.rda")
+source("R/reading_data/read_snapshots.R")
 
 # c("monocasa", formido", "cavedave", "IronWolve")
 user <- c("monocasa")
 
+load(glue("output/{user}-graph_df.rda"))
+load(glue("output/{user}_corr-df.rda"))
+load(glue("output/{user}-graph_analysis.rda"))
+
 # all snapshots for one ego
-ego_topics <-
-  read_monthly_snapshot_data(
-    user = user,
-    path = "data/{user}/ego-topics-{year}-{month}.csv",
-    cols = cols(
-      year = col_integer(),
-      month = col_integer(),
-      author = col_character(),
-      subreddit = col_character(),
-      topic = col_integer(),
-      count = col_integer()
-    )
-  )
-
-df <- graph_store
-
-df$ego <- ego_topics
-df$graph <- list_of_graphs
+ego_topics <- read_ego_topics(user)
 
 rm(graph_store)
 rm(list_of_graphs)
@@ -81,27 +64,27 @@ df <- df %>% mutate(
   })
 )
 
-df %>% 
+df %>%
   ggplot(mapping = aes(date, rat_topical_edges)) +
   geom_hline(yintercept = 0) +
   geom_point() +
   geom_smooth() +
   scale_y_continuous(limits = c(-1, 1)) +
-  labs(x = "", y = "prop. topical edges",title = "Ratio of topical edges over time")
+  labs(x = "", y = "prop. topical edges", title = "Ratio of topical edges over time")
 
 ggsave(filename = glue("figs/{user}-1-ratio-topical-edges.png"))
 
-df %>% 
+df %>%
   ggplot(mapping = aes(date, topical_edges)) +
   geom_hline(yintercept = 0) +
   geom_point() +
   geom_smooth() +
   scale_y_continuous(limits = c(-1, 1)) +
-  labs(x = "", y = "topical edges",title = "Ratio of mutual topical edges over time")
+  labs(x = "", y = "topical edges", title = "Ratio of mutual topical edges over time")
 
 ggsave(filename = glue("figs/{user}-2-ratio-mutual-topical-edges.png"))
 
-df %>% 
+df %>%
   ggplot(mapping = aes(date, kp_subgraph)) +
   geom_hline(yintercept = 0) +
   geom_point() +
@@ -116,7 +99,7 @@ df %>%
   geom_hline(yintercept = 0) +
   geom_point() +
   geom_smooth() +
-  scale_y_continuous(limits = c(-1, 1)) + 
+  scale_y_continuous(limits = c(-1, 1)) +
   labs(x = "topical edges", y = "kp", title = "Topical edges vs Katz-Powell index of subgraph")
 
 ggsave(filename = glue("figs/{user}-4-topical-edges-vs-katz-powell.png"))
@@ -152,7 +135,7 @@ f <- df$topical_subgraph[[12]]
 V(g)$color <- vertex_attr(g)$topic + 1
 V(f)$color <- vertex_attr(f)$topic + 1
 
-l <- layout_with_fr(g,niter=100000)
+l <- layout_with_fr(g, niter = 100000)
 
 idx <- which(V(g)$name %in% V(f)$name)
 xlim <- range(l[, 1])
@@ -165,8 +148,8 @@ plot(
   layout = l,
   vertex.size = 45,
   edge.width = .8,
-  edge.arrow.size=.575,
-  edge.arrow.width=.5,
+  edge.arrow.size = .575,
+  edge.arrow.width = .5,
   rescale = FALSE
 )
 plot(
@@ -176,21 +159,21 @@ plot(
   ylim = ylim,
   layout = l[idx, ],
   vertex.size = 55,
-  vertex.color=NA,
-  vertex.frame.color="red",
+  vertex.color = NA,
+  vertex.frame.color = "red",
   edge.width = 2,
-  edge.arrow.mode=0,
-  add=TRUE,
+  edge.arrow.mode = 0,
+  add = TRUE,
   rescale = FALSE
 )
 
 V(g)$color <- ifelse(V(g)$name %in% V(f)$name, "red", "white")
-l <- layout_with_fr(g,niter=100000)
+l <- layout_with_fr(g, niter = 100000)
 plot(
   g,
   vertex.size = 25,
   edge.width = .8,
-  edge.arrow.size=.575,
-  edge.arrow.width=.5,
-  layout=l
+  edge.arrow.size = .575,
+  edge.arrow.width = .5,
+  layout = l
 )

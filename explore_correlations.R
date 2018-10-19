@@ -115,10 +115,15 @@ ggsave(filename = glue("figs/{USERNAME}-3-katz-powell.png"))
 # by computing the Katz-Powell index of mutuality. This plot shows that they
 # both arrive at similar conclusions.
 df %>%
-  ggplot(mapping = aes(topical_edges, kp_subgraph)) +
+  mutate(rec = map_dbl(topical_subgraph, reciprocity, mode = "ratio")) %>%
+  ggplot(mapping = aes(x = date)) +
   geom_hline(yintercept = 0) +
-  geom_point() +
-  geom_smooth() +
+  geom_point(mapping = aes(y = rec, colour = "reciprocity ratio"),
+             alpha = P_ALPHA) +
+  geom_smooth(mapping = aes(y = rec, colour = "reciprocity ratio")) +
+  geom_point(mapping = aes(y = kp_subgraph, colour = "Katz-Powell index"),
+             alpha = P_ALPHA) +
+  geom_smooth(mapping = aes(y = kp_subgraph, colour = "Katz-Powell index")) +
   scale_y_continuous(limits = c(-1, 1)) +
   labs(
     x = "",

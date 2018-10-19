@@ -45,7 +45,8 @@ ego_topics <- read_ego_topics(USERNAME)
 
 # join graphs and topic data
 df <-
-  df %>%
+  left_join(graph_data, ego_topics, by = c("year", "month", "author")) %>%
+  rename(ego_topics = data) %>%
   mutate(
     date = make_date(year, month),
     topical_subgraph = map2(graph, ego_topics, filter_graph_wrapper),
@@ -134,28 +135,77 @@ df %>%
 
 ggsave(filename = glue("figs/{USERNAME}-5-rec-subgraph-1.png"))
 
-# plot shows similarity of reciprocity and Katz-Powell-Index
-df %>% ggplot(mapping = aes(x = date)) +
-  scale_y_continuous(limits = c(-1, 1)) +
-  geom_hline(yintercept = 0) +
-  geom_point(mapping = aes(y = unlist(map(topical_subgraph, reciprocity, mode = "ratio")), colour="reciprocity")) +
-  geom_smooth(mapping = aes(y = unlist(map(topical_subgraph, reciprocity, mode = "ratio")), colour="reciprocity")) +
-  geom_point(mapping = aes(y = unlist(map(topical_subgraph, katz_powell_mutuality)), colour="Katz-Powell index")) +
-  geom_smooth(mapping = aes(y = unlist(map(topical_subgraph, katz_powell_mutuality)), colour = "Katz-Powell index")) +
-  labs(x = "", y = "value", colour = "measure", title = "Different reciprocity measures of the topical subgraph, over time")
+THE_TOPIC <- 235
 
-ggsave(filename = glue("figs/{user}-5-rec-subgraph-1.png"))
+corr_df %>% 
+#  filter(topic == THE_TOPIC) %>% 
+  left_join(df, by = c("year", "month")) %>% 
+  ggplot(mapping = aes(prop_ego, rat_topical_edges, colour = topic)) +
+  geom_point()+
+  geom_smooth(method = "lm") +
+  facet_wrap(~topic)
 
-df %>% ggplot(mapping = aes(x = date)) +
-  scale_y_continuous(limits = c(-1, 1)) +
-  geom_hline(yintercept = 0) +
-  geom_point(mapping = aes(y = unlist(map(topical_subgraph, weighted_mutuality, node = "monocasa")), colour="weighted")) +
-  geom_smooth(mapping = aes(y = unlist(map(topical_subgraph, weighted_mutuality, node = "monocasa")), colour = "weighted")) +
-  geom_point(mapping = aes(y = topical_edges, colour = "topical")) +
-  geom_smooth(mapping = aes(y = topical_edges, colour = "topical")) +
-  labs(x = "", y = "value", colour = "measure", title = "Different reciprocity measures of the topical subgraph, over time")
+weight_mutual_edges <-
+  df %>%
+  left_join(corr_df, by = c("year", "month")) %>%
+  select(year, month, topic, graph, prop_ego) %>%
+  drop_na() %>%
+  # filter(topic == THE_TOPIC) %>%
+  group_by(topic) %>%
+  mutate(
+    subgraph = map(graph, filter_graph, topic_numbers = topic),
+    prop_edges_to_topic = map2_dbl(subgraph, graph, function(sub, full)
+      ecount(sub) / ecount(full)),
+    t = prop_ego * prop_edges_to_topic
+  )
 
-ggsave(filename = glue("figs/{user}-6-rec-subgraph-2.png"))
+weight_mutual_edges %>%
+  ggplot(mapping = aes(make_date(year, month), t)) +
+  geom_point(alpha = P_ALPHA) +
+  geom_smooth() +
+  facet_wrap( ~ topic)
+
+corr_for_topic <- function(wme, tp) {
+  wme <- wme %>% filter(topic == tp)
+  cc <- cor.test(wme$prop_edges_to_topic, wme$prop_ego)
+  list(
+    "coeff" = round(cc$estimate, digits = 3),
+    "pval" = ifelse(cc$p.value <= 0.5, "<= 0.5", "> 0.5")
+  )
+}
+
+(ccc <- corr_for_topic(weight_mutual_edges, THE_TOPIC))
+
+cc <- glue_data(ccc, "list(italic(r) == {coeff}, p {pval})")
+
+weight_mutual_edges %>%
+  filter(topic == THE_TOPIC) %>%
+  ggplot(mapping = aes(prop_edges_to_topic, prop_ego)) +
+  geom_point(alpha = P_ALPHA) +
+  geom_smooth(method = "lm") +
+  annotate(
+    "label",
+    x = 0.2,
+    y = .9,
+    label = cc,
+    parse = TRUE
+  ) +
+  labs(
+    x = "prop. edges to topically similar alters",
+    y = "prop. posts to topic",
+    title = "Do more edges to similar alters result in more posts to a topic?",
+    subtitle = glue("Topic: {THE_TOPIC}")
+  )
+
+df %>%
+  mutate(cs = cumsum(ifelse(
+    is.na(rat_topical_edges), 0, rat_topical_edges
+  ))) %>%
+  ggplot(mapping = aes(date, cs)) +
+  geom_line() +
+  labs(x = "",
+       y = "cumsum",
+       title = "Cumsum of ratio of topical edges")
 
 g <- df$graph[[12]]
 f <- df$topical_subgraph[[12]]

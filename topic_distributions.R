@@ -12,18 +12,12 @@ source("R/reading_data/read_snapshots.R")
 
 # 2: Module constants ------------------------------------------------------
 
-stroke_color <- "black"
-stroke_size  <- .1
-fill_alpha   <- .6
-fill_palette <- "Blues"
-
-# "formido" "cavedave" "IronWolve"
-user <- "monocasa"
+source("R/constants.R")
 
 # 3: read data from snapshot files ----------------------------------------
 
-ego_topics <- read_ego_topics(user)
-alters_topics <- read_alters_topics(user)
+ego_topics <- read_ego_topics(USERNAME)
+alters_topics <- read_alters_topics(USERNAME)
 
 # 4: transform and plot ego data ------------------------------------------
 
@@ -53,9 +47,9 @@ ego_proportions <- ego_topics %>%
 ego_proportions %>%
   ggplot(mapping = aes(make_date(year, month), prop, fill = topic)) +
   geom_area(
-    size = stroke_size,
-    colour = stroke_color,
-    alpha = fill_alpha,
+    size = S_SIZE,
+    colour = S_COLOR,
+    alpha = F_ALPHA,
     position = "stack"
   ) +
   labs(title = "Distribution of the ego's posts across topics",
@@ -105,9 +99,9 @@ alters_proportions <- alters_topics %>%
 alters_proportions %>%
   ggplot(mapping = aes(make_date(year, month), prop, fill = topic)) +
   geom_area(
-    size = stroke_size,
-    colour = stroke_color,
-    alpha = fill_alpha,
+    size = S_SIZE,
+    colour = S_COLOR,
+    alpha = F_ALPHA,
     position = "stack"
   ) +
   labs(title = "Distribution of the alters' posts across topics",
@@ -153,7 +147,7 @@ plot_topical_cumsums <- function(ego, alters, t) {
       colour = "Data",
       title = glue("Topic {t}")
     )
-  ggsave(filename = glue("figs/cumsum_{t}.png"), plot = p)
+  ggsave(filename = glue("figs/{USERNAME}-cumsum_{t}.png"), plot = p)
   p
 }
 
@@ -177,14 +171,14 @@ corr_df <- corr_df %>%
 # plot the proportions to identify possible correlations
 corr_df %>%
   ggplot(mapping = aes(prop_ego, prop_alters, colour = topic)) +
-  geom_point(alpha = .3) +
+  geom_point(alpha = P_ALPHA) +
   geom_smooth(method = "lm") +
   labs(
     x = "prop. of posts",
     y = "prop. of users",
-    title = user,
+    title = USERNAME,
     colour = "Topic"
   ) +
   facet_wrap(. ~ topic)
 
-save(corr_df, file = glue("output/{user}_corr-df.rda"))
+save(corr_df, file = glue("output/{USERNAME}_corr-df.rda"))

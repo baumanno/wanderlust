@@ -43,20 +43,31 @@ relative_reciprocity <- function(subg, fullg) {
   (in_subg - out_subg) / ecount(fullg)
 }
 
-ratio_edges <- function(sg, g) {
-  if (vcount(g) == 0 || vcount(sg) == 0) {
-    return(NA)
-  }
-  
-  ecount(sg) / ecount(g)
-}
+# 3: module constants -----------------------------------------------------
 
+source("R/constants.R")
+
+# 4: load external objects ------------------------------------------------
+
+load(glue("output/{USERNAME}-graph_df.rda"))
+load(glue("output/{USERNAME}_corr-df.rda"))
+load(glue("output/{USERNAME}-graph_analysis.rda"))
+
+# 5: compute measures on the graph data -----------------------------------
+
+# all snapshots for one ego
+ego_topics <- read_ego_topics(USERNAME)
+
+# join graphs and topic data
 df <-
   df %>%
   mutate(
     date = make_date(year, month),
     topical_subgraph = map2(graph, ego_topics, filter_graph_wrapper),
-    topical_edges = map2_dbl(topical_subgraph, graph, relative_reciprocity),
+    topical_edges = map2_dbl(topical_subgraph,
+                             graph,
+                             relative_reciprocity,
+                             user = USERNAME),
     rat_topical_edges = map2_dbl(topical_subgraph, graph, ratio_edges),
     kp_subgraph = map_dbl(topical_subgraph, katz_powell_mutuality)
     )
@@ -69,7 +80,7 @@ df %>%
   scale_y_continuous(limits = c(-1, 1)) +
   labs(x = "", y = "prop. topical edges", title = "Ratio of topical edges over time")
 
-ggsave(filename = glue("figs/{user}-1-ratio-topical-edges.png"))
+ggsave(filename = glue("figs/{USERNAME}-1-ratio-topical-edges.png"))
 
 df %>%
   ggplot(mapping = aes(date, topical_edges)) +
@@ -79,7 +90,7 @@ df %>%
   scale_y_continuous(limits = c(-1, 1)) +
   labs(x = "", y = "topical edges", title = "Ratio of mutual topical edges over time")
 
-ggsave(filename = glue("figs/{user}-2-ratio-mutual-topical-edges.png"))
+ggsave(filename = glue("figs/{USERNAME}-2-ratio-mutual-topical-edges.png"))
 
 df %>%
   ggplot(mapping = aes(date, kp_subgraph)) +
@@ -89,7 +100,7 @@ df %>%
   scale_y_continuous(limits = c(-1, 1)) +
   labs(x = "", y = "kp", title = "Katz-Powell index of the topical subgraph over time")
 
-ggsave(filename = glue("figs/{user}-3-katz-powell.png"))
+ggsave(filename = glue("figs/{USERNAME}-3-katz-powell.png"))
 
 df %>%
   ggplot(mapping = aes(topical_edges, kp_subgraph)) +
@@ -99,7 +110,7 @@ df %>%
   scale_y_continuous(limits = c(-1, 1)) +
   labs(x = "topical edges", y = "kp", title = "Topical edges vs Katz-Powell index of subgraph")
 
-ggsave(filename = glue("figs/{user}-4-topical-edges-vs-katz-powell.png"))
+ggsave(filename = glue("figs/{USERNAME}-5-rec-subgraph-1.png"))
 
 # plot shows similarity of reciprocity and Katz-Powell-Index
 df %>% ggplot(mapping = aes(x = date)) +

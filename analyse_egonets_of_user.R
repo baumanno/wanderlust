@@ -17,13 +17,12 @@ source("R/network_measures/krackhardt.R")
 
 # 2: global constants -----------------------------------------------------
 
-# monocasa formido cavedave IronWolve
-user <- "IronWolve"
+source("R/constants.R")
 
 # 3: Read data from snapshots ---------------------------------------------
 
-edgelists <- read_edgelist(user)
-topics_of_alters <- read_alters_topics(user)
+edgelists <- read_edgelist(USERNAME)
+topics_of_alters <- read_alters_topics(USERNAME)
 
 # the ego is missing from the alters snapshots, so we add it manually with a
 # special topic of -1
@@ -32,7 +31,7 @@ fix_missing_ego <- function(df) {
   if (nrow(df) == 0) {
     return(df)
   }
-  add_row(df, author = user, topic = -1)
+  add_row(df, author = USERNAME, topic = -1)
 }
 
 topics_of_alters <-
@@ -67,8 +66,8 @@ graph_analysis <- graph_data %>%
 
 # 6: store result objects -------------------------------------------------
 
-save(graph_data, file = glue("output/{user}-graph_df.rda"))
-save(graph_analysis, file = glue("output/{user}-graph_analysis.rda"))
+save(graph_data, file = glue("output/{USERNAME}-graph_df.rda"))
+save(graph_analysis, file = glue("output/{USERNAME}-graph_analysis.rda"))
 
 # 7: plot data ------------------------------------------------------------
 
@@ -78,7 +77,7 @@ save(graph_analysis, file = glue("output/{user}-graph_analysis.rda"))
     ggplot(mapping = aes(make_date(year, month), vertices)) +
     geom_point(alpha = 1 / 10) +
     geom_smooth() +
-    labs(x = "", y = "#vertices", title = user)
+    labs(x = "", y = "#vertices", title = USERNAME)
 )
 
 (
@@ -121,4 +120,4 @@ g_b <- grid.arrange(d, e, nrow = 2)
 
 p <- grid.arrange(g_a, g_b, ncol = 2)
 
-ggsave(glue("figs/{user}-graph-analysis.png"), p)
+ggsave(glue("figs/{USERNAME}-graph-analysis.png"), p)

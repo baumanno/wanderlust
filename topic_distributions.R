@@ -110,12 +110,21 @@ alters_proportions %>%
        fill = "Topic") #+  facet_wrap(. ~ year, scales = "free")
 
 # Plot the cumsum of the absolute number of users
+MIN_CS <- 350
 alters_proportions %>%
   group_by(topic) %>%
   mutate(cs = cumsum(num_users)) %>%
+  filter(max(cs) >= MIN_CS) %>%
   ggplot(mapping = aes(make_date(year, month), cs)) +
   geom_line(mapping = aes(colour = topic)) +
-  labs(x = "", y = "cum.sum of #users", colour = "Topic")
+  geom_hline(yintercept = MIN_CS) +
+  labs(
+    x = "",
+    y = "cum.sum of #users",
+    colour = "Topic",
+    title = "Cumulative sum of users",
+    caption = glue("Black line denotes min. cumsum ({MIN_CS})")
+  )
 
 # Plot the cumsum of the absolute number of users for the user's first two years
 # of activity to see early developments.

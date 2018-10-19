@@ -65,11 +65,13 @@ df <-
 # and the full graph?
 df %>%
   ggplot(mapping = aes(date, rat_topical_edges)) +
-  geom_hline(yintercept = 0) +
-  geom_point() +
+  geom_point(alpha = P_ALPHA) +
   geom_smooth() +
-  scale_y_continuous(limits = c(-1, 1)) +
-  labs(x = "", y = "prop. topical edges", title = "Ratio of topical edges over time")
+  labs(
+    x = "",
+    y = "ratio",
+    title = "Overlap of the topic-subgraph and the full graph over time"
+  )
 
 ggsave(filename = glue("figs/{USERNAME}-1-ratio-topical-edges.png"))
 
@@ -82,10 +84,12 @@ ggsave(filename = glue("figs/{USERNAME}-1-ratio-topical-edges.png"))
 df %>%
   ggplot(mapping = aes(date, topical_edges)) +
   geom_hline(yintercept = 0) +
-  geom_point() +
-  geom_smooth() +
+  geom_point(alpha = P_ALPHA) +
+  geom_smooth(method = "lm") +
   scale_y_continuous(limits = c(-1, 1)) +
-  labs(x = "", y = "topical edges", title = "Ratio of mutual topical edges over time")
+  labs(x = "",
+       y = "topical_edges",
+       title = "Relative to the entire graph, are topical edges mutual?")
 
 ggsave(filename = glue("figs/{USERNAME}-2-ratio-mutual-topical-edges.png"))
 
@@ -95,10 +99,15 @@ ggsave(filename = glue("figs/{USERNAME}-2-ratio-mutual-topical-edges.png"))
 df %>%
   ggplot(mapping = aes(date, kp_subgraph)) +
   geom_hline(yintercept = 0) +
-  geom_point() +
-  geom_smooth() +
+  geom_point(alpha = P_ALPHA) +
+  geom_smooth(method = "lm") +
   scale_y_continuous(limits = c(-1, 1)) +
-  labs(x = "", y = "kp", title = "Katz-Powell index of the topical subgraph over time")
+  labs(
+    x = "",
+    y = "kp (subgraph)",
+    title = "Katz-Powell index of the topical subgraph over time",
+    caption = "1: all choices are reciprocated,\n0: no tendency to reciprocate,\n< 0: too few mutual dyads observed"
+  )
 
 ggsave(filename = glue("figs/{USERNAME}-3-katz-powell.png"))
 
@@ -111,7 +120,12 @@ df %>%
   geom_point() +
   geom_smooth() +
   scale_y_continuous(limits = c(-1, 1)) +
-  labs(x = "topical edges", y = "kp", title = "Topical edges vs Katz-Powell index of subgraph")
+  labs(
+    x = "",
+    y = "value",
+    colour = "Measure",
+    title = "Different reciprocity measures of the topical subgraph"
+  )
 
 ggsave(filename = glue("figs/{USERNAME}-5-rec-subgraph-1.png"))
 

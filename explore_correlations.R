@@ -1,30 +1,20 @@
 # Explore correlations between topic distributions and properties
 # of the user's social graph.
 
+# 0: libraries ------------------------------------------------------------
+
 library(tidyverse)
 library(lubridate)
 library(glue)
-library(stringr)
+
+# 1: external function definitions ----------------------------------------
 
 source("R/network_measures/katz_powell.R")
 source("R/network_measures/weighted_mutuality.R")
 source("R/network_construction/filter_graph.R")
 source("R/reading_data/read_snapshots.R")
 
-# c("monocasa", formido", "cavedave", "IronWolve")
-user <- c("monocasa")
-
-load(glue("output/{user}-graph_df.rda"))
-load(glue("output/{user}_corr-df.rda"))
-load(glue("output/{user}-graph_analysis.rda"))
-
-# all snapshots for one ego
-ego_topics <- read_ego_topics(user)
-
-# join graphs and topic data
-df <-
-  left_join(graph_data, ego_topics, by = c("year", "month", "author")) %>%
-  rename(ego_topics = data)
+# 2: helper functions -----------------------------------------------------
 
 filter_graph_wrapper <- function(graph, ego) {
   filter_graph(graph, ego$topic)
@@ -65,8 +55,14 @@ df <-
                              user = USERNAME),
     rat_topical_edges = map2_dbl(topical_subgraph, graph, ratio_edges),
     kp_subgraph = map_dbl(topical_subgraph, katz_powell_mutuality)
-    )
+  )
 
+# 6: plot data ------------------------------------------------------------
+
+# The "topic-subgraph" contains all vertices that share a topic with the ego.
+# For the edges in this subgraph, we can compute the ratio to the total number
+# of edges, effectively asking: How big is the overlap of the topical subgraph
+# and the full graph?
 df %>%
   ggplot(mapping = aes(date, rat_topical_edges)) +
   geom_hline(yintercept = 0) +
@@ -77,6 +73,12 @@ df %>%
 
 ggsave(filename = glue("figs/{USERNAME}-1-ratio-topical-edges.png"))
 
+# For the edges in the topic-subgraph, we can compute the difference of incoming
+# and outgoing edges, relative to the ego. This provides an indication of whether
+# these edges tend to be be mutual and similar in frequency (= 0), or whether
+# there is an imbalance toward "receiver" (+ 1) or "sender" (- 1) behaviour.
+# Normalizing by the full edge count provides an indication on whether edges
+# tend to link to/from topically similar nodes. See notes for analysis of values.
 df %>%
   ggplot(mapping = aes(date, topical_edges)) +
   geom_hline(yintercept = 0) +
@@ -87,6 +89,9 @@ df %>%
 
 ggsave(filename = glue("figs/{USERNAME}-2-ratio-mutual-topical-edges.png"))
 
+# The Katz-Powell index of mutuality indicates whether edge choices between nodes 
+# are reciprocated. Computing this measure on the subgraph indicates whether edges
+# tend to be mutual if ego and alters share interests.
 df %>%
   ggplot(mapping = aes(date, kp_subgraph)) +
   geom_hline(yintercept = 0) +
@@ -97,6 +102,9 @@ df %>%
 
 ggsave(filename = glue("figs/{USERNAME}-3-katz-powell.png"))
 
+# We can measure reciprocity both as a ratio of incoming and outgoing edges, and
+# by computing the Katz-Powell index of mutuality. This plot shows that they
+# both arrive at similar conclusions.
 df %>%
   ggplot(mapping = aes(topical_edges, kp_subgraph)) +
   geom_hline(yintercept = 0) +

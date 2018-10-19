@@ -45,3 +45,27 @@ weighted_mutuality <- function(graph, node, debug = FALSE) {
   
   (inc - out) / total
 }
+
+
+#' Relative reciprocity of a set of edges
+#' 
+#' Computes the difference of incident and outgoing edges of a subgraph 
+#' relative to the number of edges in the original full graph.
+#'
+#' @param subgraph a subgraph of \code{fullgraph}
+#' @param fullgraph an igraph graph
+#'
+#' @return
+#' @export
+#'
+#' @examples
+relative_reciprocity <- function(subgraph, fullgraph, user) {
+  if (vcount(subgraph) == 0 || vcount(fullgraph) == 0) {
+    return(NA)
+  }
+  
+  in_subg <- length(incident(subgraph, user, mode = "in"))
+  out_subg <- length(incident(subgraph, user, mode = "out"))
+  
+  (in_subg - out_subg) / ecount(fullgraph)
+}

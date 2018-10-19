@@ -30,17 +30,12 @@ filter_graph_wrapper <- function(graph, ego) {
   filter_graph(graph, ego$topic)
 }
 
-# Compute a measure over the reciprocal edges in the subgraph.
-# This is the ratio of incoming - outgoing edges to all edges.
-relative_reciprocity <- function(subg, fullg) {
-  if (vcount(subg) == 0 || vcount(fullg) == 0) {
+ratio_edges <- function(subgraph, fullgraph) {
+  if (vcount(fullgraph) == 0 || vcount(subgraph) == 0) {
     return(NA)
   }
   
-  in_subg <- length(incident(subg, user, mode = "in"))
-  out_subg <- length(incident(subg, user, mode = "out"))
-  
-  (in_subg - out_subg) / ecount(fullg)
+  ecount(subgraph) / ecount(fullgraph)
 }
 
 # 3: module constants -----------------------------------------------------

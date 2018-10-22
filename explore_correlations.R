@@ -54,8 +54,7 @@ df <-
                              graph,
                              relative_reciprocity,
                              user = USERNAME),
-    rat_topical_edges = map2_dbl(topical_subgraph, graph, ratio_edges),
-    kp_subgraph = map_dbl(topical_subgraph, katz_powell_mutuality)
+    rat_topical_edges = map2_dbl(topical_subgraph, graph, ratio_edges)
   )
 
 # 6: plot data ------------------------------------------------------------
@@ -93,47 +92,6 @@ df %>%
        title = "Relative to the entire graph, are topical edges mutual?")
 
 ggsave(filename = glue("figs/{USERNAME}-2-ratio-mutual-topical-edges.png"))
-
-# The Katz-Powell index of mutuality indicates whether edge choices between nodes 
-# are reciprocated. Computing this measure on the subgraph indicates whether edges
-# tend to be mutual if ego and alters share interests.
-df %>%
-  ggplot(mapping = aes(date, kp_subgraph)) +
-  geom_hline(yintercept = 0) +
-  geom_point(alpha = P_ALPHA) +
-  geom_smooth(method = "lm") +
-  scale_y_continuous(limits = c(-1, 1)) +
-  labs(
-    x = "",
-    y = "kp (subgraph)",
-    title = "Katz-Powell index of the topical subgraph over time",
-    caption = "1: all choices are reciprocated,\n0: no tendency to reciprocate,\n< 0: too few mutual dyads observed"
-  )
-
-ggsave(filename = glue("figs/{USERNAME}-3-katz-powell.png"))
-
-# We can measure reciprocity both as a ratio of incoming and outgoing edges, and
-# by computing the Katz-Powell index of mutuality. This plot shows that they
-# both arrive at similar conclusions.
-df %>%
-  mutate(rec = map_dbl(topical_subgraph, reciprocity, mode = "ratio")) %>%
-  ggplot(mapping = aes(x = date)) +
-  geom_hline(yintercept = 0) +
-  geom_point(mapping = aes(y = rec, colour = "reciprocity ratio"),
-             alpha = P_ALPHA) +
-  geom_smooth(mapping = aes(y = rec, colour = "reciprocity ratio")) +
-  geom_point(mapping = aes(y = kp_subgraph, colour = "Katz-Powell index"),
-             alpha = P_ALPHA) +
-  geom_smooth(mapping = aes(y = kp_subgraph, colour = "Katz-Powell index")) +
-  scale_y_continuous(limits = c(-1, 1)) +
-  labs(
-    x = "",
-    y = "value",
-    colour = "Measure",
-    title = "Different reciprocity measures of the topical subgraph"
-  )
-
-ggsave(filename = glue("figs/{USERNAME}-5-rec-subgraph-1.png"))
 
 THE_TOPIC <- 235
 

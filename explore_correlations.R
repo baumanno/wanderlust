@@ -16,6 +16,7 @@ source("R/reading_data/read_snapshots.R")
 
 # 2: helper functions -----------------------------------------------------
 
+# This wrapper accepts a dataframe of ego-topics and pulls out the topics.
 filter_graph_wrapper <- function(graph, ego) {
   filter_graph(graph, ego$topic)
 }
@@ -99,8 +100,13 @@ corr_df %>%
 #  filter(topic == THE_TOPIC) %>% 
   left_join(df, by = c("year", "month")) %>% 
   ggplot(mapping = aes(prop_ego, rat_topical_edges, colour = topic)) +
-  geom_point()+
+  geom_point(alpha = P_ALPHA) +
   geom_smooth(method = "lm") +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    x = "prop. of Ego's posts",
+    y = "ratio of edges in topic"
+  ) +
   facet_wrap(~topic)
 
 weight_mutual_edges <-

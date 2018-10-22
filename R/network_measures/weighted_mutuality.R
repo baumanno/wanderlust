@@ -15,33 +15,21 @@ library(igraph)
 #' @export
 #'
 #' @examples
-weighted_mutuality <- function(graph, node, debug = FALSE) {
+weighted_mutuality <- function(graph, node) {
   if (vcount(graph) == 0)
     return(NA)
-  
-  if (debug)
-    print(graph)
   
   # outdegree d+
   out <- length(incident(graph, node, mode = "out"))
   
-  if (debug)
-    message(paste("outgoing: ", out))
-  
   # indegree d-
   inc <- length(incident(graph, node, mode = "in"))
-  
-  if (debug)
-    message(paste("incoming: ", inc))
   
   total <- inc + out
   
   # no mutuality for isolated nodes
   if (total == 0)
     return(NA)
-  
-  if (debug)
-    print((inc - out) / total)
   
   (inc - out) / total
 }

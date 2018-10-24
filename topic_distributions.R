@@ -137,35 +137,7 @@ alters_proportions %>%
   geom_line(mapping = aes(colour = topic)) +
   labs(x = "", y = "cum.sum of #users", colour = "Topic")
 
-# 6: investigate cumsums --------------------------------------------------
-
-# Filter out one topic, and plot the two cumsums
-plot_topical_cumsums <- function(ego, alters, t) {
-  a <- alters %>%
-    filter(topic == t) %>%
-    mutate(cs = cumsum(prop))
-  e <- ego %>%
-    filter(topic == t) %>%
-    mutate(cs = cumsum(prop))
-
-  p <- ggplot() +
-    geom_line(data = a, aes(make_date(year, month), cs, colour = "Alters")) +
-    geom_line(data = e, aes(make_date(year, month), cs, colour = "Ego")) +
-    labs(
-      x = "",
-      y = "proportion",
-      colour = "Data",
-      title = glue("Topic {t}")
-    )
-  ggsave(filename = glue("figs/{USERNAME}-cumsum_{t}.png"), plot = p)
-  p
-}
-
-plot_topical_cumsums(ego_proportions, alters_proportions, 239)
-plot_topical_cumsums(ego_proportions, alters_proportions, 235)
-plot_topical_cumsums(ego_proportions, alters_proportions, 69)
-
-# 7: analyze corr. of distributions ---------------------------------------
+# 6: analyze corr. of distributions ---------------------------------------
 
 # join ego and alter data into one dataframe
 corr_df <-
@@ -190,5 +162,25 @@ corr_df %>%
     colour = "Topic"
   ) +
   facet_wrap(. ~ topic)
+
+# 7: investigate cumsums --------------------------------------------------
+
+# Filter out one topic, and plot the two cumsums
+plot_topical_cumsums <- function(df, cs_thresh = 10) {
+  df %>%
+    group_by(topic) %>%
+    mutate(cs_alters = cumsum(prop_alters),
+           cs_ego = cumsum(prop_ego)) %>%
+    filter(max(cs_alters) >= cs_thresh & max(cs_ego) >= cs_thresh) %>%
+    ggplot(mapping = aes(x = make_date(year, month))) +
+    geom_line(mapping = aes(y = cs_alters, colour = "Alters")) +
+    geom_line(mapping = aes(y = cs_ego, colour = "Ego")) +
+    labs(x = "",
+         y = "proportion",
+         colour = "Data") +
+    facet_wrap(~ topic)
+}
+
+plot_topical_cumsums(corr_df, cs_thresh = 10L)
 
 save(corr_df, file = glue("output/{USERNAME}_corr-df.rda"))

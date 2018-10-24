@@ -54,6 +54,8 @@ df <-
 # and the full graph?
 df %>%
   mutate(topical_overlap = map2_dbl(topic_subgraph, graph, function(a, b) {
+    # compute ratio of edges of two graphs
+    
     if (ecount(a) == 0 | ecount(b) == 0) {
       return(NA)
     }

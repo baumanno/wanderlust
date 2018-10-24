@@ -21,14 +21,6 @@ filter_graph_wrapper <- function(graph, ego) {
   filter_graph(graph, ego$topic)
 }
 
-ratio_edges <- function(subgraph, fullgraph) {
-  if (vcount(fullgraph) == 0 || vcount(subgraph) == 0) {
-    return(NA)
-  }
-  
-  ecount(subgraph) / ecount(fullgraph)
-}
-
 # 3: module constants -----------------------------------------------------
 
 source("R/constants.R")
@@ -45,7 +37,7 @@ load(glue("output/{USERNAME}-graph_analysis.rda"))
 # all snapshots for one ego
 ego_topics <- read_ego_topics(USERNAME)
 
-# construct subgraph and its statistics
+# construct subgraph and statistics
 graphs_and_topics <-
   graph_data %>% 
   left_join(ego_topics, by = c("year", "month", "author")) %>%
@@ -53,19 +45,20 @@ graphs_and_topics <-
   drop_na() %>% 
   mutate(
     date = make_date(year, month),
-    # edges are only to topically similar nodes
-    topical_subgraph = map2(graph, ego_topics, filter_graph_wrapper),
-    # (incoming - outgoing) / all edges
-    relative_topic_reciprocity = map_dbl(topical_subgraph,
-                             relative_reciprocity,
-                             user = USERNAME),
-    topical_overlap = map2_dbl(topical_subgraph, graph, ratio_edges)
+    topic_subgraph = map2(graph, ego_topics, filter_graph_wrapper),
+    topical_overlap = map2_dbl(topical_subgraph, graph, function(a, b) {
+      # compute ratio of edges of two graphs
+      
+      if (ecount(a) == 0 | ecount(b) == 0) {
+        return(NA)
+      }
+      
+      ecount(a) / ecount(b)
+    })
   ) %>% 
   drop_na()
 
 # 6: plot data ------------------------------------------------------------
-
-THE_TOPIC <- 235
 
 # graph statistics and topic distributions
 graphs_and_proportions <- corr_df %>%

@@ -1,4 +1,5 @@
 library(igraph)
+library(glue)
 
 #' Compute weighted mutuality (better word?)
 #'
@@ -35,25 +36,33 @@ weighted_mutuality <- function(graph, node) {
 }
 
 
-#' Relative reciprocity of a set of edges
-#' 
-#' Computes the difference of incident and outgoing edges of a subgraph 
-#' relative to the number of edges in the original full graph.
+#' Ratio of incoming to outgoing edges
+#'
+#' In a directed graph, this computes the ratio of edges incident to \code{user}
+#' against the outgoing edges.
 #'
 #' @param subgraph a subgraph of \code{fullgraph}
-#' @param fullgraph an igraph graph
+#' @param user the Ego to fetch the edges for
 #'
-#' @return
+#' @return A numeric value
 #' @export
 #'
 #' @examples
-relative_reciprocity <- function(subgraph, fullgraph, user) {
-  if (vcount(subgraph) == 0 || vcount(fullgraph) == 0) {
+directed_edge_ratio <- function(subgraph, user) {
+  if (!is_igraph(subgraph)) {
+    stop("The provided subgraph is not a graph object")
+  }
+  
+  if (vcount(subgraph) == 0) {
     return(NA)
+  }
+  
+  if (!user %in% V(subgraph)$name) {
+    stop(glue("{user} is not a node in the subgraph"))
   }
   
   in_subg <- length(incident(subgraph, user, mode = "in"))
   out_subg <- length(incident(subgraph, user, mode = "out"))
   
-  (in_subg - out_subg) / ecount(fullgraph)
+  in_subg / out_subg
 }

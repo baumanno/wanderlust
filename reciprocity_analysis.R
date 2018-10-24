@@ -50,7 +50,7 @@ df <-
     kp_subgraph = map_dbl(topical_subgraph, katz_powell_mutuality)
   )
 
-# The Katz-Powell index of mutuality indicates whether edge choices between nodes 
+# The Katz-Powell index of mutuality indicates whether edge choices between nodes
 # are reciprocated. Computing this measure on the subgraph indicates whether edges
 # tend to be mutual if ego and alters share interests.
 df %>%
@@ -66,21 +66,27 @@ df %>%
     caption = "1: all choices are reciprocated,\n0: no tendency to reciprocate,\n< 0: too few mutual dyads observed"
   )
 
-ggsave(filename = glue("figs/{USERNAME}-3-katz-powell.png"))
+ggsave(filename = glue("figs/{USERNAME}-REC-reciprocity-katz-powell.png"))
 
 # We can measure reciprocity both as a ratio of incoming and outgoing edges, and
 # by computing the Katz-Powell index of mutuality. This plot shows that they
 # both arrive at similar conclusions.
 df %>%
-  mutate(rec = map_dbl(topical_subgraph, reciprocity, mode = "ratio")) %>%
+  mutate(reciprocity_of_subgraph = map_dbl(topical_subgraph, reciprocity, mode = "ratio")) %>%
   ggplot(mapping = aes(x = date)) +
-  geom_hline(yintercept = 0) +
-  geom_point(mapping = aes(y = rec, colour = "reciprocity ratio"),
-             alpha = P_ALPHA) +
-  geom_smooth(mapping = aes(y = rec, colour = "reciprocity ratio")) +
+  geom_point(
+    mapping = aes(y = reciprocity_of_subgraph, colour = "reciprocity ratio"),
+    alpha = P_ALPHA
+  ) +
+  geom_smooth(
+    mapping = aes(y = reciprocity_of_subgraph, colour = "reciprocity ratio"),
+    alpha = P_ALPHA
+  ) +
   geom_point(mapping = aes(y = kp_subgraph, colour = "Katz-Powell index"),
              alpha = P_ALPHA) +
-  geom_smooth(mapping = aes(y = kp_subgraph, colour = "Katz-Powell index")) +
+  geom_smooth(mapping = aes(y = kp_subgraph, colour = "Katz-Powell index"),
+              alpha = P_ALPHA) +
+  geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-1, 1)) +
   labs(
     x = "",
@@ -89,4 +95,4 @@ df %>%
     title = "Different reciprocity measures of the topical subgraph"
   )
 
-ggsave(filename = glue("figs/{USERNAME}-5-rec-subgraph-1.png"))
+ggsave(filename = glue("figs/{USERNAME}-REC-reciprocity-subgraph.png"))

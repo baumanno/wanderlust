@@ -56,7 +56,8 @@ df <-
                              relative_reciprocity,
                              user = USERNAME),
     rat_topical_edges = map2_dbl(topical_subgraph, graph, ratio_edges)
-  )
+  ) %>% 
+  drop_na()
 
 # 6: plot data ------------------------------------------------------------
 
@@ -74,7 +75,7 @@ df %>%
     title = "Overlap of the topic-subgraph and the full graph over time"
   )
 
-ggsave(filename = glue("figs/{USERNAME}-1-ratio-topical-edges.png"))
+ggsave(filename = glue("figs/{USERNAME}-SUBG-ratio-topical-edges.png"))
 
 # For the edges in the topic-subgraph, we can compute the difference of incoming
 # and outgoing edges, relative to the ego. This provides an indication of whether
@@ -92,81 +93,4 @@ df %>%
        y = "topical_edges",
        title = "Relative to the entire graph, are topical edges mutual?")
 
-ggsave(filename = glue("figs/{USERNAME}-2-ratio-mutual-topical-edges.png"))
-
-THE_TOPIC <- 235
-
-corr_df %>% 
-#  filter(topic == THE_TOPIC) %>% 
-  left_join(df, by = c("year", "month")) %>% 
-  ggplot(mapping = aes(prop_ego, rat_topical_edges, colour = topic)) +
-  geom_point(alpha = P_ALPHA) +
-  geom_smooth(method = "lm") +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(
-    x = "prop. of Ego's posts",
-    y = "ratio of edges in topic"
-  ) +
-  facet_wrap(~topic)
-
-weight_mutual_edges <-
-  df %>%
-  left_join(corr_df, by = c("year", "month")) %>%
-  select(year, month, topic, graph, prop_ego) %>%
-  drop_na() %>%
-  # filter(topic == THE_TOPIC) %>%
-  group_by(topic) %>%
-  mutate(
-    subgraph = map(graph, filter_graph, topic_numbers = topic),
-    prop_edges_to_topic = map2_dbl(subgraph, graph, function(sub, full)
-      ecount(sub) / ecount(full)),
-    t = prop_ego * prop_edges_to_topic
-  )
-
-weight_mutual_edges %>%
-  ggplot(mapping = aes(make_date(year, month), t)) +
-  geom_point(alpha = P_ALPHA) +
-  geom_smooth() +
-  facet_wrap( ~ topic)
-
-corr_for_topic <- function(wme, tp) {
-  wme <- wme %>% filter(topic == tp)
-  cc <- cor.test(wme$prop_edges_to_topic, wme$prop_ego)
-  list(
-    "coeff" = round(cc$estimate, digits = 3),
-    "pval" = ifelse(cc$p.value <= 0.5, "<= 0.5", "> 0.5")
-  )
-}
-
-(ccc <- corr_for_topic(weight_mutual_edges, THE_TOPIC))
-
-cc <- glue_data(ccc, "list(italic(r) == {coeff}, p {pval})")
-
-weight_mutual_edges %>%
-  filter(topic == THE_TOPIC) %>%
-  ggplot(mapping = aes(prop_edges_to_topic, prop_ego)) +
-  geom_point(alpha = P_ALPHA) +
-  geom_smooth(method = "lm") +
-  annotate(
-    "label",
-    x = 0.2,
-    y = .9,
-    label = cc,
-    parse = TRUE
-  ) +
-  labs(
-    x = "prop. edges to topically similar alters",
-    y = "prop. posts to topic",
-    title = "Do more edges to similar alters result in more posts to a topic?",
-    subtitle = glue("Topic: {THE_TOPIC}")
-  )
-
-df %>%
-  mutate(cs = cumsum(ifelse(
-    is.na(rat_topical_edges), 0, rat_topical_edges
-  ))) %>%
-  ggplot(mapping = aes(date, cs)) +
-  geom_line() +
-  labs(x = "",
-       y = "cumsum",
-       title = "Cumsum of ratio of topical edges")
+ggsave(filename = glue("figs/{USERNAME}-SUBG-ratio-mutual-topical-edges.png"))

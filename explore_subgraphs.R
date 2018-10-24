@@ -21,14 +21,6 @@ filter_graph_wrapper <- function(graph, ego) {
   filter_graph(graph, ego$topic)
 }
 
-ratio_edges <- function(subgraph, fullgraph) {
-  if (vcount(fullgraph) == 0 || vcount(subgraph) == 0) {
-    return(NA)
-  }
-  
-  ecount(subgraph) / ecount(fullgraph)
-}
-
 # 3: module constants -----------------------------------------------------
 
 source("R/constants.R")
@@ -50,13 +42,8 @@ df <-
   rename(ego_topics = data) %>%
   mutate(
     date = make_date(year, month),
-    topical_subgraph = map2(graph, ego_topics, filter_graph_wrapper),
-    topical_edges = map2_dbl(topical_subgraph,
-                             graph,
-                             relative_reciprocity,
-                             user = USERNAME),
-    rat_topical_edges = map2_dbl(topical_subgraph, graph, ratio_edges)
-  ) %>% 
+    topic_subgraph = map2(graph, ego_topics, filter_graph_wrapper)
+  ) %>%
   drop_na()
 
 # 6: plot data ------------------------------------------------------------
@@ -66,31 +53,26 @@ df <-
 # of edges, effectively asking: How big is the overlap of the topical subgraph
 # and the full graph?
 df %>%
-  ggplot(mapping = aes(date, rat_topical_edges)) +
+  mutate(topical_overlap = map2_dbl(topic_subgraph, graph, function(a, b) {
+    if (ecount(a) == 0 | ecount(b) == 0) {
+      return(NA)
+    }
+    
+    ecount(a) / ecount(b)
+  })) %>%
+  ggplot(mapping = aes(date, topical_overlap)) +
   geom_point(alpha = P_ALPHA) +
   geom_smooth() +
-  labs(
-    x = "",
-    y = "ratio",
-    title = "Overlap of the topic-subgraph and the full graph over time"
-  )
+  labs(x = "",
+       y = "ratio",
+       title = "Overlap of the topic-subgraph and the full graph over time")
 
-ggsave(filename = glue("figs/{USERNAME}-SUBG-ratio-topical-edges.png"))
-
-# For the edges in the topic-subgraph, we can compute the difference of incoming
-# and outgoing edges, relative to the ego. This provides an indication of whether
-# these edges tend to be be mutual and similar in frequency (= 0), or whether
-# there is an imbalance toward "receiver" (+ 1) or "sender" (- 1) behaviour.
-# Normalizing by the full edge count provides an indication on whether edges
-# tend to link to/from topically similar nodes. See notes for analysis of values.
 df %>%
-  ggplot(mapping = aes(date, topical_edges)) +
-  geom_hline(yintercept = 0) +
+  mutate(ratio_edges = map_dbl(topic_subgraph, directed_edge_ratio, user = USERNAME)) %>%
+  ggplot(mapping = aes(date, ratio_edges)) +
   geom_point(alpha = P_ALPHA) +
   geom_smooth(method = "lm") +
-  scale_y_continuous(limits = c(-1, 1)) +
+  scale_y_continuous(limits = c(0, 1)) +
   labs(x = "",
        y = "topical_edges",
        title = "Relative to the entire graph, are topical edges mutual?")
-
-ggsave(filename = glue("figs/{USERNAME}-SUBG-ratio-mutual-topical-edges.png"))

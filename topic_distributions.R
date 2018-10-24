@@ -54,7 +54,7 @@ ego_proportions %>%
   ) +
   labs(title = "Distribution of the ego's posts across topics",
        x = "",
-       y = "# posts, relative",
+       y = "prop. posts",
        fill = "Topic") # +
 # facet_wrap(. ~ year, scales = "free")
 
@@ -104,9 +104,10 @@ alters_proportions %>%
     alpha = F_ALPHA,
     position = "stack"
   ) +
-  labs(title = "Distribution of the alters' posts across topics",
+  labs(title = "Distribution of alters, according to main topic of interest",
+       subtitle = "For each snapshot-graph, we consider the topic that the alter was most active in",
        x = "",
-       y = "# posts, relative",
+       y = "prop. alters",
        fill = "Topic") #+  facet_wrap(. ~ year, scales = "free")
 
 # Plot the cumsum of the absolute number of users

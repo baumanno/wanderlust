@@ -91,9 +91,13 @@ df %>%
   ggplot(mapping = aes(x = date)) +
   geom_line(mapping = aes(y = cs_alters, colour = "Alters")) +
   geom_line(mapping = aes(y = cs_ego, colour = "Ego")) +
-  labs(x = "",
-       y = "proportion",
-       colour = "Data") +
+  labs(
+    x = "",
+    y = "proportion",
+    colour = "Data",
+    title = "Growth of posts vs. users",
+    caption = glue("threshold: {CS_THRESH}")
+  ) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(
           angle = 65,

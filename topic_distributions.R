@@ -92,7 +92,10 @@ alters_proportions <- alters_topics %>%
          factor_key = TRUE,
          -year,
          -month) %>%
-  mutate(prop = num_users / sum(num_users)) %>%
+  mutate(
+    date = make_date(year, month),
+    prop = num_users / sum(num_users)
+    ) %>%
   ungroup()
 
 # Plot the distribution of alters by the topic they are most active in.
@@ -116,7 +119,7 @@ alters_proportions %>%
   group_by(topic) %>%
   mutate(cs = cumsum(num_users)) %>%
   filter(max(cs) >= MIN_CS) %>%
-  ggplot(mapping = aes(make_date(year, month), cs)) +
+  ggplot(mapping = aes(date, cs)) +
   geom_line(mapping = aes(colour = topic)) +
   geom_hline(yintercept = MIN_CS) +
   labs(
@@ -133,7 +136,7 @@ alters_proportions %>%
   filter(year < 2010) %>%
   group_by(topic) %>%
   mutate(cs = cumsum(num_users)) %>%
-  ggplot(mapping = aes(make_date(year, month), cs)) +
+  ggplot(mapping = aes(date, cs)) +
   geom_line(mapping = aes(colour = topic)) +
   labs(x = "", y = "cum.sum of #users", colour = "Topic")
 
@@ -172,7 +175,7 @@ plot_topical_cumsums <- function(df, cs_thresh = 10) {
     mutate(cs_alters = cumsum(prop_alters),
            cs_ego = cumsum(prop_ego)) %>%
     filter(max(cs_alters) >= cs_thresh & max(cs_ego) >= cs_thresh) %>%
-    ggplot(mapping = aes(x = make_date(year, month))) +
+    ggplot(mapping = aes(x = date)) +
     geom_line(mapping = aes(y = cs_alters, colour = "Alters")) +
     geom_line(mapping = aes(y = cs_ego, colour = "Ego")) +
     labs(x = "",

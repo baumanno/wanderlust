@@ -116,7 +116,7 @@ weight_mutual_edges <-
 weight_mutual_edges %>%
   group_by(topic) %>% 
   filter(n() > MIN_OBS) %>% 
-  ggplot(mapping = aes(make_date(year, month), t, colour = topic)) +
+  ggplot(mapping = aes(date, weighted_ratio, colour = topic)) +
   geom_point(alpha = P_ALPHA) +
   geom_smooth(method = "lm") +
   facet_wrap( ~ topic) +

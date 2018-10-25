@@ -169,6 +169,18 @@ corr_df %>%
   ) +
   facet_wrap(. ~ topic)
 
+corr_df %>% 
+  group_by(topic) %>% 
+  filter(n() >= MIN_OBS) %>% 
+  mutate(
+    pa_pe = prop_ego * prop_alters
+  ) %>% 
+  ggplot(mapping = aes(date, pa_pe, colour = topic)) +
+  geom_point(alpha = P_ALPHA) +
+  geom_abline() +
+  geom_smooth() +
+  facet_wrap(~topic)
+  
 # 7: investigate cumsums --------------------------------------------------
 
 # Filter out one topic, and plot the two cumsums

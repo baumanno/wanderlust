@@ -155,8 +155,11 @@ corr_df <- corr_df %>%
 
 # plot the proportions to identify possible correlations
 corr_df %>%
+  group_by(topic) %>% 
+  filter(n() >= MIN_OBS) %>% 
   ggplot(mapping = aes(prop_ego, prop_alters, colour = topic)) +
   geom_point(alpha = P_ALPHA) +
+  geom_abline() +
   geom_smooth(method = "lm") +
   labs(
     x = "prop. of posts",

@@ -11,83 +11,46 @@ source("R/reading_data/read_snapshots.R")
 # 2: Module constants ------------------------------------------------------
 
 source("R/constants.R")
+MIN_CS <- 5L
+CS_THRESH <- 10L
 
 # 3: read data from snapshot files ----------------------------------------
 
 ego_topics <- read_ego_topics(USERNAME)
 alters_topics <- read_alters_topics(USERNAME)
 
-# 4: transform and plot ego data ------------------------------------------
+# 4: Load cached data -----------------------------------------------------
 
-# Compute proportions of a topic an ego is active in.
-# This can include 0-values if a user starts participating in a topic
-# e.g. in 2011, but has not been active prior to that date.
-ego_proportions <- ego_topics %>%
-  unnest() %>%
-  spread(key = topic,
-         value = count,
-         fill = 0) %>%
-  gather(
-    key = topic,
-    value = count,
-    factor_key = TRUE,
-    -year,
-    -month,
-    -author,
-    -subreddit
-  ) %>%
-  group_by(year, month, topic) %>%
-  summarise(num_posts = sum(count)) %>%
-  mutate(prop = num_posts / sum(num_posts)) %>%
-  ungroup()
+load(glue("output/{USERNAME}_corr-df.rda"))
 
-# 5: transform and plot alters data ---------------------------------------
+# 5: Compute cumulative sums ----------------------------------------------
 
-# Compute proportions of topics that the alters are active in.
-# See above.
-alters_proportions <- alters_topics %>%
-  unnest() %>%
-  group_by(year, month, topic) %>%
-  summarise(num_users = n()) %>%
-  spread(key = topic,
-         value = num_users,
-         fill = 0) %>%
-  gather(key = topic,
-         value = num_users,
-         factor_key = TRUE,
-         -year,
-         -month) %>%
-  mutate(
-    date = make_date(year, month),
-    prop = num_users / sum(num_users)
-  ) %>%
-  ungroup()
+df <- corr_df %>%
+  group_by(topic) %>%
+  mutate(cs_ego = cumsum(prop_ego),
+         cs_alters = cumsum(prop_alters))
+
+# 6: Cumulative sums of indivdual proportions -----------------------------
 
 # Plot the cumsum of the absolute number of posts
-ego_proportions %>%
-  group_by(topic) %>%
-  mutate(cs = cumsum(num_posts)) %>%
-  ggplot(mapping = aes(make_date(year, month), cs)) +
+df %>%
+  filter(max(cs_ego) >= MIN_CS) %>%
+  ggplot(mapping = aes(date, cs_ego)) +
   geom_line(mapping = aes(colour = topic)) +
   labs(x = "", y = "cum.sum of #posts", colour = "Topic")
 
 # Plot the cumsum of the absolute number of posts for the user's first two years
 # of activity to see early developments.
-ego_proportions %>%
+df %>%
   filter(year < 2010) %>%
-  group_by(topic) %>%
-  mutate(cs = cumsum(num_posts)) %>%
-  ggplot(mapping = aes(make_date(year, month), cs)) +
+  ggplot(mapping = aes(date, cs_ego)) +
   geom_line(mapping = aes(colour = topic)) +
   labs(x = "", y = "cum.sum of #posts", colour = "Topic")
 
-# Plot the cumsum of the absolute number of users
-MIN_CS <- 350
-alters_proportions %>%
-  group_by(topic) %>%
-  mutate(cs = cumsum(num_users)) %>%
-  filter(max(cs) >= MIN_CS) %>%
-  ggplot(mapping = aes(date, cs)) +
+# Plot the cumsum of the proportion of alters in a topic
+df %>%
+  filter(max(cs_alters) >= MIN_CS) %>%
+  ggplot(mapping = aes(date, cs_alters)) +
   geom_line(mapping = aes(colour = topic)) +
   geom_hline(yintercept = MIN_CS) +
   labs(
@@ -100,29 +63,27 @@ alters_proportions %>%
 
 # Plot the cumsum of the absolute number of users for the user's first two years
 # of activity to see early developments.
-alters_proportions %>%
+df %>%
   filter(year < 2010) %>%
-  group_by(topic) %>%
-  mutate(cs = cumsum(num_users)) %>%
-  ggplot(mapping = aes(date, cs)) +
+  ggplot(mapping = aes(date, cs_alters)) +
   geom_line(mapping = aes(colour = topic)) +
   labs(x = "", y = "cum.sum of #users", colour = "Topic")
 
-# 7: investigate cumsums --------------------------------------------------
 
-plot_topical_cumsums <- function(df, cs_thresh = 10) {
-  df %>%
-    group_by(topic) %>%
-    mutate(cs_alters = cumsum(prop_alters),
-           cs_ego = cumsum(prop_ego)) %>%
-    filter(max(cs_alters) >= cs_thresh & max(cs_ego) >= cs_thresh) %>%
-    ggplot(mapping = aes(x = date)) +
-    geom_line(mapping = aes(y = cs_alters, colour = "Alters")) +
-    geom_line(mapping = aes(y = cs_ego, colour = "Ego")) +
-    labs(x = "",
-         y = "proportion",
-         colour = "Data") +
-    facet_wrap(~ topic)
-}
+# 7: contrast cumsums of both proportions ---------------------------------
 
-plot_topical_cumsums(corr_df, cs_thresh = 10L)
+df %>%
+  filter(max(cs_alters) >= CS_THRESH & max(cs_ego) >= CS_THRESH) %>%
+  ggplot(mapping = aes(x = date)) +
+  geom_line(mapping = aes(y = cs_alters, colour = "Alters")) +
+  geom_line(mapping = aes(y = cs_ego, colour = "Ego")) +
+  labs(x = "",
+       y = "proportion",
+       colour = "Data") +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(
+          angle = 65,
+          vjust = 1,
+          hjust = 1
+        )) +
+  facet_wrap( ~ topic)

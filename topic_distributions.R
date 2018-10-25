@@ -58,24 +58,6 @@ ego_proportions %>%
        fill = "Topic") # +
 # facet_wrap(. ~ year, scales = "free")
 
-# Plot the cumsum of the absolute number of posts
-ego_proportions %>%
-  group_by(topic) %>%
-  mutate(cs = cumsum(num_posts)) %>%
-  ggplot(mapping = aes(make_date(year, month), cs)) +
-  geom_line(mapping = aes(colour = topic)) +
-  labs(x = "", y = "cum.sum of #posts", colour = "Topic")
-
-# Plot the cumsum of the absolute number of posts for the user's first two years
-# of activity to see early developments.
-ego_proportions %>%
-  filter(year < 2010) %>%
-  group_by(topic) %>%
-  mutate(cs = cumsum(num_posts)) %>%
-  ggplot(mapping = aes(make_date(year, month), cs)) +
-  geom_line(mapping = aes(colour = topic)) +
-  labs(x = "", y = "cum.sum of #posts", colour = "Topic")
-
 # 5: transform and plot alters data ---------------------------------------
 
 # Compute proportions of topics that the alters are active in.
@@ -112,33 +94,6 @@ alters_proportions %>%
        x = "",
        y = "prop. alters",
        fill = "Topic") #+  facet_wrap(. ~ year, scales = "free")
-
-# Plot the cumsum of the absolute number of users
-MIN_CS <- 350
-alters_proportions %>%
-  group_by(topic) %>%
-  mutate(cs = cumsum(num_users)) %>%
-  filter(max(cs) >= MIN_CS) %>%
-  ggplot(mapping = aes(date, cs)) +
-  geom_line(mapping = aes(colour = topic)) +
-  geom_hline(yintercept = MIN_CS) +
-  labs(
-    x = "",
-    y = "cum.sum of #users",
-    colour = "Topic",
-    title = "Cumulative sum of users",
-    caption = glue("Black line denotes min. cumsum ({MIN_CS})")
-  )
-
-# Plot the cumsum of the absolute number of users for the user's first two years
-# of activity to see early developments.
-alters_proportions %>%
-  filter(year < 2010) %>%
-  group_by(topic) %>%
-  mutate(cs = cumsum(num_users)) %>%
-  ggplot(mapping = aes(date, cs)) +
-  geom_line(mapping = aes(colour = topic)) +
-  labs(x = "", y = "cum.sum of #users", colour = "Topic")
 
 # 6: analyze corr. of distributions ---------------------------------------
 
@@ -180,25 +135,5 @@ corr_df %>%
   geom_abline() +
   geom_smooth() +
   facet_wrap(~topic)
-  
-# 7: investigate cumsums --------------------------------------------------
-
-# Filter out one topic, and plot the two cumsums
-plot_topical_cumsums <- function(df, cs_thresh = 10) {
-  df %>%
-    group_by(topic) %>%
-    mutate(cs_alters = cumsum(prop_alters),
-           cs_ego = cumsum(prop_ego)) %>%
-    filter(max(cs_alters) >= cs_thresh & max(cs_ego) >= cs_thresh) %>%
-    ggplot(mapping = aes(x = date)) +
-    geom_line(mapping = aes(y = cs_alters, colour = "Alters")) +
-    geom_line(mapping = aes(y = cs_ego, colour = "Ego")) +
-    labs(x = "",
-         y = "proportion",
-         colour = "Data") +
-    facet_wrap(~ topic)
-}
-
-plot_topical_cumsums(corr_df, cs_thresh = 10L)
 
 save(corr_df, file = glue("output/{USERNAME}_corr-df.rda"))

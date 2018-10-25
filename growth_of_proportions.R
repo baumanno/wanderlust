@@ -37,38 +37,52 @@ df %>%
   filter(max(cs_ego) >= MIN_CS) %>%
   ggplot(mapping = aes(date, cs_ego)) +
   geom_line(mapping = aes(colour = topic)) +
-  labs(x = "", y = "cum.sum of #posts", colour = "Topic")
+  labs(
+    x = "date",
+    y = "prop. posts",
+    colour = "Topic",
+    title = "Growth of post proportion",
+    caption = glue("threshold: {MIN_CS}")
+  )
 
-# Plot the cumsum of the absolute number of posts for the user's first two years
+# Plot the cumsum of the proportion of posts for the user's first years
 # of activity to see early developments.
 df %>%
   filter(year < 2010) %>%
   ggplot(mapping = aes(date, cs_ego)) +
   geom_line(mapping = aes(colour = topic)) +
-  labs(x = "", y = "cum.sum of #posts", colour = "Topic")
+  labs(
+    x = "date",
+    y = "prop. posts",
+    colour = "Topic",
+    title = "Growth of post proportion, up to 2010"
+  )
 
 # Plot the cumsum of the proportion of alters in a topic
 df %>%
   filter(max(cs_alters) >= MIN_CS) %>%
   ggplot(mapping = aes(date, cs_alters)) +
   geom_line(mapping = aes(colour = topic)) +
-  geom_hline(yintercept = MIN_CS) +
   labs(
-    x = "",
-    y = "cum.sum of #users",
+    x = "date",
+    y = "prop. users",
     colour = "Topic",
     title = "Cumulative sum of users",
-    caption = glue("Black line denotes min. cumsum ({MIN_CS})")
+    caption = glue("threshold: {MIN_CS}")
   )
 
-# Plot the cumsum of the absolute number of users for the user's first two years
+# Plot the cumsum of the proportion of alters for the user's first two years
 # of activity to see early developments.
 df %>%
   filter(year < 2010) %>%
   ggplot(mapping = aes(date, cs_alters)) +
   geom_line(mapping = aes(colour = topic)) +
-  labs(x = "", y = "cum.sum of #users", colour = "Topic")
-
+  labs(
+    x = "",
+    y = "cum.sum of prop. users",
+    colour = "Topic",
+    title = "Growth of user proportion, up to 2010"
+  )
 
 # 7: contrast cumsums of both proportions ---------------------------------
 

@@ -13,6 +13,7 @@ source("R/reading_data/read_snapshots.R")
 # 2: Module constants ------------------------------------------------------
 
 source("R/constants.R")
+MIN_OBS <- 5
 
 # 3: read data from snapshot files ----------------------------------------
 

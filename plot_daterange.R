@@ -24,7 +24,7 @@ ego_prop <- function(user, lower, upper) {
   
   egos <- read_ego_topics(user)
   
-  egos %>%
+  ego_filtered <- egos %>%
     unnest() %>%
     mutate(date = make_date(year, month)) %>%
     filter(date >= lower & date <= upper) %>%
@@ -46,6 +46,10 @@ ego_prop <- function(user, lower, upper) {
     mutate(date = make_date(year, month),
            prop = num_posts / sum(num_posts)) %>%
     ungroup()
+  
+  save(ego_filtered, file = glue("output/{user}_ego-filtered.rda"))
+  
+  ego_filtered
 }
 
 alters_prop <- function(user, lower, upper) {
@@ -55,7 +59,7 @@ alters_prop <- function(user, lower, upper) {
   
   alters <- read_alters_topics(user)
   
-  alters %>%
+  alters_filtered <- alters %>%
     unnest() %>%
     mutate(date = make_date(year, month)) %>%
     filter(date >= lower & date <= upper) %>%
@@ -75,6 +79,10 @@ alters_prop <- function(user, lower, upper) {
            prop = num_users / sum(num_users)) %>%
     ungroup()
   
+  save(alters_filtered,
+       file = glue("output/{user}_alters-filtered.rda"))
+  
+  alters_filtered
 }
 
 topic_colors <- function(...) {
@@ -140,14 +148,21 @@ plot_alters_props <- function(df, topic_colors) {
     )
 }
 
-plot_dists <- function(ego, alters) {
+plot_dists <- function(ego, alters, username = NULL) {
   t_cols <- topic_colors(ego$topic, alters$topic)
   p_e <- plot_ego_props(ego, t_cols)
   p_a <- plot_alters_props(alters, t_cols)
   
-  grid.draw(rbind(ggplotGrob(p_e + theme(legend.position = "none")),
-                  ggplotGrob(p_a),
-                  size = "last"))
+  combined <-
+    rbind(ggplotGrob(p_e + theme(legend.position = "none")),
+          ggplotGrob(p_a + labs(caption = username)),
+          size = "last")
+  
+  if (!is.null(username)) {
+    ggsave(glue("figs/{username}_daterange.png"))
+  }
+  
+  grid.draw(combined)
 }
 
 # monocasa ----------------------------------------------------------------
@@ -160,7 +175,7 @@ m_a <-
               lower = make_date(2013, 12),
               upper = make_date(2015, 1))
 
-plot_dists(m_e, m_a)
+plot_dists(m_e, m_a, "monocasa")
 
 # formido -----------------------------------------------------------------
 
@@ -173,7 +188,7 @@ f_a <-
               lower = make_date(2015, 1),
               upper = make_date(2017, 8))
 
-plot_dists(f_e, f_a)
+plot_dists(f_e, f_a, "formido")
 
 # cavedave ----------------------------------------------------------------
 
@@ -186,4 +201,4 @@ c_a <-
               lower = make_date(2010, 3),
               upper = make_date(2013, 6))
 
-plot_dists(c_e, c_a)
+plot_dists(c_e, c_a, "cavedave")

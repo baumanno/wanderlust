@@ -158,6 +158,8 @@ mclapply(usernames, mc.cores = 4L, function(user) {
               by = c("month", "year", "topic")) %>%
     rename(prop_ego = prop.x, prop_alters = prop.y)
   
+  save(corr_df, file = glue("output/{USERNAME}_corr-df.rda"))
+  
   # filter out 0-0 rows; these occur a lot due to the spread-gather operations
   corr_df <- corr_df %>%
     filter(prop_alters != 0 & prop_ego != 0 & topic != "<NA>")
@@ -191,6 +193,4 @@ mclapply(usernames, mc.cores = 4L, function(user) {
     facet_wrap(~ topic)
   
   ggsave(p, file = glue("figs/{user}_interest.png"))
-  
-  save(corr_df, file = glue("output/{USERNAME}_corr-df.rda"))
 })

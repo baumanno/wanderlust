@@ -159,7 +159,7 @@ plot_dists <- function(ego, alters, username = NULL) {
           size = "last")
   
   if (!is.null(username)) {
-    ggsave(glue("figs/{username}_daterange.png"))
+    ggsave(filename = glue("figs/{username}_daterange.png"), plot = combined)
   }
   
   grid.draw(combined)
@@ -168,11 +168,11 @@ plot_dists <- function(ego, alters, username = NULL) {
 # monocasa ----------------------------------------------------------------
 m_e <-
   ego_prop("monocasa",
-           lower = make_date(2013, 12),
+           lower = make_date(2012, 12),
            upper = make_date(2015, 1))
 m_a <-
   alters_prop("monocasa",
-              lower = make_date(2013, 12),
+              lower = make_date(2012, 12),
               upper = make_date(2015, 1))
 
 plot_dists(m_e, m_a, "monocasa")

@@ -23,8 +23,13 @@ MIN_OBS <- 5
 mclapply(usernames, mc.cores = 4L, function(user) {
   # 3: read data from snapshot files ----------------------------------------
   
-  ego_topics <- read_ego_topics(user)
-  alters_topics <- read_alters_topics(user)
+  date_range <-
+    seq.Date(as.Date("2007-01-01"),
+             as.Date("2018-02-01"),
+             by = "1 month")
+  
+  ego_topics <- read_ego_topics(user = user, date = date_range)
+  alters_topics <- read_alters_topics(user = user, date = date_range)
   
   # 4: transform and plot ego data ------------------------------------------
   
@@ -42,10 +47,11 @@ mclapply(usernames, mc.cores = 4L, function(user) {
       factor_key = TRUE,
       -year,
       -month,
+      -date,
       -author,
       -subreddit
     ) %>%
-    group_by(year, month, topic) %>%
+    group_by(date, topic) %>%
     summarise(num_posts = sum(count)) %>%
     mutate(prop = num_posts / sum(num_posts)) %>%
     ungroup()
@@ -54,20 +60,17 @@ mclapply(usernames, mc.cores = 4L, function(user) {
   # See above.
   alters_proportions <- alters_topics %>%
     unnest() %>%
-    group_by(year, month, topic) %>%
+    group_by(date, topic) %>%
     summarise(num_users = n()) %>%
-    filter(num_users > 1) %>%
-    filter(!is.na(topic)) %>%
+    filter(num_users > 1, !is.na(topic)) %>%
     spread(key = topic,
            value = num_users,
            fill = 0) %>%
     gather(key = topic,
            value = num_users,
            factor_key = TRUE,
-           -year,
-           -month) %>%
-    mutate(date = make_date(year, month),
-           prop = num_users / sum(num_users)) %>%
+           -date) %>%
+    mutate(prop = num_users / sum(num_users)) %>%
     ungroup()
   
   # 5: plot topic distributions ---------------------------------------------
@@ -91,7 +94,7 @@ mclapply(usernames, mc.cores = 4L, function(user) {
   # Plot topic distributions
   dist_ego <-
     ego_proportions %>%
-    ggplot(mapping = aes(make_date(year, month), prop, fill = topic)) +
+    ggplot(mapping = aes(date, prop, fill = topic)) +
     geom_area(
       size = S_SIZE,
       colour = S_COLOR,
@@ -155,7 +158,7 @@ mclapply(usernames, mc.cores = 4L, function(user) {
   corr_df <-
     left_join(ego_proportions,
               alters_proportions,
-              by = c("month", "year", "topic")) %>%
+              by = c("date", "topic")) %>%
     rename(prop_ego = prop.x, prop_alters = prop.y)
   
   save(corr_df, file = glue("output/{USERNAME}_corr-df.rda"))

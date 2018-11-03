@@ -23,6 +23,8 @@ df <- merge(ego_filtered, alters_filtered, by = c("date", "topic")) %>%
     pa = p_ego * p_alters
   )
 
+saveRDS(df, glue("output/{user}_alters-ego-merged-daterange.rds"))
+
 dates <- df %>% group_by(topic) %>% filter(p_ego == 0) %>% arrange(date)
 
 ggplot(df, mapping = aes(x = date, y = value, colour = variable)) +

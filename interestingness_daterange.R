@@ -36,7 +36,7 @@ ggplot(df, mapping = aes(x = date, y = value, colour = variable)) +
   scale_x_date(date_labels = "%m-%y") +
   theme(axis.text.x = element_text(angle = 90))
 
-df %>% filter(!(p_ego == 0 & p_alters == 0)) %>% 
+df %>% 
 ggplot(mapping = aes(x = p_ego, y = p_alters)) +
   geom_point(mapping = aes(colour = topic), alpha = .3) +
   geom_smooth(mapping = aes(colour = topic), method = "lm") +

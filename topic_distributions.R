@@ -12,6 +12,7 @@ library(parallel)
 # 1: external function definitions ----------------------------------------
 
 source("R/reading_data/read_snapshots.R")
+source("R/topic_distributions/proportions.R")
 
 # 2: Module constants ------------------------------------------------------
 
@@ -33,45 +34,8 @@ mclapply(usernames, mc.cores = 4L, function(user) {
   
   # 4: transform and plot ego data ------------------------------------------
   
-  # Compute proportions of a topic an ego is active in.
-  # This can include 0-values if a user starts participating in a topic
-  # e.g. in 2011, but has not been active prior to that date.
-  ego_proportions <- ego_topics %>%
-    unnest() %>%
-    spread(key = topic,
-           value = count,
-           fill = 0) %>%
-    gather(
-      key = topic,
-      value = count,
-      factor_key = TRUE,
-      -year,
-      -month,
-      -date,
-      -author,
-      -subreddit
-    ) %>%
-    group_by(date, topic) %>%
-    summarise(num_posts = sum(count)) %>%
-    mutate(prop = num_posts / sum(num_posts)) %>%
-    ungroup()
-  
-  # Compute proportions of topics that the alters are active in.
-  # See above.
-  alters_proportions <- alters_topics %>%
-    unnest() %>%
-    group_by(date, topic) %>%
-    summarise(num_users = n()) %>%
-    filter(num_users > 1, !is.na(topic)) %>%
-    spread(key = topic,
-           value = num_users,
-           fill = 0) %>%
-    gather(key = topic,
-           value = num_users,
-           factor_key = TRUE,
-           -date) %>%
-    mutate(prop = num_users / sum(num_users)) %>%
-    ungroup()
+  ego_proportions <- post_proportions(ego_topics)
+  alters_proportions <- user_proportions(alters_topics)
   
   # 5: plot topic distributions ---------------------------------------------
   

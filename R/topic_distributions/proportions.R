@@ -9,8 +9,13 @@
 #' @export
 #'
 #' @examples
-post_proportions <- function(data = ego_topics) {
-  data %>%
+post_proportions <- function(data) {
+  
+  # we need to grab the username for storing the data; integer-indexing is fastest
+  # and works if we assume the column to contain only one value: the username
+  user <- data$author[1]
+  
+  df <- data %>%
     unnest() %>%
     spread(key = topic,
            value = count,
@@ -29,6 +34,16 @@ post_proportions <- function(data = ego_topics) {
     summarise(num_posts = sum(count)) %>%
     mutate(prop = num_posts / sum(num_posts)) %>%
     ungroup()
+  
+  date_range <- strftime(range(df$date), format = "%Y-%m")
+  date_range <- glue("{date_range[1]}_{date_range[2]}")
+  
+  saveRDS(df,
+          file = glue(
+            "output/{user}_ego-proportions_{date_range}.rds"
+          ))
+  
+  df
 }
 
 #' Monthly proportions of alters
@@ -46,8 +61,13 @@ post_proportions <- function(data = ego_topics) {
 #' @export
 #'
 #' @examples
-user_proportions <- function(data = alters_topics) {
-  alters_topics %>%
+user_proportions <- function(data) {
+  
+  # we need to grab the username for storing the data; integer-indexing is fastest
+  # and works if we assume the column to contain only one value: the username
+  user <- data$author[1]
+  
+  df <- alters_topics %>%
     unnest() %>%
     group_by(date, topic) %>%
     summarise(num_users = n()) %>%
@@ -61,4 +81,14 @@ user_proportions <- function(data = alters_topics) {
            -date) %>%
     mutate(prop = num_users / sum(num_users)) %>%
     ungroup()
+  
+  date_range <- strftime(range(df$date), format = "%Y-%m")
+  date_range <- glue("{date_range[1]}_{date_range[2]}")
+  
+  saveRDS(df,
+          file = glue(
+            "output/{user}_alters-proportions_{date_range}.rds"
+          ))
+  
+  df
 }

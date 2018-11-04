@@ -1,0 +1,188 @@
+---
+title: Topic-Verteilungen
+output: html_notebook
+params:
+  user: monocasa
+---
+
+```{r include=FALSE}
+# Libraries
+library(tidyverse)
+library(glue)
+library(RColorBrewer)
+library(lubridate)
+
+# External functions
+source("R/topic_distributions/plot.R")
+source("R/reading_data/read_snapshots.R")
+source("R/topic_distributions/proportions.R")
+```
+
+
+## Daten und Definitionen
+
+Wir betrachten im folgenden den User "`r params$user`"; er wurde zufällig aus dem Long
+Tail der Nutzerverteilung gezogen.
+
+```{r}
+user <- "monocasa"
+```
+
+Als Analysezeitraum wählen wir November 2007 bis Februar 2018. Ab November 2007
+reduzieren sich die fehlenden Beiträge in den Baumgartner-Datensätzen (Caveat Emptor, 2018).
+
+```{r}
+date_range <-
+    seq.Date(as.Date("2007-01-01"),
+             as.Date("2018-02-01"),
+             by = "1 month")
+```
+
+Für jeden Monat in diesem Zeitraum identifizieren wir Kommentare, die entweder an
+den User gerichtet sind, oder von ihm ausgehen, sowie die User, die an diesen Interaktionen
+beteiligt sind.
+
+Für einen Post des Users stellen wir fest, in welchem Subreddit dieser verfasst wurde.
+Ein oder mehrere Subreddits fassen wir unter einem Topic zusammen, sodass man sagen kann,
+dass ein Post zu einem Topic gehört.
+
+```{r}
+ego_topics <- read_ego_topics(user = user, date = date_range)
+```
+
+Ähnliches lässt sich über die User sagen, mit denen Ego interagiert: sie sind in
+einem Topic aktiv, wenn sie in dem betrachteten Monat dort die meisten ihrer Kommentare verfasst haben.
+
+```{r}
+alters_topics <- read_alters_topics(user = user, date = date_range)
+```
+
+## Verteilungen
+
+Um die Verteilung der Kommentare bzw. User sinnvoller vergleichen zu können, 
+normalisieren wir die absoluten Zahlen indem wir ihren Anteil an der jeweiligen 
+Gesamtzahl berechnen.
+
+```{r}
+ego_proportions <- post_proportions(ego_topics)
+alters_proportions <- user_proportions(alters_topics)
+```
+
+```{r include=FALSE}
+topics_present <- union(ego_proportions$topic, alters_proportions$topic)
+cols <- fill_colours(topics_present)
+```
+
+### Posts von Ego
+
+```{r echo=FALSE}
+area_chart(ego_proportions) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  geom_vline(aes(xintercept = as.Date("2012-12-01")),
+             linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2015-01-01")),
+             linetype = "dotted") +
+  annotate(
+    "rect",
+    xmin = as.Date("2012-12-01"),
+    xmax = as.Date("2015-01-01"),
+    ymin = 0,
+    ymax = Inf,
+    fill = "lightgrey",
+    alpha = .5
+  ) +
+  theme(legend.position = "bottom")
+```
+
+In dem mit gepunkteter Linie markierten Zeitraum fällt der Anteil an Topic 239 auf ein Minimum von 0; der User
+"verlässt" das Topic. Dies ist insofern bemerkenswert, als dass noch im Dezember 2010 dieses Topic das globale Maximum erreicht; `r ego_proportions[which.max(ego_proportions$prop), ]$prop * 100`% aller Posts des Users entfallen auf dieses Topic.
+
+### Alteri von Ego
+
+```{r echo=FALSE}
+area_chart(alters_proportions) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  geom_vline(aes(xintercept = as.Date("2012-12-01")),
+             linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2015-01-01")),
+             linetype = "dotted") +
+  annotate(
+    "rect",
+    xmin = as.Date("2012-12-01"),
+    xmax = as.Date("2015-01-01"),
+    ymin = 0,
+    ymax = Inf,
+    fill = "lightgrey",
+    alpha = .5
+  ) +
+  theme(legend.position = "bottom")
+
+```
+
+Wir wählen daher für die weitere Analyse diesen Zeitraum, um die Dynamik des "Verlassens" zu ergründen.
+
+```{r}
+date_range <-
+  seq.Date(as.Date("2012-12-01"),
+           as.Date("2015-01-01"),
+           by = "1 month")
+
+ego_topics <- read_ego_topics(user = user, date = date_range)
+ego_proportions <- post_proportions(ego_topics)
+
+alters_topics <- read_alters_topics(user = user, date = date_range)
+alters_proportions <- user_proportions(alters_topics)
+```
+
+```{r echo=FALSE}
+area_chart(ego_proportions) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  theme(legend.position = "bottom")
+  
+```
+
+```{r echo=FALSE}
+area_chart(alters_proportions) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  theme(legend.position = "bottom")
+```

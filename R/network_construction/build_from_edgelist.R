@@ -16,7 +16,7 @@ egonet_from_edgelist <- function(edgelist, vertices = NULL) {
     return(make_empty_graph())
   }
 
-  g <- graph_from_data_frame(edgelist, vertices = vertices)
+  g <- graph_from_data_frame(edgelist, vertices = vertices, directed = TRUE)
 
   assertthat::assert_that(is.igraph(g))
 

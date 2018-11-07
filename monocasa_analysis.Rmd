@@ -1,8 +1,7 @@
 ---
 title: Topic-Verteilungen
 output: html_notebook
-params:
-  user: monocasa
+echo: FALSE
 ---
 
 ```{r include=FALSE}
@@ -154,6 +153,7 @@ alters_topics <- read_alters_topics(user = user, date = date_range)
 alters_proportions <- user_proportions(alters_topics)
 ```
 
+### Verteilung der Posts im Analysezeitraum
 ```{r echo=FALSE}
 area_chart(ego_proportions) +
   scale_fill_manual(
@@ -171,6 +171,8 @@ area_chart(ego_proportions) +
   
 ```
 
+### Verteilung der Alteri im Analysezeitraum
+
 ```{r echo=FALSE}
 area_chart(alters_proportions) +
   scale_fill_manual(
@@ -186,3 +188,208 @@ area_chart(alters_proportions) +
   ) +
   theme(legend.position = "bottom")
 ```
+
+
+## Interaktion von Verteilungen
+
+Um herauszufinden, wie Posting-Verhalten und Zusammensetzung des Egonetzwerks zusammenhängen,
+visualisieren wir die beiden Verteilungen.
+
+```{r}
+df <-
+    left_join(ego_proportions,
+              alters_proportions,
+              by = c("date", "topic")) %>%
+    rename(prop_ego = prop.x, prop_alters = prop.y)
+
+df %>% 
+  ggplot(mapping = aes(x = prop_ego, y = prop_alters, colour = topic)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  geom_abline(size = .1) +
+  scale_colour_manual(
+    "topic",
+    values = cols
+  ) +
+  facet_wrap(~ topic) 
+```
+
+Es scheint eine Tendenz zu einem positiven linearen Zusammenhang dieser beiden Verteilungen zu geben. 
+
+Dennoch scheint es Topics zu geben, in denen Ego Kommentare verfasst obwohl vergleichsweise wenig Alteri in diesem Topic posten. Siehe Topic 239: 40-50% Posts bei weniger als 30% Alteri. Aber auch der gegenteilige Fall ist erkennbar:
+mehr Alteri als Posts, etwa bei Topic 69 oder 235.
+
+-----
+
+**TODO: KLÄREN OB MAN DAS WEITER VERFOLGT, GGF BESSER MIT VOLLSTÄNDIGEM ZEITRAUM ??**
+
+Dies wirft die Frage auf, auf welchen Zeitraum diese "markanten" Verhältnisse entfallen. Hierzu unterteilen wir den
+Analysezeitraum nochmals in drei Abschnitte ("früh", "mittel", "spät") und ordnen jeden Datenpunkt einem dieser Abschnitte
+zu. 
+
+-----
+
+Wenn wir versuchen, die Anziehungskraft oder "Interessantheit" eines Topics messbar zu machen, bieten sich ebenfalls die
+beiden erhobenen Größen an. Wir können die Verteilungen auch als Wahrscheinlichkeiten auffassen, dass ein Post von Ego einem Topic zugerechnet wird ($p_{e}$), bzw. dass einer der Peers sich für dieses Topic interessiert ($p_{a}$).
+Die Wahrscheinlichkeit, dass sich ein User einem Topic zuwendet, also die Anziehungskraft oder Interessantheit des Topics, definieren wir als das Produkt dieser beiden Größen:
+
+$$
+Int = p_a p_e
+$$
+Wir plotten $Int$ für den gewählten Analysezeitraum.
+
+```{r}
+df %>% group_by(topic) %>%
+  mutate(pa_pe = prop_ego * prop_alters) %>%
+  ggplot(mapping = aes(date, pa_pe, colour = topic)) +
+  geom_point(alpha = P_ALPHA) +
+  geom_smooth() +
+  geom_vline(aes(xintercept = as.Date("2013-07-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2013-10-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2015-01-01")), linetype = "dotted") +
+  labs(y = "Int") +
+  scale_colour_manual("topic",
+                      values = cols) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  facet_wrap( ~ topic)
+```
+
+Im Juli 2013 sinkt die Wahrscheinlichkeit eines Ego-Posts in Topic 239 auf `r round(subset(ego_proportions, date == "2013-07-01" & topic == 239, prop)$prop, 2)`. Im Oktober 2013 verlässt der User Topic 239 gänzlich, $p_e$ sinkt auf `r round(subset(ego_proportions, date == "2013-10-01" & topic == 239, prop)$prop, 2)`. Die Wahrscheinlichkeit steigt danach wieder, bis sie im Januar 2015 den zweithöchsten Wert in diesem Zeitraum erreicht von `r round(subset(ego_proportions, date == "2015-01-01" & topic == 239, prop)$prop, 2)`.
+
+## Analyse des Netzwerks
+
+```{r echo=FALSE}
+source("R/reading_data/read_snapshots.R")
+source("R/network_construction/build_from_edgelist.R")
+```
+
+```{r}
+edgelists <-
+  read_edgelist(user, date = date_range) %>%
+  select(-year, -month, edgelist = data)
+
+topics_of_alters <-
+  read_alters_topics(user, date = date_range) %>% 
+  select(-year, -month, topics = data)
+
+# identify the single top topic of ego for a month in the dataset
+ego_top_topics <-
+  ego_proportions %>%
+  group_by(date) %>%
+  summarize(user = user,
+            topic = topic[which.max(prop)]) %>%
+  select(date, user = user, topic)
+
+vertex_data <-
+  topics_of_alters %>%
+  unnest() %>%
+  select(date, user = author1, topic) %>%
+  rbind(ego_top_topics) %>%
+  group_by(date) %>%
+  nest() %>% 
+  rename(topics = data)
+
+graph_data <- 
+  left_join(edgelists, vertex_data, by = "date") %>% 
+  mutate(graph = map2(edgelist, topics, egonet_from_edgelist)) %>% 
+  select(date, graph)
+```
+
+### Knoten und Kanten im Graphen
+
+Um eine Übersicht über die Struktur des sozialen Netzes des Nutzers zu erhalten, betrachten wir die Entwicklung 
+der Größe dieses Netzes.
+
+```{r}
+graph_data %>%
+  ggplot(mapping = aes(x = date, y = count, colour = variable)) +
+  geom_line(mapping = aes(y = Vectorize(FUN = vcount, vectorize.args = "graph")(graph), colour = "vertices") ) +
+  geom_line(mapping = aes(y = Vectorize(FUN = ecount, vectorize.args = "graph")(graph), colour = "edges")) +
+  ylab("count") +
+  scale_x_date(
+    date_breaks = "3 months",
+    date_minor_breaks = "1 month",
+    date_labels = "%Y-%m"
+  ) +
+  scale_y_continuous(breaks = seq(0, 200, 10),
+                     minor_breaks = seq(0, 200, 5))
+```
+
+Im Oktober 2013 besteht das Ego-Netz des Nutzers aus `r vcount(subset(graph_data, date == as.Date("2013-10-01"))$graph[[1]])` Knoten, es finden also Interaktionen mit 4 weiteren Nutzern statt; im Graphen gibt es `r ecount(subset(graph_data, date == as.Date("2013-10-01"))$graph[[1]])` Kanten, also zu jedem Nutzer eine.
+
+Das soziale Netz ist als Multigraph modelliert, ein Post entspricht einer Kante. Die Visualisierung zeigt, dass im Oktober 2013 auch die Anzahl an Posts des Users auf ein Minimum fällt. Um mögliche Ursachen hierfür zu erforschen, betrachten wir die Reziprozität der Interaktionen.
+
+### Reziprozität
+
+Wir bestimmen zuerst die Reziprozität im gesamten Graphen.
+
+```{r}
+source("R/network_measures/katz_powell.R")
+
+graph_data %>% 
+  mutate(
+    katz_powell = map_dbl(graph, katz_powell_mutuality)
+  ) %>% 
+  ggplot(mapping = aes(x = date, y = katz_powell)) +
+  geom_line() +
+  geom_smooth(method = "lm") +
+  scale_x_date(
+    date_breaks = "3 months",
+    date_minor_breaks = "1 month",
+    date_labels = "%Y-%m"
+  ) +
+  scale_y_continuous(breaks = seq(-1, 1, 0.1),
+                     minor_breaks = seq(-1, 1, 0.05))
+```
+Es bietet sich ein ähnliches Bild wie zuvor: der Katz-Powell Index schwankt zwischen ca. 0.35 und 0.55, und fällt im Oktober 2013 stark ab; der Index nimmt sogar einen negativen Wert an, was bedeutet, dass zu wenig Beobachtungen (Knoten) vorliegen, um eine fundierte Aussage treffen zu können.
+
+Betrachten wir nun das Verhältnis eingehender zu ausgehender Kanten.
+
+```{r}
+graph_data_with_degree <-
+  graph_data %>% 
+  mutate(
+    degree_ratio = map_dbl(graph, function (graph) {
+      modes <- c("in", "out")
+      degs <- map(modes, function (m) {
+        degree(graph, v = "monocasa", mode = m)
+      })
+      do.call(`/`, degs)
+    })
+  ) 
+
+graph_data_with_degree %>% 
+  ggplot(mapping = aes(x = date, y = degree_ratio)) +
+  geom_line() +
+  geom_smooth(method = "lm") +
+  scale_x_date(
+    date_breaks = "3 months",
+    date_minor_breaks = "1 month",
+    date_labels = "%Y-%m"
+  ) +
+  scale_y_continuous(breaks = seq(0, 100, 0.1),
+                     minor_breaks = seq(0, 100, 0.05)) +
+  expand_limits(y = 0)
+  
+```
+
+```{r}
+# TODO: Filter topical subgraphs, then compute weighted degree
+
+left_join(ego_proportions, graph_data_with_degree, by = c("date")) %>% 
+  mutate(
+    weighted_degree = degree_ratio * prop
+  ) %>% 
+  ggplot(mapping = aes(x = date, y = weighted_degree)) +
+  geom_line() +
+  geom_smooth() +
+  scale_x_date(
+    date_breaks = "3 months",
+    date_minor_breaks = "1 month",
+    date_labels = "%Y-%m"
+  ) +
+  scale_y_continuous(breaks = seq(0, 100, 0.1),
+                     minor_breaks = seq(0, 100, 0.05)) +
+  expand_limits(y = 0)
+```
+

@@ -42,3 +42,6 @@ tags
 # output directories
 output/
 figs/*
+
+# ignore huge LDA results
+data/lda/*

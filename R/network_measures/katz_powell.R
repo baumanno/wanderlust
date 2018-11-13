@@ -14,13 +14,20 @@ library(igraph)
 #' @export
 #'
 katz_powell_mutuality <- function(graph) {
-  if (vcount(graph) == 0)
-    NA
-  
-  L <- ecount(graph)
-  L2 <- sum(degree(graph, mode = "out") ** 2)
-  g <- vcount(graph)
-  M <- dyad_census(graph)$mut
-  
-  (2 * (g - 1) ** 2 * M - L ** 2 + L2) / (L * (g - 1) ** 2 - L ** 2 + L2)
+  vapply(
+    X = graph,
+    FUN = function(graph) {
+      if (ecount(graph) == 0) {
+        return(NA)
+      }
+      
+      L <- ecount(graph)
+      L2 <- sum(degree(graph, mode = "out") ** 2)
+      g <- vcount(graph)
+      M <- dyad_census(graph)$mut
+      
+      (2 * (g - 1) ** 2 * M - L ** 2 + L2) / (L * (g - 1) ** 2 - L ** 2 + L2)
+    },
+    FUN.VALUE = double(1)
+  )
 }

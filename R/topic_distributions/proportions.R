@@ -67,7 +67,7 @@ user_proportions <- function(data) {
   # and works if we assume the column to contain only one value: the username
   user <- data$author[1]
   
-  df <- alters_topics %>%
+  df <- data %>%
     unnest() %>%
     group_by(date, topic) %>%
     summarise(num_users = n()) %>%

@@ -1,0 +1,73 @@
+---
+title: LDA-Ergebnisse
+output: 
+  html_notebook: 
+    fig_caption: yes
+  html_document: 
+    fig_caption: yes
+---
+
+```{r, include=FALSE}
+library(tidyverse)
+library(glue)
+library(data.table)
+library(stringr)
+library(purrr)
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r}
+subreddits <- readLines("data/lda/the_subreddits.dat")
+# first line contains total count of subreddits
+subreddits <- subreddits[-1]
+
+topics <- readLines("data/lda/model-final.theta") %>% 
+  str_split(" ") %>% 
+  map_int(which.max)
+
+df <- tibble(sub = subreddits, topic = factor(topics)) %>% 
+  count(topic) %>% 
+  mutate(rel = n/sum(n))
+
+```
+
+Zu `r length(subreddits)` Subreddits wurden die 50 Top-Posts abgerufen und dienten der LDA als Eingabe.
+
+
+```{r}
+df %>% 
+  ggplot() +
+  geom_boxplot(mapping = aes(x = "Zuweisungen", y = n), width = .3) +
+  labs(y = "", x = "") +
+  scale_y_log10()
+```
+Die Ordinate des Boxplots ist logarithmisch skaliert, da wegen der Breite der Verteilung die kleinen Werte 
+schwer zu erkennen sind.
+
+Es wurde jedem gefundenen Topic mindestens ein Subreddit zugeordnet. 25% der gefundenen Topcis
+enthalten weniger als sechs und mehr als 97.5 Subreddits, 50% der Topics enthalten 9 oder weniger Subreddits.
+Topic 235 ist mit 45577 (22%) zugeordneten Subreddits das größte.
+
+```{r}
+
+breaks <- which(df$rel >= .05)
+
+df %>%
+  mutate(
+    highlight = rel >= .05
+  ) %>% 
+  ggplot() + 
+  geom_bar(mapping = aes(x = topic, y = rel, fill = highlight), stat = "identity") +
+  scale_fill_manual(values = c("FALSE" = "black", "TRUE" = "red")) +
+  scale_x_discrete(breaks = breaks) +
+  theme(
+    legend.position = "none"
+  )
+```
+
+Das Histogramm zeigt den Anteil aller Subreddits, die jeweils einem Topic zugeordnet wurden. Beispielsweise
+sind knapp 5% aller betrachteten Subreddits Topic Nummer 210 zugeordnet.
+
+Hervorgehoben sind die sechs größten Topics, deren Anteil jeweils mindestens 5% ausmacht.
+Die Hälfte aller Topics enthält 9 oder weniger Subreddits, was in etwa `r round(median(df$n)/length(subreddits)*100, 3)`% entspricht. Aufgrund der linearen Skalierung der y-Achse sind diese kleinen Werte nicht erkennbar.

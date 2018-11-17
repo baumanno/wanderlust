@@ -1,0 +1,20 @@
+--- 
+bibliography:
+- literature.bib
+- packages.bib
+classoption: twoside
+documentclass: article
+fontsize: 11pt
+geometry: "left=2.5cm,right=3.5cm,top=83.75pt,textheight=24.35cm,textwidth=15cm,a4paper,headheight=13.6pt,twoside=true"
+link-citations: yes
+papersize: a4
+site: bookdown::bookdown_site
+---
+# Start
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```

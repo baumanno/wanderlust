@@ -26,7 +26,9 @@ topics <- readLines("data/lda/model-final.theta") %>%
   str_split(" ") %>% 
   map_int(which.max)
 
-df <- tibble(sub = subreddits, topic = factor(topics)) %>% 
+subreddit_topic_mapping <- tibble(sub = subreddits, topic = factor(topics))
+
+df <- subreddit_topic_mapping %>% 
   count(topic) %>% 
   mutate(rel = n/sum(n))
 
@@ -51,23 +53,24 @@ Topic 235 ist mit 45577 (22%) zugeordneten Subreddits das größte.
 
 ```{r}
 
-breaks <- which(df$rel >= .05)
+large_topics <- which(df$rel >= .05)
 
 df %>%
-  mutate(
-    highlight = rel >= .05
-  ) %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = topic, y = rel, fill = highlight), stat = "identity") +
-  scale_fill_manual(values = c("FALSE" = "black", "TRUE" = "red")) +
-  scale_x_discrete(breaks = breaks) +
-  theme(
-    legend.position = "none"
-  )
+  mutate(highlight = rel >= .05) %>%
+  ggplot() +
+  geom_bar(
+    mapping = aes(x = topic, y = rel, fill = highlight),
+    stat = "identity",
+    colour = "black",
+    fill = "grey",
+    size = .2
+  ) +
+  scale_x_discrete(breaks = large_topics) +
+  theme(legend.position = "none")
 ```
 
 Das Histogramm zeigt den Anteil aller Subreddits, die jeweils einem Topic zugeordnet wurden. Beispielsweise
-sind knapp 5% aller betrachteten Subreddits Topic Nummer 210 zugeordnet.
+sind knapp 22% aller betrachteten Subreddits Topic Nummer 235 zugeordnet.
 
 Hervorgehoben sind die sechs größten Topics, deren Anteil jeweils mindestens 5% ausmacht.
 Die Hälfte aller Topics enthält 9 oder weniger Subreddits, was in etwa `r round(median(df$n)/length(subreddits)*100, 3)`% entspricht. Aufgrund der linearen Skalierung der y-Achse sind diese kleinen Werte nicht erkennbar.

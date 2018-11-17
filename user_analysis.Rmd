@@ -1,0 +1,149 @@
+---
+title: User-Verteilungen
+output: 
+  html_document: 
+    fig_caption: yes
+  html_notebook: 
+    fig_caption: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r, include=FALSE}
+# Libraries
+library(tidyverse)
+library(glue)
+library(DBI)
+
+# External functions
+
+# only read the entire table if no result exists yet
+if (!(exists("res") && is.data.frame(res) && nrow(res) > 0)) {
+  con <-
+    dbConnect(RSQLite::SQLite(),
+              "/run/media/oliver/Elements SE/reddit.db")
+  
+  res <- dbGetQuery(con, glue_sql("SELECT * FROM `months_active` WHERE `author` != '[deleted]'", .con = con))
+  
+  dbDisconnect(con)
+}
+
+geom_histogram_original <- ggplot2::geom_histogram
+geom_histogram <- function(...) {
+  geom_histogram_original(..., )
+}
+
+geom_bar_orig <- ggplot2::geom_bar
+
+geom_bar <- function(...) {
+  geom_bar_orig(..., fill = "grey", colour = "black", size = .2)
+}
+```
+
+In dem Analysezeitraum von November 2007 bis Februar 2018 sind `r nrow(res)` User enthalten. Das nachfolgende Diagramm zeigt die
+Verteilung der "Lebenszeit", also in wie vielen Monaten ein User im Datensatz enthalten ist. Die Zahl der Monate ist dabei
+nicht als konsekutive Dauer zu verstehen; ein User, der einmal am Anfang und einmal am Ende des Zeitraums in Erscheinung tritt, hat ein "Alter" von zwei Monaten. Wie wir später zeigen werden, ist dies keine Einschränkung.
+
+```{r}
+
+ggplot(data = res) + 
+  geom_boxplot(mapping = aes(x = "Alter", y = active)) +
+  scale_y_log10()
+
+```
+
+```{r}
+summary(res$active)
+```
+
+Der Boxplot zeigt die Verteilung der Monate mit Aktivität; zu beachten ist die logarithmisch skalierte Ordinate.
+Da der Datensatz alle Kommentare
+auf Reddit enthält, die in einem Monat erstellt wurden, ist das Minimum von einem Monat eine logische Konsequenz: wir betrachten
+die Gesamtheit an Kommentaren, nicht die Gesamtheit an Nutzern. Nur in letzterem Fall würden wir auch 0 beobachten, also User, die die Plattform rein passiv Nutzen (sog. "Lurker"). Die 50% der am wenigsten aktiven Nutzer sind 2 Monate oder weniger aktiv.
+25% der Nutzer sind mehr als 6 Monate aktiv. Es gibt aber durchaus Nutzer, die in jedem Monat des Datensatzes enthalten sind, was
+das Maximum von 124 begründet: der Zeitraum November 2007 bis Februar 2018 umfasst `r length(seq.Date(from = as.Date("2007-11-01"), to = as.Date("2018-02-01"), by = "1 month"))` Monate.
+
+Die Verteilung der Aktivität weist einen Long Tail auf: sehr viele Nutzer sind eher kurz aktiv, während Nutzer mit eher langer
+Aktivität nur einen gerinen Anteil ausmachen. 
+
+Das nachfolgende Histogramm kann aufgrund der linear skalierten Ordinate viele diese kleinen Anteile nicht mehr darstellen. Eine spätere Betrachtung verwendet daher eine logarithmische Skala, durch welche diese kleinen Anteile besser erkennbar werden.
+
+```{r}
+ggplot(data = res) +
+  geom_histogram(mapping = aes(x = active), binwidth = 1, fill = "grey", colour = "black", size = .2)
+```
+
+Der QQ-Plot ermöglicht es, den Long Tail besser sichtbar zu machen.
+
+```{r}
+ggplot(data = res, mapping = aes(sample = active)) +
+  geom_qq() + geom_qq_line()
+```
+
+
+```{r}
+ggplot(data = res) +
+  geom_bar(mapping = aes(x = active), fill = "grey", colour = "black", size = .2) +
+  scale_y_log10()
+```
+Das Histogramm zeigt die Verteilung nach Alter. Wie bereits einleitend erwähnt wählen wir eine logarithmische Skala, um numerisch kleine Werte besser darstellen zu können.
+
+Bemerkenswert ist hier der Ausschlag am rechten Rand. Entgegen dem fallenden Trend der Verteilung entfallen auf das Bucket mit dem maximalen Alter sichtbar mehr Nutzer als auf die vorhergehenden.
+
+```{r}
+df <- res %>% 
+  count(active)
+```
+
+In dem letzten Bucket, das einem Alter von 124 Monaten entspricht, befinden sich `r (df[nrow(df), ]$n -> ult)` User, in dem Bucket davor
+mit 123 Monaten `r (df[nrow(df) - 1, ]$n -> penult)` User, die Differenz beträgt `r ult - penult`.
+Für die Analyse treffen wir eine Zufallsauswahl aus den ältesten 1000 Usern. Dadurch stellen wir sicher, dass wir User über einen genügend langen Zeitraum beobachten können. Das folgende Histogramm zeigt die Verteilung dieses Ausschnitts aus dem Long Tail.
+
+```{r}
+thresh_age <- 10000
+thresh_posts <- 50
+
+top_age <- res[order(res$active, decreasing = TRUE)[1:thresh_age], ]
+
+ggplot(data = top_age) +
+  geom_bar(mapping = aes(x = active), fill = "grey", colour = "black", size = .2)
+
+```
+
+```{r}
+min_age <- min(top_age$active)
+min_age_years <- min_age / 12
+date_range <- seq.Date(from = as.Date("2007-11-01"), to = as.Date("2018-02-01"), by = "1 month")
+```
+
+
+Da wir die Auswahl aus der festen Menge der `r thresh_age` am längsten aktiven Nutzer auswählen, enthält das Bucket am linken äußeren Rand weniger User. Der Cutoff liegt demnach bei einem Mindestalter von `r min_age` Monaten, also etwa `r round(min_age_years, 2)` Jahren. In dem festgelegten Zeitraum von November 2007 bis Februar 2018 sind das etwa 
+`r round(min_age / length(date_range) * 100, 2)`% Überdeckung. Zudem setzen wir voraus, dass ein User pro Monat mindestens `r thresh_posts` Kommentare erstellt hat.
+
+```{r}
+con <- dbConnect(RSQLite::SQLite(), "/run/media/oliver/Elements SE/posts_per_month_and_totals.db")
+
+total_posts <- dbGetQuery(con, glue_sql("SELECT * FROM posts ORDER BY months_active DESC LIMIT {thresh_age}", .con = con))
+
+dbDisconnect(con)
+
+smpl <- left_join(top_age, total_posts, by = c("author" = "username"))
+
+smpl %>% 
+  filter(
+    total_count / active >= thresh_posts
+  ) %>% 
+  ggplot() +
+  geom_bar(mapping = aes(x = active), fill = "grey", colour = "black", size = .2)
+```
+
+
+
+------------
+
+**TODO**:
+Plots zusammenfassen: ein Plot nach Filtern genügt?
+
+------------

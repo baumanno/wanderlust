@@ -9,14 +9,16 @@
 \usepackage{changepage}
 \usepackage{subcaption}
 \usepackage{hanging}
+% \usepackage{titlesec}
+% \titleformat{\chapter}
+%   {\normalfont\LARGE\bfseries}{\thechapter}{1em}{}
+% \titlespacing*{\chapter}{0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
 
 % custom imports
 % multirows für Tabellen
 \usepackage{multirow}
 % nice quotes
 \usepackage{csquotes}
-
-\usepackage{layout}
 
 \usepackage[onehalfspacing]{setspace} % 1,5facher Zeilenabstand
 
@@ -31,9 +33,7 @@
 \graphicspath{{./images/}}
 
 \usepackage{fancyhdr} % Positionierung der Seitenzahlen
-\fancyhead[LE,RO,LO,RE]{}
-\fancyfoot[CE,CO,RE,LO]{}
-\fancyfoot[LE,RO]{\Roman{page}}
+
 
 \renewcommand{\headrulewidth}{0pt}
 
@@ -47,3 +47,8 @@
 \makeatother
 
 %\sloppy % Damit LaTeX nicht so viel über "overfull hbox" u.Ä. meckert
+
+% römische numerale für Inhaltsverzeichnis; wird in index.Rmd zurückgesetzt
+\fancyhead[LE,RO,LO,RE]{}
+\fancyfoot[CE,CO,RE,LO]{}
+\fancyfoot[LE,RO]{\roman{page}}

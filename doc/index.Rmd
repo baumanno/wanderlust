@@ -9,12 +9,26 @@ geometry: "left=2.5cm,right=3.5cm,top=83.75pt,textheight=24.35cm,textwidth=15cm,
 link-citations: yes
 papersize: a4
 site: bookdown::bookdown_site
+# lot: true
+# lof: true
+subparagraph: true
 ---
-# Start
+\cleardoublepage
+<!-- Arabische Seitenzahlen -->
+\pagenumbering{arabic}
+\setcounter{page}{1}
+<!-- Geändertes Format für Seitenränder, arabische Seitenzahlen -->
+\fancyhead[LE,RO]{\rightmark}
+\fancyhead[LO,RE]{\leftmark}
+\fancyfoot[LE,RO]{\thepage}
 
-```{r include=FALSE}
+```{r setup, include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
   .packages(), 'bookdown', 'knitr', 'rmarkdown'
 ), 'packages.bib')
 ```
+
+\iffalse
+# Makes the HTML happy {-}
+\fi

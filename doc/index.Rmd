@@ -1,6 +1,6 @@
 --- 
 bibliography:
-- literatur.bib
+- bibliography.bib
 - packages.bib
 classoption: twoside
 # documentclass: book

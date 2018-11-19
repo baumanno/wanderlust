@@ -9,10 +9,27 @@ Im zweiten Teil des Kapitels werden dann die Ergebnisse vorgestellt, ohne dabei 
 
 ### Datensatz
 
-### Der Baumgartner-Korpus {-}
+Die Grundlage der Analyse bildet ein frei zugänglicher Datensatz mit Reddit-Kommentaren.
+Jason Baumgartner, der unter dem Pseudonym *stuck_in_the_matrix*^[https://www.reddit.com/user/stuck_in_the_matrix] selbst auf Reddit aktiv ist, stellt monatliche Zusammenfassungen aller erstellten Kommentare zum Download bereit [@Baumgartner].
+Diese reichen zum gegenwärtigen Zeitpunkt von Oktober 2018 zurück bis Dezember 2005.
+
+### Struktur
+Die monatlichen Datensätze liegen in Form von Textdateien vor, in denen jede Zeile einen Kommentar sowie Metadaten enthält.
+Das maschinenlesbare JSON-Format, in dem die Daten abgelegt sind, ermöglicht dabei eine effiziente computergestützte Auswertung.
+Einen Auszug der für diese Arbeit relevanten Schlüssel-Wert-Paare der Datensätze zeigt Tabelle \@ref(tab:importantkeys).
+
+```{r importantkeys}
+knitr::kable(
+  tribble(
+    ~Schlüssel, ~Wert,
+    "foo", "bar"
+  ),
+  booktabs = TRUE,
+  caption = "wichtige Schlüssel-Wert-Paare des Datensatzes"
+)
+```
 
 ### Kohärenz der Daten {-}
-
 Im März 2018 haben Gaffney und Matias [@Gaffney2018] eine umfassende Analyse des Baumgartner-Korpus vorgelegt.
 Sie kommen zu dem Schluss, dass die Erfassung sowohl der Beiträge (*submissions*) als auch der Kommentare (*comments*) Lücken aufweist, also Elemente gänzlich nicht vorhanden sind.
 
@@ -30,3 +47,76 @@ Ab August 2007 fällt diese Linie stark ab und stabilisiert sich ab November 200
 Obgleich die fehlenden Kommentardaten in der Folge der Veröffentlichung von Gaffney und Matias nachgepflegt werden [@Baumgartner2018] wird sich die vorliegende Analyse auf den Zeitraum beginnend mit November 2007 bis April 2018 beschränken.
 
 ## Ergebnisse
+
+### Das Alter von Usern
+
+In den vorangehenden Kapiteln wurde erläutert, welche Daten gesammelt wurden
+und wie eine erste Vorauswahl getroffen wurde. Die detaillierte Analyse soll
+Gegenstand dieses Kapitels sein.
+
+#### Virtuelles Alter {#virtage}
+
+Nach der Vorauswahl der Daten ergibt sich ein Analysezeitraum von 124 Monaten.
+Da nicht alle Nutzer über diesen gesamten Zeitraum hinweg aktiv gewesen sein
+werden, ist eine weitere Auswahl nöitg. Zudem ist es denkbar, dass ein Teil der
+Nutzer nach nur wenigen Monaten die Plattform wieder verlassen hat.
+
+Zur Bestimmung des virtuellen "Alters" der Nutzer, also wie lange
+sie sich aktiv an Reddit-Communities beteiligen, wurde für jeden Monat erfasst,
+in welchen Subreddits sie aktiv sind und wieviele Kommentare sie dort
+verfassen. Diese monatlichen Daten wurden dann über den gesamten Zeitraum
+aggregiert, sodass am Ende für jeden Nutzer ersichtlich war, in wie vielen
+monatlichen Zusammenfassungen er auftaucht, sprich: wie viele Monate er sich
+aktiv beteiligt hat.
+
+**PLACEHOLDER USER AGES****PLACEHOLDER USER AGES**
+
+Wie in Abbildung~\ref{fig:virt_alter} ersichtlich liegen 75\% der Daten
+unterhalb des Mittelwerts, viele User sind also weniger als 6 Monate auf Reddit
+aktiv. Um sinnvolle Aussagen über die zeitliche Entwicklung treffen zu können,
+werden nur Nutzer betrachtet, die mindestens 6 Monate aktiv waren. Damit
+verbleiben 7~047~535 Nutzer im Datensatz, was etwa 25\% der Gesamtzahl
+entspricht. Abbildung~\ref{fig:virt_alter_geschnitten} zeigt die Verteilung für
+diesen neuen Datensatz.
+
+
+Für diese Nutzer werden die Subreddits erfasst, in denen sie aktiv sind. Über
+die Reddit-API werden zu jedem dieser Subreddits 50 Beiträge aus der
+\textit{Top}-Kategorie abgerufen, welche die höchstbewerteten Posts dieser
+Community auflistet, unabhängig vom Erstellungsdatum des Beitrags. Diese
+Top-Beiträge dienen im weiteren Verlauf dazu, ein Subreddit inhaltlich zu
+charakterisieren; ihre Titel werden einer Topic-Analyse unterzogen.
+
+**PLACEHOLDER USER AGES**
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lccccc}
+        \toprule
+        & N & Mittel & Median & Min & Max \\
+        \midrule
+        voller Datensatz & 28~029~500 & 6,665$\pm$12,407 & 2 & 1 & 124 \\
+        mindestens 6 Monate aktiv & 7~047~535 & 21,593$\pm$17,634 & 15 & 6 & 124 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Altersverteilungen}%
+    \label{tab:altersverteilungen}
+\end{table}
+Beim Abrufen der insgesamt 419~616 Subreddits antwortete die Reddit-API in XY
+Fällen mit \glqq{}404 Not Found\grqq{}, und in XY Fällen mit \glqq{}403
+Forbidden\grqq{}. Die genaue Ursache dieser Fehler kann nicht bestimmt werden,
+aber 404 lässt vermuten, dass das Subreddit gelöscht wurde, und 403 deutet auf
+eine zugangsbeschränkte Community hin, die nicht frei einsehbar ist.
+
+
+Wegen eines Programmierfehlers wurden zu 499 Usern nicht die Subreddits
+abgerufen, in die sie gepostet hatten. Eine nachträgliche Analyse ergab, dass
+diese Nutzer im Mittel einen Monat aktiv waren und 1,17 Kommentare verfassten.
+Aufgrund dieser geringen Aktivität wurde keine Nacherfassung der Subreddits
+durchgeführt.
+<!-- select avg(months_active), avg(total_count) from posts where username in (select username from tmp_missing); -->
+
+
+### Verteilung von Topics
+
+### Fallstudie

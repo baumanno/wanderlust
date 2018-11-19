@@ -27,6 +27,6 @@ knitr::include_graphics("./images/gaffneymatias_fig4.eps")
 
 Die mittelblauen Punkte (bis Juni 2007 die "mittlere" der drei Linien) in Abbildung \@ref(fig:gf4) zeigen den prozentualen Anteil fehlender Einträge an der Gesamtzahl aller Kommentare für einen Monat.
 Ab August 2007 fällt diese Linie stark ab und stabilisiert sich ab November 2007 im niedrigen einstelligen Bereich, was darauf hindeutet, dass ab diesem Zeitpunkt die Erhebung der Kommentare nahezu vollständig verläuft und kaum noch Lücken aufweist.
-Obgleich die fehlenden Kommentardaten in der Folge der Veröffentlichung von Gaffney und Matias nachgepflegt werden~[@Baumgartner2018] wird sich die vorliegende Analyse auf den Zeitraum beginnend mit November 2007 bis April 2018 beschränken.
+Obgleich die fehlenden Kommentardaten in der Folge der Veröffentlichung von Gaffney und Matias nachgepflegt werden [@Baumgartner2018] wird sich die vorliegende Analyse auf den Zeitraum beginnend mit November 2007 bis April 2018 beschränken.
 
 ## Ergebnisse

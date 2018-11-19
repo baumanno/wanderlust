@@ -5,12 +5,14 @@
 
 ### Datensatz
 
-#### Kohärenz der Daten {#coherence}
+### Der Baumgartner-Korpus {-}
 
-Im März 2018 haben Gaffney und Matias~[@Gaffney2018] eine umfassende Analyse des Baumgartner-Korpus unternommen.
-Sie kommen zu dem Schluss, dass sowohl die Erfassung der Beiträge (*submissions*) als auch der Kommentare (*comments*) Lücken aufweist, also Elemente gänzlich nicht vorhanden sind.
+### Kohärenz der Daten {-}
 
-Da jedes Datum auf Reddit, Beiträge wie Kommentare, eine eindeutige numerische ID besitzt, nimmt Baumgartners System Blöcke von jeweils 100 solcher Identifikatoren und stellt zu jedem davon eine Anfrage an die Reddit-API~[@Baumgartner2018a].
+Im März 2018 haben Gaffney und Matias [@Gaffney2018] eine umfassende Analyse des Baumgartner-Korpus vorgelegt.
+Sie kommen zu dem Schluss, dass die Erfassung sowohl der Beiträge (*submissions*) als auch der Kommentare (*comments*) Lücken aufweist, also Elemente gänzlich nicht vorhanden sind.
+
+Da jedes Datum auf Reddit, Beiträge wie Kommentare, eine eindeutige numerische ID besitzt, nimmt Baumgartners System Blöcke von jeweils 100 solcher Identifikatoren und stellt zu jedem davon eine Anfrage an die Reddit-API [@Baumgartner2018a].
 Da Reddit auch auf Anfragen nach gelöschten Elementen mit einem sinnvollen Objekt antwortet, insbesondere aber nicht mit einer Fehlermeldung, sollte dieser Bereich von 100 sequentiellen IDs vollständig im Datensatz abgebildet sein, inklusive als gelöscht markierte Elemente.
 Gaffney und Matias machen jedoch für den Zeitraum Dezember 2005 bis Februar 2016 943.755 fehlende Kommentar- und 1.539.583 fehlende Beitrags-IDs aus. 
 

@@ -96,16 +96,12 @@
 \usepackage{changepage}
 \usepackage{subcaption}
 \usepackage{hanging}
-% \usepackage{titlesec}
-% \titleformat{\chapter}
-%   {\normalfont\LARGE\bfseries}{\thechapter}{1em}{}
-% \titlespacing*{\chapter}{0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
 
 % custom imports
 % multirows für Tabellen
 \usepackage{multirow}
 % nice quotes
-\usepackage{csquotes}
+\usepackage[autostyle=true,german=quotes]{csquotes}
 
 \usepackage[onehalfspacing]{setspace} % 1,5facher Zeilenabstand
 
@@ -116,11 +112,7 @@
 \definecolor{darkmagenta}{rgb}{0.2,0,0.2}
 \definecolor{darkcyan}{rgb}{0,0.15,0.15}
 
-\epstopdfsetup{update}
-\graphicspath{{./images/}}
-
 \usepackage{fancyhdr} % Positionierung der Seitenzahlen
-
 
 \renewcommand{\headrulewidth}{0pt}
 
@@ -303,6 +295,52 @@ Forschung}\label{grundlagen-und-verwandte-forschung}}
 
 \hypertarget{datensatz}{%
 \subsubsection{Datensatz}\label{datensatz}}
+
+\hypertarget{coherence}{%
+\paragraph{Kohärenz der Daten}\label{coherence}}
+
+Im März 2018 haben Gaffney und
+Matias\textasciitilde{}\autocite{Gaffney2018} eine umfassende Analyse
+des Baumgartner-Korpus unternommen. Sie kommen zu dem Schluss, dass
+sowohl die Erfassung der Beiträge (\emph{submissions}) als auch der
+Kommentare (\emph{comments}) Lücken aufweist, also Elemente gänzlich
+nicht vorhanden sind.
+
+Da jedes Datum auf Reddit, Beiträge wie Kommentare, eine eindeutige
+numerische ID besitzt, nimmt Baumgartners System Blöcke von jeweils 100
+solcher Identifikatoren und stellt zu jedem davon eine Anfrage an die
+Reddit-API\textasciitilde{}\autocite{Baumgartner2018a}. Da Reddit auch
+auf Anfragen nach gelöschten Elementen mit einem sinnvollen Objekt
+antwortet, insbesondere aber nicht mit einer Fehlermeldung, sollte
+dieser Bereich von 100 sequentiellen IDs vollständig im Datensatz
+abgebildet sein, inklusive als gelöscht markierte Elemente. Gaffney und
+Matias machen jedoch für den Zeitraum Dezember 2005 bis Februar 2016
+943.755 fehlende Kommentar- und 1.539.583 fehlende Beitrags-IDs aus.
+
+
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{./images/gaffneymatias_fig4} 
+
+}
+
+\caption{Verschiedene Maße zur Bestimmung fehlender Kommentare
+\autocite{Gaffney2018}}\label{fig:gf4}
+\end{figure}
+
+Die mittelblauen Punkte (bis Juni 2007 die \enquote{mittlere} der drei
+Linien) in Abbildung \ref{fig:gf4} zeigen den prozentualen Anteil
+fehlender Einträge an der Gesamtzahl aller Kommentare für einen Monat.
+Ab August 2007 fällt diese Linie stark ab und stabilisiert sich ab
+November 2007 im niedrigen einstelligen Bereich, was darauf hindeutet,
+dass ab diesem Zeitpunkt die Erhebung der Kommentare nahezu vollständig
+verläuft und kaum noch Lücken aufweist. Obgleich die fehlenden
+Kommentardaten in der Folge der Veröffentlichung von Gaffney und Matias
+nachgepflegt werden\textasciitilde{}\autocite{Baumgartner2018} wird sich
+die vorliegende Analyse auf den Zeitraum beginnend mit November 2007 bis
+April 2018 beschränken.
 
 \hypertarget{ergebnisse}{%
 \subsection{Ergebnisse}\label{ergebnisse}}

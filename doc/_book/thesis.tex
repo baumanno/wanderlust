@@ -29,7 +29,7 @@
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage{biblatex}
 
-\addbibresource{literature.bib}
+\addbibresource{literatur.bib}
 \addbibresource{packages.bib}
 \usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
@@ -96,14 +96,16 @@
 \usepackage{changepage}
 \usepackage{subcaption}
 \usepackage{hanging}
+% \usepackage{titlesec}
+% \titleformat{\chapter}
+%   {\normalfont\LARGE\bfseries}{\thechapter}{1em}{}
+% \titlespacing*{\chapter}{0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
 
 % custom imports
 % multirows für Tabellen
 \usepackage{multirow}
 % nice quotes
 \usepackage{csquotes}
-
-\usepackage{layout}
 
 \usepackage[onehalfspacing]{setspace} % 1,5facher Zeilenabstand
 
@@ -118,9 +120,7 @@
 \graphicspath{{./images/}}
 
 \usepackage{fancyhdr} % Positionierung der Seitenzahlen
-\fancyhead[LE,RO,LO,RE]{}
-\fancyfoot[CE,CO,RE,LO]{}
-\fancyfoot[LE,RO]{\Roman{page}}
+
 
 \renewcommand{\headrulewidth}{0pt}
 
@@ -134,6 +134,11 @@
 \makeatother
 
 %\sloppy % Damit LaTeX nicht so viel über "overfull hbox" u.Ä. meckert
+
+% römische numerale für Inhaltsverzeichnis; wird in index.Rmd zurückgesetzt
+\fancyhead[LE,RO,LO,RE]{}
+\fancyfoot[CE,CO,RE,LO]{}
+\fancyfoot[LE,RO]{\roman{page}}
 
 \begin{document}
 
@@ -181,6 +186,7 @@ Anwendungsfall geeignet. Ein Transfer zu anderen Einsatzmöglichkeiten schließt
 dass die in dieser Studie präsentierten Ergebnisse anhand einer kleinen Stichprobe ermittelt wurden und möglicherweise
 nicht vollends generalisierbar sind.
 
+\iffalse
 \selectlanguage{english}
 \section*{Abstract}
 
@@ -195,8 +201,8 @@ compatibility with being used in interactive workspaces. We conclude that neithe
 and thus suggest that they are equally suitable for this particular use case. We end with suggesting other possible applications
 of this setup, not restricted to any single use-case. We note, however, that due to the small sample size of our study, the
 findings presented here might not be fully generalizable.
-
 \selectlanguage{ngerman}
+\fi
 \clearpage
 \section*{Aufgabenstellung}
 
@@ -218,12 +224,7 @@ sowie alle benutzten Quellen und Hilfsmittel angegeben habe.
 %______________________________________________________________________
 
 \cleardoublepage
-\pagestyle{fancy}
-\pagenumbering{roman} % Römische Seitenzahlen
-\setcounter{page}{1}
 
-% Inhaltsverzeichnis erzeugen
-%\tableofcontents
 
 %Abbildungsverzeichnis erzeugen - normalerweise nicht nötig
 %\cleardoublepage
@@ -232,29 +233,98 @@ sowie alle benutzten Quellen und Hilfsmittel angegeben habe.
 
 \cleardoublepage
 
-% Arabische Seitenzahlen
+
+
+\pagestyle{fancy}
+\pagenumbering{roman} % Römische Seitenzahlen
+\setcounter{page}{1}
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\cleardoublepage
+
 \pagenumbering{arabic}
 \setcounter{page}{1}
-% Geändertes Format für Seitenränder, arabische Seitenzahlen
+
 \fancyhead[LE,RO]{\rightmark}
 \fancyhead[LO,RE]{\leftmark}
 \fancyfoot[LE,RO]{\thepage}
 
-{
-\setcounter{tocdepth}{2}
-\tableofcontents
-}
-\hypertarget{start}{%
-\section{Start}\label{start}}
+\iffalse
+
+\hypertarget{makes-the-html-happy}{%
+\section*{Makes the HTML happy}\label{makes-the-html-happy}}
+
+
+\fi
+
+\cleardoublepage
 
 \hypertarget{einleitung}{%
 \section{Einleitung}\label{einleitung}}
 
-\hypertarget{hauptteil}{%
-\section{Hauptteil}\label{hauptteil}}
+\cleardoublepage
 
-\hypertarget{schluss}{%
-\section{Schluss}\label{schluss}}
+\hypertarget{grundlagen-und-verwandte-forschung}{%
+\section{Grundlagen und verwandte
+Forschung}\label{grundlagen-und-verwandte-forschung}}
+
+\hypertarget{topic-modelle}{%
+\subsection{Topic-Modelle}\label{topic-modelle}}
+
+\hypertarget{lda}{%
+\subsubsection{LDA}\label{lda}}
+
+\hypertarget{verwandte-arbeiten}{%
+\subsubsection{Verwandte Arbeiten}\label{verwandte-arbeiten}}
+
+\hypertarget{soziale-netzwerkanalyse}{%
+\subsection{Soziale Netzwerkanalyse}\label{soziale-netzwerkanalyse}}
+
+\hypertarget{graphen-und-netzwerke}{%
+\subsubsection{Graphen und Netzwerke}\label{graphen-und-netzwerke}}
+
+\hypertarget{ego-netzwerke}{%
+\subsubsection{Ego-Netzwerke}\label{ego-netzwerke}}
+
+\hypertarget{verwandte-arbeiten-1}{%
+\subsubsection{Verwandte Arbeiten}\label{verwandte-arbeiten-1}}
+
+\hypertarget{reddit}{%
+\subsection{Reddit}\label{reddit}}
+
+\hypertarget{begriffsklarung}{%
+\subsubsection{Begriffsklärung}\label{begriffsklarung}}
+
+\hypertarget{verwandte-arbeiten-2}{%
+\subsubsection{Verwandte Arbeiten}\label{verwandte-arbeiten-2}}
+
+\cleardoublepage
+
+\hypertarget{datenanalyse}{%
+\section{Datenanalyse}\label{datenanalyse}}
+
+\hypertarget{methodik}{%
+\subsection{Methodik}\label{methodik}}
+
+\hypertarget{datensatz}{%
+\subsubsection{Datensatz}\label{datensatz}}
+
+\hypertarget{ergebnisse}{%
+\subsection{Ergebnisse}\label{ergebnisse}}
+
+\cleardoublepage
+
+\hypertarget{diskussion}{%
+\section{Diskussion}\label{diskussion}}
+
+\cleardoublepage
+
+\hypertarget{zusammenfassung-und-ausblick}{%
+\section{Zusammenfassung und
+Ausblick}\label{zusammenfassung-und-ausblick}}
 
 \printbibliography
 

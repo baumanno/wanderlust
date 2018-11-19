@@ -28,7 +28,3 @@ knitr::write_bib(c(
   .packages(), 'bookdown', 'knitr', 'rmarkdown'
 ), 'packages.bib')
 ```
-
-\iffalse
-# Makes the HTML happy {-}
-\fi

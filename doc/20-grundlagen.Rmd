@@ -1,0 +1,16 @@
+\cleardoublepage
+# Grundlagen und verwandte Forschung
+
+## Topic-Modelle
+### LDA
+### Verwandte Arbeiten
+
+## Soziale Netzwerkanalyse
+### Graphen und Netzwerke
+### Ego-Netzwerke
+### Verwandte Arbeiten
+
+## Reddit
+### Begriffsklärung
+### Verwandte Arbeiten
+

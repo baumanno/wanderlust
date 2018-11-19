@@ -1,2 +1,9 @@
 \cleardoublepage
-# Datenanalyse: Vorgehen und Ergebnisse
+# Datenanalyse
+
+## Methodik
+
+### Datensatz
+
+
+## Ergebnisse

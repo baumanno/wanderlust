@@ -38,6 +38,10 @@
 \renewcommand{\thetable}{\thesection.\arabic{table}}
 \makeatother
 
+% include bibliography in ToC - special case for biblatex (bookdown doesn't handle this atm)
+\let\oldpb\printbibliography
+\renewcommand{\printbibliography}{\oldpb[heading=bibintoc]}
+
 %\sloppy % Damit LaTeX nicht so viel über "overfull hbox" u.Ä. meckert
 
 % römische numerale für Inhaltsverzeichnis; wird in index.Rmd zurückgesetzt

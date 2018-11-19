@@ -290,32 +290,45 @@ Forschung}\label{grundlagen-und-verwandte-forschung}}
 \hypertarget{datenanalyse}{%
 \section{Datenanalyse}\label{datenanalyse}}
 
+In diesem Kapitel sollen das methodische Vorgehen bei der Datenanalyse
+sowie die Ergebnisse daraus vorgestellt werden. Zunächst wird der
+verwendete Datensatz präsentiert und Kritik daran erörtert. Weiterhin
+wird dargelegt, wie Topic-Modelle erzeugt wurden und welche Methoden der
+sozialen Netzwerkanalyse Anwendung finden, sowie welche
+Software-Komponenten dazu genutzt wruden. Der zweite Teil des Kapitels
+präsentiert die Ergebnisse, ohne dabei jedoch einer Interpretation zu
+weit vorzugreifen.
+
 \hypertarget{methodik}{%
 \subsection{Methodik}\label{methodik}}
 
 \hypertarget{datensatz}{%
 \subsubsection{Datensatz}\label{datensatz}}
 
-\hypertarget{coherence}{%
-\paragraph{Kohärenz der Daten}\label{coherence}}
+\hypertarget{der-baumgartner-korpus}{%
+\subsubsection*{Der Baumgartner-Korpus}\label{der-baumgartner-korpus}}
 
-Im März 2018 haben Gaffney und
-Matias\textasciitilde{}\autocite{Gaffney2018} eine umfassende Analyse
-des Baumgartner-Korpus unternommen. Sie kommen zu dem Schluss, dass
-sowohl die Erfassung der Beiträge (\emph{submissions}) als auch der
-Kommentare (\emph{comments}) Lücken aufweist, also Elemente gänzlich
-nicht vorhanden sind.
+
+\hypertarget{koharenz-der-daten}{%
+\subsubsection*{Kohärenz der Daten}\label{koharenz-der-daten}}
+
+
+Im März 2018 haben Gaffney und Matias \autocite{Gaffney2018} eine
+umfassende Analyse des Baumgartner-Korpus vorgelegt. Sie kommen zu dem
+Schluss, dass die Erfassung sowohl der Beiträge (\emph{submissions}) als
+auch der Kommentare (\emph{comments}) Lücken aufweist, also Elemente
+gänzlich nicht vorhanden sind.
 
 Da jedes Datum auf Reddit, Beiträge wie Kommentare, eine eindeutige
 numerische ID besitzt, nimmt Baumgartners System Blöcke von jeweils 100
 solcher Identifikatoren und stellt zu jedem davon eine Anfrage an die
-Reddit-API\textasciitilde{}\autocite{Baumgartner2018a}. Da Reddit auch
-auf Anfragen nach gelöschten Elementen mit einem sinnvollen Objekt
-antwortet, insbesondere aber nicht mit einer Fehlermeldung, sollte
-dieser Bereich von 100 sequentiellen IDs vollständig im Datensatz
-abgebildet sein, inklusive als gelöscht markierte Elemente. Gaffney und
-Matias machen jedoch für den Zeitraum Dezember 2005 bis Februar 2016
-943.755 fehlende Kommentar- und 1.539.583 fehlende Beitrags-IDs aus.
+Reddit-API \autocite{Baumgartner2018a}. Da Reddit auch auf Anfragen nach
+gelöschten Elementen mit einem sinnvollen Objekt antwortet, insbesondere
+aber nicht mit einer Fehlermeldung, sollte dieser Bereich von 100
+sequentiellen IDs vollständig im Datensatz abgebildet sein, inklusive
+als gelöscht markierte Elemente. Gaffney und Matias machen jedoch für
+den Zeitraum Dezember 2005 bis Februar 2016 943.755 fehlende Kommentar-
+und 1.539.583 fehlende Beitrags-IDs aus.
 
 
 
@@ -338,9 +351,9 @@ November 2007 im niedrigen einstelligen Bereich, was darauf hindeutet,
 dass ab diesem Zeitpunkt die Erhebung der Kommentare nahezu vollständig
 verläuft und kaum noch Lücken aufweist. Obgleich die fehlenden
 Kommentardaten in der Folge der Veröffentlichung von Gaffney und Matias
-nachgepflegt werden\textasciitilde{}\autocite{Baumgartner2018} wird sich
-die vorliegende Analyse auf den Zeitraum beginnend mit November 2007 bis
-April 2018 beschränken.
+nachgepflegt werden \autocite{Baumgartner2018} wird sich die vorliegende
+Analyse auf den Zeitraum beginnend mit November 2007 bis April 2018
+beschränken.
 
 \hypertarget{ergebnisse}{%
 \subsection{Ergebnisse}\label{ergebnisse}}

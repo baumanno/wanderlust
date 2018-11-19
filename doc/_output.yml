@@ -7,4 +7,5 @@ bookdown::pdf_book:
   keep_tex: true
   toc_depth: 3
   toc_unnumbered: false
+  fig_caption: true
 bookdown::epub_book: default

@@ -1,17 +1,15 @@
 --- 
 bibliography:
-- literature.bib
+- literatur.bib
 - packages.bib
 classoption: twoside
+# documentclass: book
 documentclass: article
 fontsize: 11pt
 geometry: "left=2.5cm,right=3.5cm,top=83.75pt,textheight=24.35cm,textwidth=15cm,a4paper,headheight=13.6pt,twoside=true"
 link-citations: yes
 papersize: a4
 site: bookdown::bookdown_site
-# lot: true
-# lof: true
-subparagraph: true
 ---
 \cleardoublepage
 <!-- Arabische Seitenzahlen -->

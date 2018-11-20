@@ -1,6 +1,6 @@
 \cleardoublepage
 # Datenanalyse
-Diess Kapitel liefert einen Überblick über die Methodik sowie die Ergebnisse der Datenanalyse.
+Dieses Kapitel liefert einen Überblick über die Methodik sowie die Ergebnisse der Datenanalyse.
 Zunächst wird der verwendete Datensatz präsentiert und Kritik daran erörtert.
 Weiterhin wird dargelegt, wie Topic-Modelle erzeugt werden und welche Methoden der sozialen Netzwerkanalyse Anwendung finden, sowie welche Software-Komponenten zum Einsatz kommen.
 Im zweiten Teil des Kapitels werden dann die Ergebnisse vorgestellt, ohne dabei jedoch einer Interpretation zu weit vorzugreifen.

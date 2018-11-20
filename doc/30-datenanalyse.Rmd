@@ -22,7 +22,10 @@ Einen Auszug der für diese Arbeit relevanten Schlüssel-Wert-Paare der Datensä
 knitr::kable(
   tribble(
     ~Schlüssel, ~Wert,
-    "foo", "bar"
+    "author", "Username des Kommentar-Erstellers",
+    "id", "eindeutige ID des Kommentars",
+    "parent_id", "eindeutige ID des Elements, auf das sich der Kommentar bezieht",
+    "subreddit", "Name des Subreddits, in dem der Kommentar erstellt wurde"
   ),
   booktabs = TRUE,
   caption = "wichtige Schlüssel-Wert-Paare des Datensatzes"

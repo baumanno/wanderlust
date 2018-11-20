@@ -2,7 +2,7 @@
 # Datenanalyse
 Dieses Kapitel liefert einen Überblick über die Methodik sowie die Ergebnisse der Datenanalyse.
 Zunächst wird der verwendete Datensatz präsentiert und Kritik daran erörtert.
-Weiterhin wird dargelegt, wie Topic-Modelle erzeugt werden und welche Methoden der sozialen Netzwerkanalyse Anwendung finden, sowie welche Software-Komponenten zum Einsatz kommen.
+Weiterhin wird dargelegt, wie die betrachteten Topic-Modelle erzeugt werden und welche Methoden der sozialen Netzwerkanalyse Anwendung finden, sowie welche Software-Komponenten jeweils zum Einsatz kommen.
 Im zweiten Teil des Kapitels werden dann die Ergebnisse vorgestellt, ohne dabei jedoch einer Interpretation zu weit vorzugreifen.
 
 ## Methodik
@@ -13,10 +13,13 @@ Die Grundlage der Analyse bildet ein frei zugänglicher Datensatz mit Reddit-Kom
 Jason Baumgartner, der unter dem Pseudonym *stuck_in_the_matrix*^[https://www.reddit.com/user/stuck_in_the_matrix] selbst auf Reddit aktiv ist, stellt monatliche Zusammenfassungen aller erstellten Kommentare zum Download bereit [@Baumgartner].
 Diese reichen zum gegenwärtigen Zeitpunkt von Oktober 2018 zurück bis Dezember 2005.
 
-### Struktur
+#### Struktur
 Die monatlichen Datensätze liegen in Form von Textdateien vor, in denen jede Zeile einen Kommentar sowie Metadaten enthält.
 Das maschinenlesbare JSON-Format, in dem die Daten abgelegt sind, ermöglicht dabei eine effiziente computergestützte Auswertung.
-Einen Auszug der für diese Arbeit relevanten Schlüssel-Wert-Paare der Datensätze zeigt Tabelle \@ref(tab:importantkeys).
+Tabelle \@ref(tab:importantkeys) führt die für diese Arbeit relevanten Schlüssel-Wert-Paare des Datensatzes auf.
+Der Schlüssel *parent_id* bezeichnet dabei das Element, auf welches sich der Kommentar bezieht.
+Dies können Beiträge oberster Ordnung sein, sog. "Links", oder selbst Kommentare [@Reddit2018].
+Zu beachten ist hier insbesondere, dass der eigentliche Textinhalt des Kommentars für diese Auswertung nicht genutzt wird.
 
 ```{r importantkeys}
 knitr::kable(
@@ -32,22 +35,29 @@ knitr::kable(
 )
 ```
 
-### Kohärenz der Daten {-}
-Im März 2018 haben Gaffney und Matias [@Gaffney2018] eine umfassende Analyse des Baumgartner-Korpus vorgelegt.
-Sie kommen zu dem Schluss, dass die Erfassung sowohl der Beiträge (*submissions*) als auch der Kommentare (*comments*) Lücken aufweist, also Elemente gänzlich nicht vorhanden sind.
+#### Kohärenz des Datensatzes
+Im März 2018 haben Gaffney und Matias eine Analyse des Baumgartner-Korpus vorgelegt [@Gaffney2018].
+Der vollständige Korpus enthält neben Kommentaren auch Datensätze mit allen monatlich erstellten Beiträgen, im folgenden auch "Submissions" genannt.
+Gaffney und Matias kommen zu dem Schluss, dass die Erfassung sowohl der Submissions als auch der Kommentare Lücken aufweist, also Elemente gänzlich nicht im Datensatz vorhanden sind.
+Für den Gegenstand der vorliegenden Arbeit ist dieser Umstand insofern von Bedeutung, als dass fehlende Kommentare die Topic-Affinität von Nutzern verzerren können, etwa wenn ein Topic, in dem der Nutzer durchaus aktiv war, aufgrund fehlender Daten unterrepräsentiert ist.
+Auch Gaffney und Matias stellen fest, dass Studien, welche auf die vollständige Historie von Nutzern zugreifen, dem höchsten Risiko ausgesetzt sind, lückenhafte Daten zu betrachten [@Gaffney2018].
 
-Da jedes Datum auf Reddit, Beiträge wie Kommentare, eine eindeutige numerische ID besitzt, nimmt Baumgartners System Blöcke von jeweils 100 solcher Identifikatoren und stellt zu jedem davon eine Anfrage an die Reddit-API [@Baumgartner2018a].
-Da Reddit auch auf Anfragen nach gelöschten Elementen mit einem sinnvollen Objekt antwortet, insbesondere aber nicht mit einer Fehlermeldung, sollte dieser Bereich von 100 sequentiellen IDs vollständig im Datensatz abgebildet sein, inklusive als gelöscht markierte Elemente.
-Gaffney und Matias machen jedoch für den Zeitraum Dezember 2005 bis Februar 2016 943.755 fehlende Kommentar- und 1.539.583 fehlende Beitrags-IDs aus. 
-
+Reddit weist jedem Kommentar eine eindeutige numerische ID zu^[Dies trifft nicht nur auf Kommentare zu; Reddit spricht in diesem Zusammenhang allgemeiner von *things* [@Reddit2018], wozu bspw. auch Submissions zählen.].
+Das von Baumgartner eingesetzte System nimmt zusammenhängende Blöcke von jeweils 100 solcher IDs und versucht, die zugehörigen Kommentare über die Reddit-API^[https://api.reddit.com/] aufzulösen [@Baumgartner2018a]. 
+Da Reddit auch Anfragen nach gelöschten Elementen sinnvoll beantwortet, also nicht etwa mit einer Fehlermeldung, sollte ein Bereich von 100 sequentiellen IDs auch vollständig im Datensatz abgebildet sein, inklusive als gelöscht markierter Elemente.
+Gaffney und Matias stellen jedoch für den Zeitraum Dezember 2005 bis Februar 2016 fest, dass 943.755 Kommentar- und 1.539.583 Beitrags-IDs nicht in den Datensätzen enthalten sind.
 (ref:gf4cap) Verschiedene Maße zur Bestimmung fehlender Kommentare [@Gaffney2018]
 ```{r gf4, out.width='80%', fig.cap='(ref:gf4cap)'}
 knitr::include_graphics("./images/gaffneymatias_fig4.eps")
 ```
+In Abbildung \@ref(fig:gf4) stellen die mittelblauen Punkte den Anteil fehlender Kommentare in Prozent dar.
+Ab etwa April 2006 beginnt dieser Anteil zu sinken, fällt ab etwa August 2007 stark ab und stabilisiert sich ab etwa November 2007 im niedrigen einstelligen Bereich.
+Um den Einfluss fehlender Kommentare so gering wie möglich zuhalten, wurden daher für die vorliegende Arbeit die Datensätze von November 2007 bis Februar 2018 ausgewertet.
+Jason Baumgartner hat als Folge der Veröffentlichung von Gaffney und Matias angekündigt, fehlende Kommentare und Beiträge nachträglich zu erfassen [@Baumgartner2018].
 
-Die mittelblauen Punkte (bis Juni 2007 die "mittlere" der drei Linien) in Abbildung \@ref(fig:gf4) zeigen den prozentualen Anteil fehlender Einträge an der Gesamtzahl aller Kommentare für einen Monat.
-Ab August 2007 fällt diese Linie stark ab und stabilisiert sich ab November 2007 im niedrigen einstelligen Bereich, was darauf hindeutet, dass ab diesem Zeitpunkt die Erhebung der Kommentare nahezu vollständig verläuft und kaum noch Lücken aufweist.
-Obgleich die fehlenden Kommentardaten in der Folge der Veröffentlichung von Gaffney und Matias nachgepflegt werden [@Baumgartner2018] wird sich die vorliegende Analyse auf den Zeitraum beginnend mit November 2007 bis April 2018 beschränken.
+### Topic-Modelle
+
+### Ego-Netzwerke und soziale Netzwerkanalyse
 
 ## Ergebnisse
 

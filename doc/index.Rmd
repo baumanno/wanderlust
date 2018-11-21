@@ -37,7 +37,27 @@ knitr::opts_chunk$set(
 )
 
 # automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
+knitr::write_bib(c(.packages(), 'bookdown', 'knitr', 'rmarkdown'),
+                 'packages.bib')
+```
+
+```{r helper-funcs}
+#' Format a number
+#'
+#' Given an input x, format it to contain thousands separator and 
+#' correct decimal mark.
+#'
+#' @param x a number to format
+#'
+#' @return a string representing the formatted number
+#' @export
+#'
+#' @examples
+#' fmt(10**3)
+#' fmt(5000)
+#' fmt(100)
+#' fmt(5000.5)
+fmt <- function(x) {
+  format(x, big.mark = ".", decimal.mark = ",")
+}
 ```

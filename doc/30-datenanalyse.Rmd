@@ -42,20 +42,116 @@ Gaffney und Matias kommen zu dem Schluss, dass die Erfassung sowohl der Submissi
 Für den Gegenstand der vorliegenden Arbeit ist dieser Umstand insofern von Bedeutung, als dass fehlende Kommentare die Topic-Affinität von Nutzern verzerren können, etwa wenn ein Topic, in dem der Nutzer durchaus aktiv war, aufgrund fehlender Daten unterrepräsentiert ist.
 Auch Gaffney und Matias stellen fest, dass Studien, welche auf die vollständige Historie von Nutzern zugreifen, dem höchsten Risiko ausgesetzt sind, lückenhafte Daten zu betrachten [@Gaffney2018].
 
-Reddit weist jedem Kommentar eine eindeutige numerische ID zu^[Dies trifft nicht nur auf Kommentare zu; Reddit spricht in diesem Zusammenhang allgemeiner von *things* [@Reddit2018], wozu bspw. auch Submissions zählen.].
+Reddit weist jedem Kommentar eine eindeutige numerische ID zu.
 Das von Baumgartner eingesetzte System nimmt zusammenhängende Blöcke von jeweils 100 solcher IDs und versucht, die zugehörigen Kommentare über die Reddit-API^[https://api.reddit.com/] aufzulösen [@Baumgartner2018a]. 
 Da Reddit auch Anfragen nach gelöschten Elementen sinnvoll beantwortet, also nicht etwa mit einer Fehlermeldung, sollte ein Bereich von 100 sequentiellen IDs auch vollständig im Datensatz abgebildet sein, inklusive als gelöscht markierter Elemente.
 Gaffney und Matias stellen jedoch für den Zeitraum Dezember 2005 bis Februar 2016 fest, dass 943.755 Kommentar- und 1.539.583 Beitrags-IDs nicht in den Datensätzen enthalten sind.
-(ref:gf4cap) Verschiedene Maße zur Bestimmung fehlender Kommentare [@Gaffney2018]
-```{r gf4, out.width='80%', fig.cap='(ref:gf4cap)'}
+Als mögliche Gründe für das Fehlen nennen Gaffney und Matias dreierlei: sog. "dangling references", also Verweise, bei denen das Element, auf das verwiesen wird, nicht auffindbar ist; öffentlich zugängliche Daten, die aus unbekanntem Grund nicht von Reddit an Baumgartners System übertragen wurden; oder Daten aus als privat eingestuften Communities, die nicht öffentlich sondern nur von Mitgliedern mit Zugangsberechtigung einsehbar sind [@Gaffney2018].
+
+(ref:gf4cap) Anteil fehlender Kommentare. Die hellblauen Quadrate (obere Linie) stellen den gleitenden Mittelwert fehlender Kommentare in Prozent dar, die mittelblauen Punkte (mittlere Linie) den prozentualen Anteil fehlender Kommentare, und die dunkelblauen Kreuze (untere Linie)  die kumlierte Gesamtzahl fehlender Kommentare [@Gaffney2018]
+```{r gf4, fig.cap='(ref:gf4cap)'}
 knitr::include_graphics("./images/gaffneymatias_fig4.eps")
 ```
 In Abbildung \@ref(fig:gf4) stellen die mittelblauen Punkte den Anteil fehlender Kommentare in Prozent dar.
 Ab etwa April 2006 beginnt dieser Anteil zu sinken, fällt ab etwa August 2007 stark ab und stabilisiert sich ab etwa November 2007 im niedrigen einstelligen Bereich.
-Um den Einfluss fehlender Kommentare so gering wie möglich zuhalten, wurden daher für die vorliegende Arbeit die Datensätze von November 2007 bis Februar 2018 ausgewertet.
+Um den Einfluss fehlender Kommentare so gering wie möglich zu halten, wurden daher für die vorliegende Arbeit die Datensätze beginnend mit November 2007 bis einschließlich Februar 2018 ausgewertet.  
 Jason Baumgartner hat als Folge der Veröffentlichung von Gaffney und Matias angekündigt, fehlende Kommentare und Beiträge nachträglich zu erfassen [@Baumgartner2018].
 
-### Topic-Modelle
+### Stichprobe von Nutzern
+
+Nachdem der Datensatz einer zeitlichen Einschränkung unterworfen wurde, müssen Kriterien für die Auswahl von Nutzern herangezogen werden.
+Dieser Abschnitt gibt Aufschluss über die Altersverteilung von Nutzern im Datensatz und beschreibt die Ziehung einer Stichprobe für die Datenanalyse.
+
+#### Altersverteilung
+
+```{r db-months-active}
+# only read the entire table if no result exists yet
+if (!(exists("res") && is.data.frame(res) && nrow(res) > 0)) {
+  con <-
+    dbConnect(RSQLite::SQLite(),
+              "/run/media/oliver/Elements SE/reddit.db")
+  
+  res <- dbGetQuery(con, glue_sql("SELECT * FROM `months_active` WHERE `author` != '[deleted]'", .con = con))
+  
+  dbDisconnect(con)
+}
+
+res_counted <- res %>% 
+  count(active)
+num_users <- nrow(res)
+summary_age <- tribble(
+    ~N, ~"arithm. Mittel", ~SD, ~Min, ~"Q1", ~Median, ~"Q3", ~Max,
+    nrow(res), mean(res$active), sd(res$active), min(res$active), quantile(res$active, .25), median(res$active), quantile(res$active, .75), max(res$active)
+  )
+```
+Nach der zeitlichen Eingrenzung der Daten liegen für den betrachteten Zeitraum von 124 Monaten etwa 3,6 Milliarden `r # fmt(3615667286)` Kommentare vor, verfasst von ca. 28 Millionen `r # fmt(num_users)` Nutzern.
+Für jeden dieser Nutzer wurde bestimmt, in wie vielen Monaten er insgesamt im Datensatz enthalten ist; nachfolgend wird dies als "virtuelles Alter" oder schlicht "Alter" des Users bezeichnet.
+
+(ref:lab) Zusammenfassung der Altersverteilung.
+```{r summary-age-tab, cache=FALSE}
+knitr::kable(
+  summary_age,
+  digits = 2,
+  align = c("l", "c", "c", "c", "c", "c", "c", "c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "(ref:lab)"
+)
+```
+
+Tabelle \@ref(tab:summary-age-tab) bietet eine Übersicht über die Verteilung der Alterswerte.
+50% der Nutzer sind zwischen einem und sechs Monaten auf Reddit aktiv (unteres resp. oberes Quartil), und 50% sind in zwei Monaten oder weniger enthalten (Median).
+Der arithmetische Altersdurchschnitt liegt bei etwa sieben Monaten.
+Da ein User mindestens einen Kommentar verfasst haben muss, um gezählt zu werden, liegt das minimale Alter bei einem Monat.
+
+```{r age-distribution-1, fig.cap="Verteilung der Alterswerte."}
+ggplot(data = res_counted) +
+  geom_bar(mapping = aes(x = active, y = n/sum(n)), stat = "identity", fill = "grey", color = "black", size = .2) +
+  labs(
+    x = "Alter in Monaten",
+    y = "Anteil Nutzer"
+  ) +
+  scale_x_continuous(breaks = seq(0, 124, by = 12)) +
+  scale_y_continuous(labels = scales::percent)
+```
+
+Das Histogramm in Abbildung \@ref(fig:age-distribution-1) veranschaulicht das hohe Vorkommen eher kleiner Werte.
+Die ALtersverteilung weist einen sog. "Long Tail" auf: sehr viele Nutzer sind eher kurz aktiv, während Nutzer mit eher langer Aktivität nur einen gerinen Anteil ausmachen.
+Die lineare Skala des Histograms macht es schwierig, die Werte des Long Tail sinnvoll darzustellen.
+Abbildung \@ref(fig:age-distribution-2) nutzt daher eine logarithmische Darstellung.
+
+```{r age-distribution-2, fig.cap="Verteilung der Alterswerte, logarithmische Darstellung."}
+ggplot(data = res_counted) +
+  geom_bar(mapping = aes(x = active, y = n), stat = "identity", fill = "grey", colour = "black", size = .2) +
+  labs(
+    x = "Alter in Monaten",
+    y = "Anzahl Nutzer"
+  ) +
+  scale_x_continuous(breaks = seq(0, 124, by = 12)) +
+  scale_y_log10(label = scales::comma_format(decimal.mark = ",", big.mark = "."))
+```
+Markant ist bei dieser Visualisierung der Ausschlag am äußersten rechten Rand.
+Offenbar entfallen auf die Altersgruppe "124 Monate" noch einmal deutlich mehr Nutzer als noch auf die vorhergehenden Gruppen.
+In der Tat beträgt der Unterschied zwischen den beiden letzten Altersgruppen `r subset(res_counted, active == 124, n) - subset(res_counted, active == 123, n)` Nutzer
+Obwohl an dieser Stelle keine Erklärung für diese Beobachtung geliefert werden kann, ist es denkbar, dass es einen "harten Kern" von Usern gibt, die Reddit seit langer Zeit, möglicherweise sogar von Anfang an nutzen, und regelmäßig aktiv sind.
+
+#### Kriterien für die Stichprobe
+
+Um Nutzer für die weitere Datenanalyse auszuwählen, wurden zwei Kriterien festgelegt.
+Zum einen sollte ein Nutzer über einen ausreichend langen Zeitraum hinweg aktiv sein.
+Damit wird sichergestellt, dass zeitliche Verläufe keine Lücken aufweisen und genügend Daten vorliegen, um Trends zu identifizieren.
+Zum anderen sollte der User ein Mindestmaß an Interaktionen pro Monat hervorbringen.
+Da diese Arbeit Interaktionsgraphen analysiert, sollten di
+
+Für die Analyse treffen wir eine Zufallsauswahl aus den ältesten 1000 Usern.
+Dadurch stellen wir sicher, dass wir User über einen genügend langen Zeitraum beobachten können. Das folgende Histogramm zeigt die Verteilung dieses Ausschnitts aus dem Long Tail.
+
+### Topic-Modelling
+
+Für die Berechnung des Topic-Modells wurden für eine Auswahl an Subreddits die Titel von 50 Beiträgen aus der *Top*-Kategorie 
+
+Für jeden Kommentar im Datensatz wurde festgehalten, in welchem Subreddit er erstellt wurde.
+Kommentare, deren Schlüssel `author` den Wert `[deleted]` enthielten, wurden dabei übersprungen; Reddit nutzt diesen Wert, um gelöschte Inhalte zu kennzeichnen.
 
 ### Ego-Netzwerke und soziale Netzwerkanalyse
 

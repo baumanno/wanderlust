@@ -9,6 +9,7 @@ fontsize: 11pt
 geometry: "left=2.5cm,right=3.5cm,top=83.75pt,textheight=24.35cm,textwidth=15cm,a4paper,headheight=13.6pt,twoside=true"
 link-citations: yes
 papersize: a4
+subparagraph: true
 site: bookdown::bookdown_site
 ---
 \cleardoublepage

@@ -42,6 +42,12 @@
 \let\oldpb\printbibliography
 \renewcommand{\printbibliography}{\oldpb[heading=bibintoc]}
 
+\let\oldpar\paragraph
+\renewcommand{\paragraph}{\oldpar*}
+
+\let\oldsubpar\subparagraph
+\renewcommand{\subparagraph}{\oldsubpar*}
+
 %\sloppy % Damit LaTeX nicht so viel über "overfull hbox" u.Ä. meckert
 
 % römische numerale für Inhaltsverzeichnis; wird in index.Rmd zurückgesetzt

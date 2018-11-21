@@ -51,15 +51,6 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
 
 %%% Use protect on footnotes to avoid problems with footnotes in titles
 \let\rmarkdownfootnote\footnote%
@@ -92,7 +83,7 @@
 \usepackage{pgf}
 \usepackage{epstopdf}
 
-\usepackage{caption}
+\usepackage[labelfont=bf]{caption}
 \usepackage{changepage}
 \usepackage{subcaption}
 \usepackage{hanging}
@@ -128,6 +119,12 @@
 % include bibliography in ToC - special case for biblatex (bookdown doesn't handle this atm)
 \let\oldpb\printbibliography
 \renewcommand{\printbibliography}{\oldpb[heading=bibintoc]}
+
+\let\oldpar\paragraph
+\renewcommand{\paragraph}{\oldpar*}
+
+\let\oldsubpar\subparagraph
+\renewcommand{\subparagraph}{\oldsubpar*}
 
 %\sloppy % Damit LaTeX nicht so viel über "overfull hbox" u.Ä. meckert
 
@@ -280,14 +277,14 @@ Forschung}\label{grundlagen-und-verwandte-forschung}}
 \hypertarget{datenanalyse}{%
 \section{Datenanalyse}\label{datenanalyse}}
 
-Diess Kapitel liefert einen Überblick über die Methodik sowie die
+Dieses Kapitel liefert einen Überblick über die Methodik sowie die
 Ergebnisse der Datenanalyse. Zunächst wird der verwendete Datensatz
-präsentiert und Kritik daran erörtert. Weiterhin wird dargelegt, wie
-Topic-Modelle erzeugt werden und welche Methoden der sozialen
-Netzwerkanalyse Anwendung finden, sowie welche Software-Komponenten zum
-Einsatz kommen. Im zweiten Teil des Kapitels werden dann die Ergebnisse
-vorgestellt, ohne dabei jedoch einer Interpretation zu weit
-vorzugreifen.
+präsentiert und Kritik daran erörtert. Weiterhin wird dargelegt, wie die
+betrachteten Topic-Modelle erzeugt werden und welche Methoden der
+sozialen Netzwerkanalyse Anwendung finden, sowie welche
+Software-Komponenten jeweils zum Einsatz kommen. Im zweiten Teil des
+Kapitels werden dann die Ergebnisse vorgestellt, ohne dabei jedoch einer
+Interpretation zu weit vorzugreifen.
 
 \hypertarget{methodik}{%
 \subsection{Methodik}\label{methodik}}
@@ -304,14 +301,19 @@ reichen zum gegenwärtigen Zeitpunkt von Oktober 2018 zurück bis Dezember
 2005.
 
 \hypertarget{struktur}{%
-\subsubsection{Struktur}\label{struktur}}
+\paragraph{Struktur}\label{struktur}}
 
 Die monatlichen Datensätze liegen in Form von Textdateien vor, in denen
 jede Zeile einen Kommentar sowie Metadaten enthält. Das maschinenlesbare
 JSON-Format, in dem die Daten abgelegt sind, ermöglicht dabei eine
-effiziente computergestützte Auswertung. Einen Auszug der für diese
-Arbeit relevanten Schlüssel-Wert-Paare der Datensätze zeigt Tabelle
-\ref{tab:importantkeys}.
+effiziente computergestützte Auswertung. Tabelle \ref{tab:importantkeys}
+führt die für diese Arbeit relevanten Schlüssel-Wert-Paare des
+Datensatzes auf. Der Schlüssel \emph{parent\_id} bezeichnet dabei das
+Element, auf welches sich der Kommentar bezieht. Dies können Beiträge
+oberster Ordnung sein, sog. \enquote{Links}, oder selbst Kommentare
+\autocite{Reddit2018}. Zu beachten ist hier insbesondere, dass der
+eigentliche Textinhalt des Kommentars für diese Auswertung nicht genutzt
+wird.
 
 \begin{table}
 
@@ -321,31 +323,53 @@ Arbeit relevanten Schlüssel-Wert-Paare der Datensätze zeigt Tabelle
 \toprule
 Schlüssel & Wert\\
 \midrule
-foo & bar\\
+author & Username des Kommentar-Erstellers\\
+id & eindeutige ID des Kommentars\\
+parent\_id & eindeutige ID des Elements, auf das sich der Kommentar bezieht\\
+subreddit & Name des Subreddits, in dem der Kommentar erstellt wurde\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\hypertarget{koharenz-der-daten}{%
-\subsubsection*{Kohärenz der Daten}\label{koharenz-der-daten}}
+\hypertarget{koharenz-des-datensatzes}{%
+\paragraph{Kohärenz des Datensatzes}\label{koharenz-des-datensatzes}}
+
+Im März 2018 haben Gaffney und Matias eine Analyse des
+Baumgartner-Korpus vorgelegt \autocite{Gaffney2018}. Der vollständige
+Korpus enthält neben Kommentaren auch Datensätze mit allen monatlich
+erstellten Beiträgen, im folgenden auch \enquote{Submissions} genannt.
+Gaffney und Matias kommen zu dem Schluss, dass die Erfassung sowohl der
+Submissions als auch der Kommentare Lücken aufweist, also Elemente
+gänzlich nicht im Datensatz vorhanden sind. Für den Gegenstand der
+vorliegenden Arbeit ist dieser Umstand insofern von Bedeutung, als dass
+fehlende Kommentare die Topic-Affinität von Nutzern verzerren können,
+etwa wenn ein Topic, in dem der Nutzer durchaus aktiv war, aufgrund
+fehlender Daten unterrepräsentiert ist. Auch Gaffney und Matias stellen
+fest, dass Studien, welche auf die vollständige Historie von Nutzern
+zugreifen, dem höchsten Risiko ausgesetzt sind, lückenhafte Daten zu
+betrachten \autocite{Gaffney2018}.
+
+Reddit weist jedem Kommentar eine eindeutige numerische ID zu. Das von
+Baumgartner eingesetzte System nimmt zusammenhängende Blöcke von jeweils
+100 solcher IDs und versucht, die zugehörigen Kommentare über die
+Reddit-API\footnote{\url{https://api.reddit.com/}} aufzulösen
+\autocite{Baumgartner2018a}. Da Reddit auch Anfragen nach gelöschten
+Elementen sinnvoll beantwortet, also nicht etwa mit einer Fehlermeldung,
+sollte ein Bereich von 100 sequentiellen IDs auch vollständig im
+Datensatz abgebildet sein, inklusive als gelöscht markierter Elemente.
+Gaffney und Matias stellen jedoch für den Zeitraum Dezember 2005 bis
+Februar 2016 fest, dass 943.755 Kommentar- und 1.539.583 Beitrags-IDs
+nicht in den Datensätzen enthalten sind. Als mögliche Gründe für das
+Fehlen nennen Gaffney und Matias dreierlei: sog. \enquote{dangling
+references}, also Verweise, bei denen das Element, auf das verwiesen
+wird, nicht auffindbar ist; öffentlich zugängliche Daten, die aus
+unbekanntem Grund nicht von Reddit an Baumgartners System übertragen
+wurden; oder Daten aus als privat eingestuften Communities, die nicht
+öffentlich sondern nur von Mitgliedern mit Zugangsberechtigung einsehbar
+sind \autocite{Gaffney2018}.
 
 
-Im März 2018 haben Gaffney und Matias \autocite{Gaffney2018} eine
-umfassende Analyse des Baumgartner-Korpus vorgelegt. Sie kommen zu dem
-Schluss, dass die Erfassung sowohl der Beiträge (\emph{submissions}) als
-auch der Kommentare (\emph{comments}) Lücken aufweist, also Elemente
-gänzlich nicht vorhanden sind.
 
-Da jedes Datum auf Reddit, Beiträge wie Kommentare, eine eindeutige
-numerische ID besitzt, nimmt Baumgartners System Blöcke von jeweils 100
-solcher Identifikatoren und stellt zu jedem davon eine Anfrage an die
-Reddit-API \autocite{Baumgartner2018a}. Da Reddit auch auf Anfragen nach
-gelöschten Elementen mit einem sinnvollen Objekt antwortet, insbesondere
-aber nicht mit einer Fehlermeldung, sollte dieser Bereich von 100
-sequentiellen IDs vollständig im Datensatz abgebildet sein, inklusive
-als gelöscht markierte Elemente. Gaffney und Matias machen jedoch für
-den Zeitraum Dezember 2005 bis Februar 2016 943.755 fehlende Kommentar-
-und 1.539.583 fehlende Beitrags-IDs aus.
 
 
 
@@ -356,21 +380,133 @@ und 1.539.583 fehlende Beitrags-IDs aus.
 
 }
 
-\caption{Verschiedene Maße zur Bestimmung fehlender Kommentare
-\autocite{Gaffney2018}}\label{fig:gf4}
+\caption{Anteil fehlender Kommentare. Die hellblauen Quadrate (obere
+Linie) stellen den gleitenden Mittelwert fehlender Kommentare in Prozent
+dar, die mittelblauen Punkte (mittlere Linie) den prozentualen Anteil
+fehlender Kommentare, und die dunkelblauen Kreuze (untere Linie) die
+kumlierte Gesamtzahl fehlender Kommentare \autocite{Gaffney2018}}\label{fig:gf4}
 \end{figure}
 
-Die mittelblauen Punkte (bis Juni 2007 die \enquote{mittlere} der drei
-Linien) in Abbildung \ref{fig:gf4} zeigen den prozentualen Anteil
-fehlender Einträge an der Gesamtzahl aller Kommentare für einen Monat.
-Ab August 2007 fällt diese Linie stark ab und stabilisiert sich ab
-November 2007 im niedrigen einstelligen Bereich, was darauf hindeutet,
-dass ab diesem Zeitpunkt die Erhebung der Kommentare nahezu vollständig
-verläuft und kaum noch Lücken aufweist. Obgleich die fehlenden
-Kommentardaten in der Folge der Veröffentlichung von Gaffney und Matias
-nachgepflegt werden \autocite{Baumgartner2018} wird sich die vorliegende
-Analyse auf den Zeitraum beginnend mit November 2007 bis April 2018
-beschränken.
+In Abbildung \ref{fig:gf4} stellen die mittelblauen Punkte den Anteil
+fehlender Kommentare in Prozent dar. Ab etwa April 2006 beginnt dieser
+Anteil zu sinken, fällt ab etwa August 2007 stark ab und stabilisiert
+sich ab etwa November 2007 im niedrigen einstelligen Bereich. Um den
+Einfluss fehlender Kommentare so gering wie möglich zu halten, wurden
+daher für die vorliegende Arbeit die Datensätze beginnend mit November
+2007 bis einschließlich Februar 2018 ausgewertet.\\
+Jason Baumgartner hat als Folge der Veröffentlichung von Gaffney und
+Matias angekündigt, fehlende Kommentare und Beiträge nachträglich zu
+erfassen \autocite{Baumgartner2018}.
+
+\hypertarget{stichprobe-von-nutzern}{%
+\subsubsection{Stichprobe von Nutzern}\label{stichprobe-von-nutzern}}
+
+Nachdem der Datensatz einer zeitlichen Einschränkung unterworfen wurde,
+müssen Kriterien für die Auswahl von Nutzern herangezogen werden. Dieser
+Abschnitt gibt Aufschluss über die Altersverteilung von Nutzern im
+Datensatz und beschreibt die Ziehung einer Stichprobe für die
+Datenanalyse.
+
+\hypertarget{altersverteilung}{%
+\paragraph{Altersverteilung}\label{altersverteilung}}
+
+Nach der zeitlichen Eingrenzung der Daten liegen für den betrachteten
+Zeitraum von 124 Monaten etwa 3,6 Milliarden Kommentare vor, verfasst
+von ca. 28 Millionen Nutzern. Für jeden dieser Nutzer wurde bestimmt, in
+wie vielen Monaten er insgesamt im Datensatz enthalten ist; nachfolgend
+wird dies als \enquote{virtuelles Alter} oder schlicht \enquote{Alter}
+des Users bezeichnet.
+
+
+
+\begin{table}
+
+\caption{\label{tab:summary-age-tab}Zusammenfassung der Altersverteilung.}
+\centering
+\begin{tabular}[t]{lccccccc}
+\toprule
+N & arithm. Mittel & SD & Min & Q1 & Median & Q3 & Max\\
+\midrule
+28.029.716 & 6,67 & 12,41 & 1 & 1 & 2 & 6 & 124\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Tabelle \ref{tab:summary-age-tab} bietet eine Übersicht über die
+Verteilung der Alterswerte. 50\% der Nutzer sind zwischen einem und
+sechs Monaten auf Reddit aktiv (unteres resp. oberes Quartil), und 50\%
+sind in zwei Monaten oder weniger enthalten (Median). Der arithmetische
+Altersdurchschnitt liegt bei etwa sieben Monaten. Da ein User mindestens
+einen Kommentar verfasst haben muss, um gezählt zu werden, liegt das
+minimale Alter bei einem Monat.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/age-distribution-1-1} 
+
+}
+
+\caption{Verteilung der Alterswerte.}\label{fig:age-distribution-1}
+\end{figure}
+
+Das Histogramm in Abbildung \ref{fig:age-distribution-1} veranschaulicht
+das hohe Vorkommen eher kleiner Werte. Die ALtersverteilung weist einen
+sog. \enquote{Long Tail} auf: sehr viele Nutzer sind eher kurz aktiv,
+während Nutzer mit eher langer Aktivität nur einen gerinen Anteil
+ausmachen. Die lineare Skala des Histograms macht es schwierig, die
+Werte des Long Tail sinnvoll darzustellen. Abbildung
+\ref{fig:age-distribution-2} nutzt daher eine logarithmische
+Darstellung.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/age-distribution-2-1} 
+
+}
+
+\caption{Verteilung der Alterswerte, logarithmische Darstellung.}\label{fig:age-distribution-2}
+\end{figure}
+
+Markant ist bei dieser Visualisierung der Ausschlag am äußersten rechten
+Rand. Offenbar entfallen auf die Altersgruppe \enquote{124 Monate} noch
+einmal deutlich mehr Nutzer als noch auf die vorhergehenden Gruppen. In
+der Tat beträgt der Unterschied zwischen den beiden letzten
+Altersgruppen 382 Nutzer Obwohl an dieser Stelle keine Erklärung für
+diese Beobachtung geliefert werden kann, ist es denkbar, dass es einen
+\enquote{harten Kern} von Usern gibt, die Reddit seit langer Zeit,
+möglicherweise sogar von Anfang an nutzen, und regelmäßig aktiv sind.
+
+\hypertarget{kriterien-fur-die-stichprobe}{%
+\paragraph{Kriterien für die
+Stichprobe}\label{kriterien-fur-die-stichprobe}}
+
+Um Nutzer für die weitere Datenanalyse auszuwählen, wurden zwei
+Kriterien festgelegt. Zum einen sollte ein Nutzer über einen ausreichend
+langen Zeitraum hinweg aktiv sein. Damit wird sichergestellt, dass
+zeitliche Verläufe keine Lücken aufweisen und genügend Daten vorliegen,
+um Trends zu identifizieren. Zum anderen sollte der User ein Mindestmaß
+an Interaktionen pro Monat hervorbringen. Da diese Arbeit
+Interaktionsgraphen analysiert, sollten di
+
+Für die Analyse treffen wir eine Zufallsauswahl aus den ältesten 1000
+Usern. Dadurch stellen wir sicher, dass wir User über einen genügend
+langen Zeitraum beobachten können. Das folgende Histogramm zeigt die
+Verteilung dieses Ausschnitts aus dem Long Tail.
+
+\hypertarget{topic-modelling}{%
+\subsubsection{Topic-Modelling}\label{topic-modelling}}
+
+Für die Berechnung des Topic-Modells wurden für eine Auswahl an
+Subreddits die Titel von 50 Beiträgen aus der \emph{Top}-Kategorie
+
+Für jeden Kommentar im Datensatz wurde festgehalten, in welchem
+Subreddit er erstellt wurde. Kommentare, deren Schlüssel \texttt{author}
+den Wert \texttt{{[}deleted{]}} enthielten, wurden dabei übersprungen;
+Reddit nutzt diesen Wert, um gelöschte Inhalte zu kennzeichnen.
+
+\hypertarget{ego-netzwerke-und-soziale-netzwerkanalyse}{%
+\subsubsection{Ego-Netzwerke und soziale
+Netzwerkanalyse}\label{ego-netzwerke-und-soziale-netzwerkanalyse}}
 
 \hypertarget{ergebnisse}{%
 \subsection{Ergebnisse}\label{ergebnisse}}

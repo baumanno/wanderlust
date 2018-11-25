@@ -1,2 +1,5 @@
 \cleardoublepage
+
+
 # Einleitung
+\epigraphhead[80]{\epigraph{The world is a thing of utter inordinate complexity and richness and strangeness that is absolutely awesome.}{\textit{Douglas Adams}}}

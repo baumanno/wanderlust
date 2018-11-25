@@ -8,13 +8,14 @@ library(glue)
 #' maps every word in the voabulary to an integer ID.
 #'
 #' @param path the path to the file
+#' @param ... additional arguments passed to data.table::fread
 #'
 #' @return a data.table with columns \code{word} and \code{id}
 #' @export
 #'
 #' @examples
 #' wordmap <- read_wordmap("wordmap.txt")
-read_wordmap <- function(path) {
+read_wordmap <- function(path, ...) {
   assert_that(is.readable(path), msg = glue("Given path {path} is not readable"))
   
   column_names <- c("word", "id")
@@ -26,7 +27,8 @@ read_wordmap <- function(path) {
     header = FALSE,
     # first line contains total amount of words
     skip = 1,
-    col.names = column_names
+    col.names = column_names,
+    ...
   )
 }
 
@@ -38,18 +40,20 @@ read_wordmap <- function(path) {
 #' Row numbers correspond to topic numbers returned from the algorithm.
 #'
 #' @param path  the path to <model-name>.phi
+#' @param ... additional arguments passed to data.table::fread
 #'
 #' @return a data.table with ntopic rows and nwords columns
 #' @export
 #'
 #' @examples
 #' dt <- read_word_topic_distribution("model-final.phi")
-read_word_topic_distribution <- function(path) {
+read_word_topic_distribution <- function(path, ...) {
   assert_that(is.readable(path), msg = glue("Given path {path} is not readable"))
   
   fread(file = path,
         sep = " ",
-        header = FALSE)
+        header = FALSE,
+        ...)
 }
 
 #' Returns the top words for a topic model

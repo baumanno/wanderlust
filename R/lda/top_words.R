@@ -86,7 +86,7 @@ top_words <-
            topics = NULL,
            decreasing = TRUE) {
     assert_that(nrow(wtm) > 0, msg = "Input matrix contains no documents")
-    assertthat(ncol(wtm), msg = "Input matrix contains no words")
+    assert_that(ncol(wtm) > 0, msg = "Input matrix contains no words")
     
     assert_that(ncol(wm) == 2, msg = "Wordmap should have exactly two columns")
     assert_that(nrow(wm) == ncol(wtm), msg = "Wordmap should contain as many rows as word-topic-matrix has columns")
@@ -113,7 +113,7 @@ top_words <-
     # we must subtract 1 at the end, as wordmap-indices start at 0, but R's indexing
     # starts at 1
     
-    words <- wordmap[match(top_words_ind, wm$id)$word,]
+    words <- wm[match(top_words_ind, wm$id), ]$word
     
     matrix(words, nrow = nrow(top_words_ind))
   }

@@ -115,15 +115,14 @@ Da ein Nutzer mindestens einen Kommentar verfasst haben muss, um gezählt zu wer
 
 ```{r age-distribution-1, fig.cap="Verteilung der Alterswerte."}
 ggplot(data = res_counted) +
-  geom_bar(mapping = aes(x = active, y = n/sum(n)), stat = "identity", fill = "grey", color = "black", size = .2) +
-  labs(
-    x = "Alter in Monaten",
-    y = "Anteil Nutzer"
+  geom_bar(
+    mapping = aes(x = active, y = n / sum(n)),
+    stat = "identity",
   ) +
   labs(x = "Alter in Monaten",
        y = "Anteil Nutzer") +
   scale_x_continuous(breaks = seq(0, 124, by = 12)) +
-  scale_y_continuous(labels = scales::percent)
+  scale_y_continuous(labels = scales::percent_format(decimal.mark = ",", accuracy = 1))
 ```
 
 Das Histogramm in Abbildung \@ref(fig:age-distribution-1) veranschaulicht das hohe Vorkommen eher kleiner Werte.
@@ -133,10 +132,9 @@ Abbildung \@ref(fig:age-distribution-2) nutzt daher eine logarithmische Darstell
 
 ```{r age-distribution-2, fig.cap="Verteilung der Alterswerte, logarithmische Darstellung."}
 ggplot(data = res_counted) +
-  geom_bar(mapping = aes(x = active, y = n), stat = "identity", fill = "grey", colour = "black", size = .2) +
-  labs(
-    x = "Alter in Monaten",
-    y = "Anzahl Nutzer"
+  geom_bar(
+    mapping = aes(x = active, y = n),
+    stat = "identity",
   ) +
   labs(x = "Alter in Monaten",
        y = "Anzahl Nutzer") +
@@ -152,7 +150,6 @@ Obwohl an dieser Stelle keine Erklärung für diese Beobachtung geliefert werden
 
 Um Nutzer für die weitere Datenanalyse auszuwählen, wurden zwei Kriterien festgelegt.
 Zum einen sollte ein Nutzer über einen ausreichend langen Zeitraum hinweg aktiv sein.
-Da diese Arbeit Interaktionsgraphen analysiert, sollten di
 Hierdurch wird sichergestellt, dass zeitliche Verläufe möglichst keine Lücken enthalten und genügend Daten vorliegen, um Trends zu identifizieren.
 Zum anderen sollte der Nutzer ein Mindestmaß an Interaktionen pro Monat aufweisen, damit Aussagen sowohl über seine thematische Affinität als auch die sozialen Kreise möglich sind, in denen er sich bewegt.
 

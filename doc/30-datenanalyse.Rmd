@@ -249,7 +249,9 @@ In diesem Fall könnte der Grund für einen 403-Fehler auf mangelnde Zugriffsrec
 
 Die Titel der `r fmt(length(subreddits))` erfolgreich abgerufenen Beiträge wurden konkateniert und zusammen mit dem Namen des Subreddits gespeichert.
 Jedes Subreddit entspricht damit einem Dokument, dessen Inhalt die Titel der Top 50 Beiträge bilden.
-Diese Aufstellung diente in der Folge dem LDA-Algorithmus als Eingabe.
+Die Inhalte wurden in Kleinschreibung umgewandelt und um Satzzeichen und Ziffern bereinigt; redundante Leerzeichen wurden entfernt.
+Zudem wurden Dokumente verworfen, deren Inhalt weniger als 500 Zeichen umfasste.
+Die so erhaltene Sammlung an Dokumenten diente dem LDA-Algorithmus als Eingabe.
 
 Wegen der hohen Anzahl an Dokumenten wurde wurde eine effiziente Implementierung des LDA-Algorithmus benötigt.
 Die Wahl fiel dabei auf "GLDA", eine "verbesserte Version" [@Lu2013] der "GibbsLDA++"-Implementierung [@Phan2007], welche sich die hohe Rechenleistung moderner Grafikkarten zunutze macht.

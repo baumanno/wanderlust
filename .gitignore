@@ -49,3 +49,6 @@ data/lda/*
 # ignore backup files
 *.bak
 *.sav
+
+# ignore bookdown caches
+_bookdown_files

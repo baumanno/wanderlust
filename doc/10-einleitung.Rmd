@@ -1,5 +1,12 @@
 \cleardoublepage
 
-
 # Einleitung
-\epigraphhead[80]{\epigraph{The world is a thing of utter inordinate complexity and richness and strangeness that is absolutely awesome.}{\textit{Douglas Adams}}}
+\epigraphhead[50]{\epigraph{\textit{The world is a thing of utter inordinate complexity and richness and strangeness that is absolutely awesome.}}{\textsc{Douglas Adams}}}
+\vspace{1.5cm}
+
+Diese Antwort gab der Schriftsteller seinem Freund Richard Dawkins auf die Frage, was an der Wissenschaft sein Blut so richtig in Wallung bringe [@Dawkins2004, S. 170].
+Diese Trias -- komplex, reichhaltig, seltsam -- aufzubrechen, haben sich die verschiedenen wissenschaftlichen Fakultäten zum Ziel gemacht.
+Die Wissenschaft versucht mit den ihr zur Verfügung stehenden Mitteln ja stets, die komplexen Verhältnisse zu simplifizieren, zu entwirren;
+die reichhaltigen auszudünnen, auf das Wesentliche zu destillieren; und die seltsamen zu verstehen und ihnen Sinn zu geben.
+
+Dies trifft auch auf die Soziologie zu, die sich die Beschreibung der Fülle (zwischen-)menschlicher Beziehungen zum Ziel gemacht hat.

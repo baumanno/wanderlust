@@ -1,0 +1,26 @@
+\cleardoublepage
+
+# (PART\*) Anhang {-}
+# (APPENDIX) Anhang {-}
+
+# Häufigste Wörter je Subreddit
+
+(ref:app-top-words-lab) Charakteristische Wörter der größten Topics.
+Aufgeführt sind jeweils die Topic-ID, die Anzahl an zugeordneten Subreddits ($n$, mit der Einschränkung $n \ge 500$) sowie die 25 häufigsten Wörter in
+dem jeweiligen Topic.
+```{r app-top-words-tab}
+
+top_words <- read.csv("../data/lda/largest_topics_top_words.csv")
+
+knitr::kable(
+  top_words,
+  longtable = TRUE,
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  align = c("c", "r", " >{\\raggedright\\arraybackslash}p{\\textwidth}" ),
+  caption = "(ref:app-top-words-lab)"
+)
+```
+
+
+\cleardoublepage

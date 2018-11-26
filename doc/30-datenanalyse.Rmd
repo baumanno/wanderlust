@@ -153,88 +153,234 @@ Zum einen sollte ein Nutzer über einen ausreichend langen Zeitraum hinweg aktiv
 Hierdurch wird sichergestellt, dass zeitliche Verläufe möglichst keine Lücken enthalten und genügend Daten vorliegen, um Trends zu identifizieren.
 Zum anderen sollte der Nutzer ein Mindestmaß an Interaktionen pro Monat aufweisen, damit Aussagen sowohl über seine thematische Affinität als auch die sozialen Kreise möglich sind, in denen er sich bewegt.
 
-Für die Analyse treffen wir eine Zufallsauswahl aus den ältesten 1000 Usern.
-Dadurch stellen wir sicher, dass wir User über einen genügend langen Zeitraum beobachten können. Das folgende Histogramm zeigt die Verteilung dieses Ausschnitts aus dem Long Tail.
+Um dem zeitlichen Kriterium zu genügen wird eine zufällige Auswahl aus den ältesten `r fmt(10000)` Nutzern getroffen.
+Indem nur Nutzer einbezogen werden, die über die gesamten 124 Monate hinweg mindestens 50 Kommentare pro Monat erstellt haben, wird der Datensatz weiter gefiltert und dem Volumen-Kriterium entsprochen.
+Das Histogramm in Abbildung \@ref(fig:sample-users-hist) zeigt die zugehörige Verteilung der Altersgruppen nachdem die beiden Einschränkungen vorgenommen wurden.
 
-### Topic-Modelling
+```{r sample-users}
+thresh_size <- 10000
+thresh_posts <- 50
 
-Für die Berechnung des Topic-Modells wurden für eine Auswahl an Subreddits die Titel von 50 Beiträgen aus der *Top*-Kategorie 
+# cut off the `thresh_size` oldest users
+top_age <- res[order(res$active, decreasing = TRUE)[1:thresh_size], ]
 
-Für jeden Kommentar im Datensatz wurde festgehalten, in welchem Subreddit er erstellt wurde.
-Kommentare, deren Schlüssel `author` den Wert `[deleted]` enthielten, wurden dabei übersprungen; Reddit nutzt diesen Wert, um gelöschte Inhalte zu kennzeichnen.
+min_age_in_sample <- min(top_age$active)
+date_range <-
+  seq.Date(
+    from = as.Date("2007-11-01"),
+    to = as.Date("2018-02-01"),
+    by = "1 month"
+  )
+
+if (!(exists("total_posts") && nrow(total_posts) > 0)) {
+  con <-
+    dbConnect(
+      RSQLite::SQLite(),
+      "/run/media/oliver/Elements SE/posts_per_month_and_totals.db"
+    )
+  
+  total_posts <-
+    dbGetQuery(
+      con,
+      glue_sql(
+        "SELECT * FROM posts ORDER BY months_active DESC LIMIT {thresh_size}",
+        .con = con
+      )
+    )
+  
+  dbDisconnect(con)
+}
+
+top_active_users <-
+  left_join(top_age, total_posts, by = c("author" = "username")) %>%
+  filter(total_count / active >= thresh_posts) %>%
+  count(active)
+```
+
+```{r sample-users-hist, fig.cap="Altersverteilung nach Einschränkungen."}
+top_active_users %>%
+  ggplot() +
+  geom_bar(
+    mapping = aes(x = active, y = n),
+    stat = "identity",
+  ) +
+  labs(
+    x = "Alter in Monaten",
+    y = "Anzahl Nutzer"
+  )
+```
+
+Wegen der Auswahl der `r fmt(thresh_size)` ältesten Nutzer ist die erste, "jüngste" Säule nicht vollständig gefüllt.
+Das Mindestalter in dieser neuen Verteilung liegt bei `r min_age_in_sample` Monaten.
+Dies entpricht einer Überschneidung zu `r round(min_age_in_sample / length(date_range) * 100, 2)`% mit dem gesamten Untersuchungszeitraum von 124 Monaten.
+
+### Topic-Modelle
+
+Für alle Nutzer, die über dem Durchschnittsalter von `r round(subset(summary_age, TRUE, "arithm. Mittel"), 2)` Monaten liegen, wurde festgehalten, in welchen Subreddits sie kommentiert hatten.
+Durch diese Altersbeschränkung wird verhindert, dass Subreddits in das Topic-Modell einbezogen werden, die ausschließlich von Nutzern aufgesucht werden, die die Plattform nach kurzer Aktivität verlassen.
+
+```{r sub-topic-mapping}
+library("R.utils")
+library("tidyverse")
+nsubs <- countLines("../data/subreddits/subreddits_unique.txt")
+
+subreddits <- readLines("../data/lda/the_subreddits.dat")
+# first line contains total count of subreddits
+subreddits <- subreddits[-1]
+
+topics <- readLines("../data/lda/model-final.theta") %>% 
+  str_split(" ") %>% 
+  map_int(which.max)
+
+subreddit_topic_mapping <- tibble(sub = subreddits, topic = factor(topics))
+
+```
+
+Für die so erhaltenen `r fmt(nsubs)` Subreddits wurden über die Reddit-API jeweils maximal 50 Beiträge aus dem Listing "Top" abgerufen.
+Diese Sortierung liefert Beiträge mit dem besten Score, also der Differenz aus Up- und Downvotes [@RedditSrc].
+In der Folge erhält man so diejenigen Beiträge, die von der Community am besten bewertet wurden.
+In dieser Arbeit wird davon ausgegangen, dass ein Beitrag mit hohem Score auch repräsentativ für die Inhalte der Community ist.
+
+Beim Abrufen der Top-Listings über die Reddit-API traten zum Teil zwei Arten von HTTP-Fehlern auf: "403 Forbidden" sowie "404 Not found".
+Da keine weiteren Informationen zu den Fehlern übermittelt wurden, können nur Vermutungen über deren Ursache angestellt werden.
+Da Listings auf Subreddit- und nicht auf Beitragsebene abgerufen werden, ist ein Fehler immer im Kontext des Zugriffs auf eine Community zu verstehen.
+In diesem Fall könnte der Grund für einen 403-Fehler auf mangelnde Zugriffsrechte auf das Subreddit zurückzuführen sein, sprich: nur Mitglieder dürfen Beiträge lesen und schreiben, die Community ist privat.
+Ähnlich ist ein 404-Fehler zu interpretieren: obwohl das Subreddit im Datensatz enthalten ist, kann es zum gegenwärtigen Zeitpunkt nicht abgerufen werden; aller Voraussicht nach wurde es gesperrt oder gelöscht.
+
+Die Titel der `r fmt(length(subreddits))` erfolgreich abgerufenen Beiträge wurden konkateniert und zusammen mit dem Namen des Subreddits gespeichert.
+Jedes Subreddit entspricht damit einem Dokument, dessen Inhalt die Titel der Top 50 Beiträge bilden.
+Diese Aufstellung diente in der Folge dem LDA-Algorithmus als Eingabe.
+
+Wegen der hohen Anzahl an Dokumenten wurde wurde eine effiziente Implementierung des LDA-Algorithmus benötigt.
+Die Wahl fiel dabei auf "GLDA", eine "verbesserte Version" [@Lu2013] der "GibbsLDA++"-Implementierung [@Phan2007], welche sich die hohe Rechenleistung moderner Grafikkarten zunutze macht.
+Die Start-Parameter des Algorithmus führt Tabelle \@ref(tab:lda-params) auf.
+
+```{r lda-params}
+knitr::kable(
+  tribble(~ Parameter, ~ Wert,
+          #-----------------#
+          "$\\alpha$", round(0.195312, 3),
+          "$\\beta$", 0.100000,
+          "k", "256",
+          "niter", "2000"),
+  escape = FALSE,
+  align = c("c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "Startparameter des LDA-Algorithmus"
+)
+```
+
+Da sich eine Evaluation verschiedener *k*-Parameter wegen der hohen Zahl an Dokumenten als schwierig herausstellte, wurde die Zahl der zu bestimmenden Topics auf 256 festgelegt.
+Unklar ist, ob diese Zahl in der Nähe eines Optimums liegt; dies festzustellen wird jedoch nicht Gegenstand dieser Arbeit sein.
+
+Der LDA-Algorithmus arbeitet mit der Annahme, jedes Dokument setze sich aus verschiedenen (latenten) Themen zusammen.
+Das Ergebnis liefert daher für jedes Dokument eine Wahrscheinlichlichkeitsverteilung über die zu bestimmenden Topics.
+Für die weitere Betrachtung wird daraus eine 1:1-Zuordnung abgeleitet, indem für jedes Dokument das Topic als maßgebend angesehen wurde, dem der Algorithmus die höchste Wahrscheinlichkeit zugewiesen hatte.
+
+An dieser Stelle sei darauf hingewiesen, dass die Topic-IDs keine natürliche Ordnung besitzen sondern lediglich eine Form von Bezeichner darstellen.
+Eine inhaltliche Analyse der Topics würde es durchaus ermöglichen, diesen Topics semantisch wertvolle Bezeichner zuzuweisen, etwa "Politik" oder "Sport".
+Für die Zwecke dieser Arbeit ist dies jedoch nicht weiter von Bedeutung.
+
+```{r topic-assignments}
+sub_topic_hist <-
+  subreddit_topic_mapping %>% 
+  count(topic) %>% 
+  mutate(rel = n/sum(n))
+
+sub_topic_summary <-
+  sub_topic_hist %>% 
+  summarise(
+    N = n(),
+    "arithm. Mittel" = mean(n),
+    SD = sd(n),
+    Min = min(n),
+    Q1 = quantile(n, .25),
+    Median = median(n),
+    Q3 = quantile(n, .75),
+    Max = max(n)
+  )
+```
+
+(ref:topic-assignments-total-lab) Anzahl der Zuordnungen von Subreddits zu Topics. Die Gesamtzahl aller kategorisierten Topics beträgt `r fmt(length(subreddits))`, die Zahl der Topics 256. Aus Gründen der besseren Darstellung wurde auf eine Auszeichnung der x-Achse verzichtet; die Sortierung erfolgt absteigend nach Anzahl der Subreddits.
+```{r topic-assignments-total, fig.cap="(ref:topic-assignments-total-lab)"}
+sub_topic_hist %>% 
+ggplot() +
+  geom_col(
+    aes(reorder(topic, -n), n)
+    
+  ) +
+  labs(
+    x = "Topic",
+    y = "Anzahl Subreddits"
+  ) +
+  scale_y_log10(labels = scales::comma_format(big.mark = ".", decimal.mark = ",")) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
+  )
+```
+
+
+Abbildung \@ref(fig:topic-assignments-total) stellt diese Zuordnung von Subreddits zu Topics als Histogramm dar.
+Jede Klasse entlang der x-Achse entspricht einem der 256 Topics, die der LDA-Algorithmus identifizieren sollte.
+Die y-Achse ist logarithmisch skaliert und notiert die Anzahl an Subreddits, die dem jeweiligen Topic zugewiesen wurden.
+Wie bereits zuvor beim Alter der Nutzer zeigt diese Darstellung eine Verteilung mit einem Long Tail: auf einen großen Teil der Topics entfallen vergleichsweise wenige Subreddits.
+
+(ref:topic-assignments-summary-lab) Kennzahlen der Topic-Verteilung
+```{r topic-assignments-summary}
+knitr::kable(
+  sub_topic_summary,
+  digits = 2,
+  align = c("l", "c", "c", "c", "c", "c", "c", "c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "(ref:topic-assignments-summary-lab)"
+)
+```
+Die Kennzahlen dieser Verteilung in Tabelle \@ref(tab:topic-assignments-summary) verdeutlichen dies: 25% der Topics enthalten weniger als sechs bzw. mehr als 97 Subreddits, dem größten Topic sind über 45.000, dem oder den kleinsten nur ein einzelnes Subreddit zugewiesen.
+
+
+(ref:topic-assignments-top-lab) Anzahl der Zuordnungen von Subreddits zu Topics. Dargestellt sind alle Topics, denen 500 oder mehr Subreddits zugeordnet wurden. Die Sortierung erfolgt analog zu Abbildung \@ref(fig:topic-assignments-total) nach Anzahl Zuordnungen in absteigender Folge.
+```{r topic-assignments-top, fig.cap="(ref:topic-assignments-top-lab)", fig.height=5.5}
+large_topics <- subset(sub_topic_hist, n >= 500) 
+
+large_topics %>% 
+ggplot() +
+  geom_point(
+    mapping = aes(reorder(topic, n), n)
+  ) +
+  labs(
+    x = "Topic",
+    y = "Anzahl Subreddits"
+  ) +
+  scale_y_continuous(labels = scales::comma_format(big.mark = ".", decimal.mark = ","), limits = c(500, 50000), breaks = c(500, 10000, 20000, 30000, 40000, 50000)) +
+  coord_flip()
+```
+
+```{r top-words}
+# this chunk is used merely to generate the top 25 words in the largest topics.
+# this data will be used later on in the appendix to generate a table containing the topics and words.
+large_topics <- large_topics[order(large_topics$n, decreasing = TRUE), ]
+
+top_words <- read.csv("../data/lda/top_words.csv")
+top_words <- top_words[as.integer(large_topics$topic), ]
+top_words <- top_words[, 1:25]
+
+top_words_pretty <- tibble(
+  Topic = large_topics$topic,
+  n = large_topics$n,
+  Wörter = apply(top_words, 1, paste, collapse = ", ")
+)
+
+write.csv(x = top_words_pretty, file = "../data/lda/largest_topics_top_words.csv", row.names = FALSE)
+
+```
+
 
 ### Ego-Netzwerke und soziale Netzwerkanalyse
 
 ## Ergebnisse
-
-### Das Alter von Usern
-
-In den vorangehenden Kapiteln wurde erläutert, welche Daten gesammelt wurden
-und wie eine erste Vorauswahl getroffen wurde. Die detaillierte Analyse soll
-Gegenstand dieses Kapitels sein.
-
-#### Virtuelles Alter {#virtage}
-
-Nach der Vorauswahl der Daten ergibt sich ein Analysezeitraum von 124 Monaten.
-Da nicht alle Nutzer über diesen gesamten Zeitraum hinweg aktiv gewesen sein
-werden, ist eine weitere Auswahl nöitg. Zudem ist es denkbar, dass ein Teil der
-Nutzer nach nur wenigen Monaten die Plattform wieder verlassen hat.
-
-Zur Bestimmung des virtuellen "Alters" der Nutzer, also wie lange
-sie sich aktiv an Reddit-Communities beteiligen, wurde für jeden Monat erfasst,
-in welchen Subreddits sie aktiv sind und wieviele Kommentare sie dort
-verfassen. Diese monatlichen Daten wurden dann über den gesamten Zeitraum
-aggregiert, sodass am Ende für jeden Nutzer ersichtlich war, in wie vielen
-monatlichen Zusammenfassungen er auftaucht, sprich: wie viele Monate er sich
-aktiv beteiligt hat.
-
-**PLACEHOLDER USER AGES****PLACEHOLDER USER AGES**
-
-Wie in Abbildung~\ref{fig:virt_alter} ersichtlich liegen 75\% der Daten
-unterhalb des Mittelwerts, viele User sind also weniger als 6 Monate auf Reddit
-aktiv. Um sinnvolle Aussagen über die zeitliche Entwicklung treffen zu können,
-werden nur Nutzer betrachtet, die mindestens 6 Monate aktiv waren. Damit
-verbleiben 7~047~535 Nutzer im Datensatz, was etwa 25\% der Gesamtzahl
-entspricht. Abbildung~\ref{fig:virt_alter_geschnitten} zeigt die Verteilung für
-diesen neuen Datensatz.
-
-
-Für diese Nutzer werden die Subreddits erfasst, in denen sie aktiv sind. Über
-die Reddit-API werden zu jedem dieser Subreddits 50 Beiträge aus der
-\textit{Top}-Kategorie abgerufen, welche die höchstbewerteten Posts dieser
-Community auflistet, unabhängig vom Erstellungsdatum des Beitrags. Diese
-Top-Beiträge dienen im weiteren Verlauf dazu, ein Subreddit inhaltlich zu
-charakterisieren; ihre Titel werden einer Topic-Analyse unterzogen.
-
-**PLACEHOLDER USER AGES**
-
-\begin{table}[h]
-    \centering
-    \begin{tabular}{lccccc}
-        \toprule
-        & N & Mittel & Median & Min & Max \\
-        \midrule
-        voller Datensatz & 28~029~500 & 6,665$\pm$12,407 & 2 & 1 & 124 \\
-        mindestens 6 Monate aktiv & 7~047~535 & 21,593$\pm$17,634 & 15 & 6 & 124 \\
-        \bottomrule
-    \end{tabular}
-    \caption{Altersverteilungen}%
-    \label{tab:altersverteilungen}
-\end{table}
-Beim Abrufen der insgesamt 419~616 Subreddits antwortete die Reddit-API in XY
-Fällen mit \glqq{}404 Not Found\grqq{}, und in XY Fällen mit \glqq{}403
-Forbidden\grqq{}. Die genaue Ursache dieser Fehler kann nicht bestimmt werden,
-aber 404 lässt vermuten, dass das Subreddit gelöscht wurde, und 403 deutet auf
-eine zugangsbeschränkte Community hin, die nicht frei einsehbar ist.
-
-
-Wegen eines Programmierfehlers wurden zu 499 Usern nicht die Subreddits
-abgerufen, in die sie gepostet hatten. Eine nachträgliche Analyse ergab, dass
-diese Nutzer im Mittel einen Monat aktiv waren und 1,17 Kommentare verfassten.
-Aufgrund dieser geringen Aktivität wurde keine Nacherfassung der Subreddits
-durchgeführt.
-<!-- select avg(months_active), avg(total_count) from posts where username in (select username from tmp_missing); -->
-
 
 ### Verteilung von Topics
 

@@ -406,8 +406,8 @@ Jason Baumgartner hat als Folge der Veröffentlichung von Gaffney und
 Matias angekündigt, fehlende Kommentare und Beiträge nachträglich zu
 erfassen \autocite{Baumgartner2018}.
 
-\hypertarget{stichprobe-von-nutzern}{%
-\subsubsection{Stichprobe von Nutzern}\label{stichprobe-von-nutzern}}
+\hypertarget{stichprobe}{%
+\subsubsection{Stichprobe von Nutzern}\label{stichprobe}}
 
 Nachdem der Datensatz einer zeitlichen Einschränkung unterworfen wurde,
 müssen Kriterien für die Auswahl von Nutzern herangezogen werden. Dieser
@@ -484,9 +484,8 @@ diese Beobachtung geliefert werden kann, ist es denkbar, dass es einen
 \enquote{harten Kern} von Nutzern gibt, die Reddit seit langer Zeit,
 möglicherweise sogar von Anfang an nutzen, und regelmäßig aktiv sind.
 
-\hypertarget{kriterien-fur-die-stichprobe}{%
-\paragraph{Kriterien für die
-Stichprobe}\label{kriterien-fur-die-stichprobe}}
+\hypertarget{kriterien}{%
+\paragraph{Kriterien für die Stichprobe}\label{kriterien}}
 
 Um Nutzer für die weitere Datenanalyse auszuwählen, wurden zwei
 Kriterien festgelegt. Zum einen sollte ein Nutzer über einen ausreichend
@@ -558,8 +557,8 @@ Jedes Subreddit entspricht damit einem Dokument, dessen Inhalt die Titel
 der Top 50 Beiträge bilden. Die Inhalte wurden in Kleinschreibung
 umgewandelt und um Satzzeichen und Ziffern bereinigt; redundante
 Leerzeichen wurden entfernt. Zudem wurden Dokumente verworfen, deren
-Inhalt weniger als 500 Zeichen umfasste. Diese Aufstellung diente in der
-Folge dem LDA-Algorithmus als Eingabe.
+Inhalt weniger als 500 Zeichen umfasste. Die so erhaltene Sammlung an
+Dokumenten diente dem LDA-Algorithmus als Eingabe.
 
 Wegen der hohen Anzahl an Dokumenten wurde wurde eine effiziente
 Implementierung des LDA-Algorithmus benötigt. Die Wahl fiel dabei auf
@@ -676,9 +675,34 @@ beinahe ausschließlich aus Stoppwörtern bestehen. Da dies keine
 sinnvollen Rückschlüsse auf Nutzerinteressen zulassen, werden bei sie
 der weiteren Analyse zwar aufgeführt, jedoch nicht näher berücksichtigt.
 
-\hypertarget{ego-netzwerke-und-soziale-netzwerkanalyse}{%
-\subsubsection{Ego-Netzwerke und soziale
-Netzwerkanalyse}\label{ego-netzwerke-und-soziale-netzwerkanalyse}}
+\hypertarget{interaktionsgraphen-aus-kommentaren}{%
+\subsubsection{Interaktionsgraphen aus
+Kommentaren}\label{interaktionsgraphen-aus-kommentaren}}
+
+Die Kommentarverläufe von Reddit lassen sich als Interaktionsgraphen
+modellieren. Jeder Knoten in einem solchen Graph stellt einen Akteur in
+einem sozialen Netzwerk dar. Zwischen Akteuren manifestieren sich
+Kanten, wenn sie miteinander interagieren, in diesem Fall in Form von
+Kommentaren auf Reddit. Die Richtung der Kanten gibt dabei an, welcher
+Nutzer den Kommentar verfasst hat (Quelle) bzw. an welchen Nutzer der
+Kommentar gerichtet ist (Senke). Im Datensatz sind Kanten über die
+Beziehung zwischen den \emph{id}- bzw. \emph{parent\_id}-Attributen
+realisiert. Seien dazu \(U, V\) Akteure im sozialen Netzwerk und
+\(K_U, K_V\) von \(U\) resp. \(V\) verfasste Reddit-Kommentare. Zwischen
+\(U\) und \(V\) wird eine gerichtete Kante \((u,v)\) eingefügt, wenn
+gilt: \(K_{U}.parent\_id = K_{V}.id\).
+
+Für jeden wie in Abschnitt \ref{kriterien} beschrieben ausgewählten
+Nutzer werden monatliche Interaktionsgraphen bestimmt. Da diese einen
+zeitlich abgegrenzten Ausschnitt aus dem gesamten sozialen Netzwerk
+eines Nutzers darstellen, werden sie im folgenden auch als
+Snapshot-Graphen oder einfach Snapshots bezeichnet. Da ausgehend von
+einem Nutzer dessen unmittelbare Kontakte erfasst werden, spricht man
+hier zudem von egozentrischen Netzwerken. Dabei ist zu beachten, dass
+abweichend von gängigen Definitionen des Begriffs (etwa \autocite[S.
+42]{Wasserman1994}, \autocite{Wolf2010}) in dieser Arbeit keine
+Strukturen zwischen den Alteri erfasst werden, sondern nur zwischen Ego
+und Alteri.
 
 \hypertarget{ergebnisse}{%
 \subsection{Ergebnisse}\label{ergebnisse}}

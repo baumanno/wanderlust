@@ -17,7 +17,7 @@ knitr::kable(
   longtable = TRUE,
   booktabs = TRUE,
   format.args = list(big.mark = ".", decimal.mark = ","),
-  align = c("c", "r", " >{\\raggedright\\arraybackslash}p{\\textwidth}" ),
+  align = c("c", "r", " >{\\raggedright\\arraybackslash}p{0.8\\textwidth}" ),
   caption = "(ref:app-top-words-lab)"
 )
 ```

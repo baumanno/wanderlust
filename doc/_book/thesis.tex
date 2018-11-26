@@ -79,18 +79,24 @@
 \usepackage{booktabs}
 \usepackage[ngerman,english]{babel} % deutsche Trennregeln, "Inhaltsverzeichnis" etc.
 \usepackage{mathptmx} % Times-Roman-Schrift (auch für mathematische Formeln)
-\usepackage{pdfpages}
-\usepackage{pgf}
-\usepackage{epstopdf}
+% \usepackage{pdfpages}
+% \usepackage{pgf}
+% \usepackage{epstopdf}
 
 \usepackage[labelfont=bf]{caption}
-\usepackage{changepage}
-\usepackage{subcaption}
-\usepackage{hanging}
+% \usepackage{changepage}
+% \usepackage{subcaption}
+% \usepackage{hanging}
+
+\usepackage{array}
+
+\usepackage{epigraph}
+\renewcommand{\epigraphsize}{\small}
+\setlength{\epigraphwidth}{.6\textwidth}
 
 % custom imports
 % multirows für Tabellen
-\usepackage{multirow}
+% \usepackage{multirow}
 % nice quotes
 \usepackage[autostyle=true,german=quotes]{csquotes}
 
@@ -236,6 +242,8 @@ sowie alle benutzten Quellen und Hilfsmittel angegeben habe.
 \hypertarget{einleitung}{%
 \section{Einleitung}\label{einleitung}}
 
+\epigraphhead[80]{\epigraph{The world is a thing of utter inordinate complexity and richness and strangeness that is absolutely awesome.}{\textit{Douglas Adams}}}
+
 \cleardoublepage
 
 \hypertarget{grundlagen-und-verwandte-forschung}{%
@@ -323,7 +331,7 @@ wird.
 \toprule
 Schlüssel & Wert\\
 \midrule
-author & Username des Kommentar-Erstellers\\
+author & Nutzername des Kommentar-Erstellers\\
 id & eindeutige ID des Kommentars\\
 parent\_id & eindeutige ID des Elements, auf das sich der Kommentar bezieht\\
 subreddit & Name des Subreddits, in dem der Kommentar erstellt wurde\\
@@ -384,7 +392,7 @@ sind \autocite{Gaffney2018}.
 Linie) stellen den gleitenden Mittelwert fehlender Kommentare in Prozent
 dar, die mittelblauen Punkte (mittlere Linie) den prozentualen Anteil
 fehlender Kommentare, und die dunkelblauen Kreuze (untere Linie) die
-kumlierte Gesamtzahl fehlender Kommentare \autocite{Gaffney2018}}\label{fig:gf4}
+kumulierte Gesamtzahl fehlender Kommentare \autocite{Gaffney2018}}\label{fig:gf4}
 \end{figure}
 
 In Abbildung \ref{fig:gf4} stellen die mittelblauen Punkte den Anteil
@@ -415,13 +423,13 @@ Zeitraum von 124 Monaten etwa 3,6 Milliarden Kommentare vor, verfasst
 von ca. 28 Millionen Nutzern. Für jeden dieser Nutzer wurde bestimmt, in
 wie vielen Monaten er insgesamt im Datensatz enthalten ist; nachfolgend
 wird dies als \enquote{virtuelles Alter} oder schlicht \enquote{Alter}
-des Users bezeichnet.
+des Nutzers bezeichnet.
 
 
 
 \begin{table}
 
-\caption{\label{tab:summary-age-tab}Zusammenfassung der Altersverteilung.}
+\caption{\label{tab:summary-age-tab}Kennzahlen der Altersverteilung.}
 \centering
 \begin{tabular}[t]{lccccccc}
 \toprule
@@ -436,9 +444,9 @@ Tabelle \ref{tab:summary-age-tab} bietet eine Übersicht über die
 Verteilung der Alterswerte. 50\% der Nutzer sind zwischen einem und
 sechs Monaten auf Reddit aktiv (unteres resp. oberes Quartil), und 50\%
 sind in zwei Monaten oder weniger enthalten (Median). Der arithmetische
-Altersdurchschnitt liegt bei etwa sieben Monaten. Da ein User mindestens
-einen Kommentar verfasst haben muss, um gezählt zu werden, liegt das
-minimale Alter bei einem Monat.
+Altersdurchschnitt liegt bei etwa sieben Monaten. Da ein Nutzer
+mindestens einen Kommentar verfasst haben muss, um gezählt zu werden,
+liegt das minimale Alter bei einem Monat.
 
 \begin{figure}
 
@@ -473,7 +481,7 @@ einmal deutlich mehr Nutzer als noch auf die vorhergehenden Gruppen. In
 der Tat beträgt der Unterschied zwischen den beiden letzten
 Altersgruppen 382 Nutzer Obwohl an dieser Stelle keine Erklärung für
 diese Beobachtung geliefert werden kann, ist es denkbar, dass es einen
-\enquote{harten Kern} von Usern gibt, die Reddit seit langer Zeit,
+\enquote{harten Kern} von Nutzern gibt, die Reddit seit langer Zeit,
 möglicherweise sogar von Anfang an nutzen, und regelmäßig aktiv sind.
 
 \hypertarget{kriterien-fur-die-stichprobe}{%
@@ -482,27 +490,185 @@ Stichprobe}\label{kriterien-fur-die-stichprobe}}
 
 Um Nutzer für die weitere Datenanalyse auszuwählen, wurden zwei
 Kriterien festgelegt. Zum einen sollte ein Nutzer über einen ausreichend
-langen Zeitraum hinweg aktiv sein. Damit wird sichergestellt, dass
-zeitliche Verläufe keine Lücken aufweisen und genügend Daten vorliegen,
-um Trends zu identifizieren. Zum anderen sollte der User ein Mindestmaß
-an Interaktionen pro Monat hervorbringen. Da diese Arbeit
-Interaktionsgraphen analysiert, sollten di
+langen Zeitraum hinweg aktiv sein. Hierdurch wird sichergestellt, dass
+zeitliche Verläufe möglichst keine Lücken enthalten und genügend Daten
+vorliegen, um Trends zu identifizieren. Zum anderen sollte der Nutzer
+ein Mindestmaß an Interaktionen pro Monat aufweisen, damit Aussagen
+sowohl über seine thematische Affinität als auch die sozialen Kreise
+möglich sind, in denen er sich bewegt.
 
-Für die Analyse treffen wir eine Zufallsauswahl aus den ältesten 1000
-Usern. Dadurch stellen wir sicher, dass wir User über einen genügend
-langen Zeitraum beobachten können. Das folgende Histogramm zeigt die
-Verteilung dieses Ausschnitts aus dem Long Tail.
+Um dem zeitlichen Kriterium zu genügen wird eine zufällige Auswahl aus
+den ältesten 10.000 Nutzern getroffen. Indem nur Nutzer einbezogen
+werden, die über die gesamten 124 Monate hinweg mindestens 50 Kommentare
+pro Monat erstellt haben, wird der Datensatz weiter gefiltert und dem
+Volumen-Kriterium entsprochen. Das Histogramm in Abbildung
+\ref{fig:sample-users-hist} zeigt die zugehörige Verteilung der
+Altersgruppen nachdem die beiden Einschränkungen vorgenommen wurden.
 
-\hypertarget{topic-modelling}{%
-\subsubsection{Topic-Modelling}\label{topic-modelling}}
+\begin{figure}
 
-Für die Berechnung des Topic-Modells wurden für eine Auswahl an
-Subreddits die Titel von 50 Beiträgen aus der \emph{Top}-Kategorie
+{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/sample-users-hist-1} 
 
-Für jeden Kommentar im Datensatz wurde festgehalten, in welchem
-Subreddit er erstellt wurde. Kommentare, deren Schlüssel \texttt{author}
-den Wert \texttt{{[}deleted{]}} enthielten, wurden dabei übersprungen;
-Reddit nutzt diesen Wert, um gelöschte Inhalte zu kennzeichnen.
+}
+
+\caption{Altersverteilung nach Einschränkungen.}\label{fig:sample-users-hist}
+\end{figure}
+
+Wegen der Auswahl der 10.000 ältesten Nutzer ist die erste,
+\enquote{jüngste} Säule nicht vollständig gefüllt. Das Mindestalter in
+dieser neuen Verteilung liegt bei 103 Monaten. Dies entpricht einer
+Überschneidung zu 83.06\% mit dem gesamten Untersuchungszeitraum von 124
+Monaten.
+
+\hypertarget{topic-modelle-1}{%
+\subsubsection{Topic-Modelle}\label{topic-modelle-1}}
+
+Für alle Nutzer, die über dem Durchschnittsalter von 6.67 Monaten
+liegen, wurde festgehalten, in welchen Subreddits sie kommentiert
+hatten. Durch diese Altersbeschränkung wird verhindert, dass Subreddits
+in das Topic-Modell einbezogen werden, die ausschließlich von Nutzern
+aufgesucht werden, die die Plattform nach kurzer Aktivität verlassen.
+
+Für die so erhaltenen 419.616 Subreddits wurden über die Reddit-API
+jeweils maximal 50 Beiträge aus dem Listing \enquote{Top} abgerufen.
+Diese Sortierung liefert Beiträge mit dem besten Score, also der
+Differenz aus Up- und Downvotes \autocite{RedditSrc}. In der Folge
+erhält man so diejenigen Beiträge, die von der Community am besten
+bewertet wurden. In dieser Arbeit wird davon ausgegangen, dass ein
+Beitrag mit hohem Score auch repräsentativ für die Inhalte der Community
+ist.
+
+Beim Abrufen der Top-Listings über die Reddit-API traten zum Teil zwei
+Arten von HTTP-Fehlern auf: \enquote{403 Forbidden} sowie \enquote{404
+Not found}. Da keine weiteren Informationen zu den Fehlern übermittelt
+wurden, können nur Vermutungen über deren Ursache angestellt werden. Da
+Listings auf Subreddit- und nicht auf Beitragsebene abgerufen werden,
+ist ein Fehler immer im Kontext des Zugriffs auf eine Community zu
+verstehen. In diesem Fall könnte der Grund für einen 403-Fehler auf
+mangelnde Zugriffsrechte auf das Subreddit zurückzuführen sein, sprich:
+nur Mitglieder dürfen Beiträge lesen und schreiben, die Community ist
+privat. Ähnlich ist ein 404-Fehler zu interpretieren: obwohl das
+Subreddit im Datensatz enthalten ist, kann es zum gegenwärtigen
+Zeitpunkt nicht abgerufen werden; aller Voraussicht nach wurde es
+gesperrt oder gelöscht.
+
+Die Titel der 207.056 erfolgreich abgerufenen Beiträge wurden
+konkateniert und zusammen mit dem Namen des Subreddits gespeichert.
+Jedes Subreddit entspricht damit einem Dokument, dessen Inhalt die Titel
+der Top 50 Beiträge bilden. Diese Aufstellung diente in der Folge dem
+LDA-Algorithmus als Eingabe.
+
+Wegen der hohen Anzahl an Dokumenten wurde wurde eine effiziente
+Implementierung des LDA-Algorithmus benötigt. Die Wahl fiel dabei auf
+\enquote{GLDA}, eine \enquote{verbesserte Version} \autocite{Lu2013} der
+\enquote{GibbsLDA++}-Implementierung \autocite{Phan2007}, welche sich
+die hohe Rechenleistung moderner Grafikkarten zunutze macht. Die
+Start-Parameter des Algorithmus führt Tabelle \ref{tab:lda-params} auf.
+
+\begin{table}
+
+\caption{\label{tab:lda-params}Startparameter des LDA-Algorithmus}
+\centering
+\begin{tabular}[t]{cc}
+\toprule
+Parameter & Wert\\
+\midrule
+$\alpha$ & 0.195\\
+$\beta$ & 0.1\\
+k & 256\\
+niter & 2000\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Da sich eine Evaluation verschiedener \emph{k}-Parameter wegen der hohen
+Zahl an Dokumenten als schwierig herausstellte, wurde die Zahl der zu
+bestimmenden Topics auf 256 festgelegt. Unklar ist, ob diese Zahl in der
+Nähe eines Optimums liegt; dies festzustellen wird jedoch nicht
+Gegenstand dieser Arbeit sein.
+
+Der LDA-Algorithmus arbeitet mit der Annahme, jedes Dokument setze sich
+aus verschiedenen (latenten) Themen zusammen. Das Ergebnis liefert daher
+für jedes Dokument eine Wahrscheinlichlichkeitsverteilung über die zu
+bestimmenden Topics. Für die weitere Betrachtung wird daraus eine
+1:1-Zuordnung abgeleitet, indem für jedes Dokument das Topic als
+maßgebend angesehen wurde, dem der Algorithmus die höchste
+Wahrscheinlichkeit zugewiesen hatte.
+
+An dieser Stelle sei darauf hingewiesen, dass die Topic-IDs keine
+natürliche Ordnung besitzen sondern lediglich eine Form von Bezeichner
+darstellen. Eine inhaltliche Analyse der Topics würde es durchaus
+ermöglichen, diesen Topics semantisch wertvolle Bezeichner zuzuweisen,
+etwa \enquote{Politik} oder \enquote{Sport}. Für die Zwecke dieser
+Arbeit ist dies jedoch nicht weiter von Bedeutung.
+
+
+
+
+
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/topic-assignments-total-1} 
+
+}
+
+\caption{Anzahl der Zuordnungen von Subreddits
+zu Topics. Die Gesamtzahl aller kategorisierten Topics beträgt 207.056,
+die Zahl der Topics 256. Aus Gründen der besseren Darstellung wurde auf
+eine Auszeichnung der x-Achse verzichtet; die Sortierung erfolgt
+absteigend nach Anzahl der Subreddits.}\label{fig:topic-assignments-total}
+\end{figure}
+
+Abbildung \ref{fig:topic-assignments-total} stellt diese Zuordnung von
+Subreddits zu Topics als Histogramm dar. Jede Klasse entlang der x-Achse
+entspricht einem der 256 Topics, die der LDA-Algorithmus identifizieren
+sollte. Die y-Achse ist logarithmisch skaliert und notiert die Anzahl an
+Subreddits, die dem jeweiligen Topic zugewiesen wurden. Wie bereits
+zuvor beim Alter der Nutzer zeigt diese Darstellung eine Verteilung mit
+einem Long Tail: auf einen großen Teil der Topics entfallen
+vergleichsweise wenige Subreddits.
+
+
+
+\begin{table}
+
+\caption{\label{tab:topic-assignments-summary}Kennzahlen der Topic-Verteilung}
+\centering
+\begin{tabular}[t]{lccccccc}
+\toprule
+N & arithm. Mittel & SD & Min & Q1 & Median & Q3 & Max\\
+\midrule
+256 & 808,81 & 4.040,09 & 1 & 6 & 9 & 97,5 & 45.577\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Die Kennzahlen dieser Verteilung in Tabelle
+\ref{tab:topic-assignments-summary} verdeutlichen dies: 25\% der Topics
+enthalten weniger als sechs bzw. mehr als 97 Subreddits, dem größten
+Topic sind über 45.000, dem oder den kleinsten nur ein einzelnes
+Subreddit zugewiesen.
+
+
+
+
+
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/topic-assignments-top-1} 
+
+}
+
+\caption{Anzahl der Zuordnungen von Subreddits zu
+Topics. Dargestellt sind alle Topics, denen 500 oder mehr Subreddits
+zugeordnet wurden. Die Sortierung erfolgt analog zu Abbildung
+\ref{fig:topic-assignments-total} nach Anzahl Zuordnungen in
+absteigender Folge.}\label{fig:topic-assignments-top}
+\end{figure}
 
 \hypertarget{ego-netzwerke-und-soziale-netzwerkanalyse}{%
 \subsubsection{Ego-Netzwerke und soziale
@@ -510,79 +676,6 @@ Netzwerkanalyse}\label{ego-netzwerke-und-soziale-netzwerkanalyse}}
 
 \hypertarget{ergebnisse}{%
 \subsection{Ergebnisse}\label{ergebnisse}}
-
-\hypertarget{das-alter-von-usern}{%
-\subsubsection{Das Alter von Usern}\label{das-alter-von-usern}}
-
-In den vorangehenden Kapiteln wurde erläutert, welche Daten gesammelt
-wurden und wie eine erste Vorauswahl getroffen wurde. Die detaillierte
-Analyse soll Gegenstand dieses Kapitels sein.
-
-\hypertarget{virtage}{%
-\paragraph{Virtuelles Alter}\label{virtage}}
-
-Nach der Vorauswahl der Daten ergibt sich ein Analysezeitraum von 124
-Monaten. Da nicht alle Nutzer über diesen gesamten Zeitraum hinweg aktiv
-gewesen sein werden, ist eine weitere Auswahl nöitg. Zudem ist es
-denkbar, dass ein Teil der Nutzer nach nur wenigen Monaten die Plattform
-wieder verlassen hat.
-
-Zur Bestimmung des virtuellen \enquote{Alters} der Nutzer, also wie
-lange sie sich aktiv an Reddit-Communities beteiligen, wurde für jeden
-Monat erfasst, in welchen Subreddits sie aktiv sind und wieviele
-Kommentare sie dort verfassen. Diese monatlichen Daten wurden dann über
-den gesamten Zeitraum aggregiert, sodass am Ende für jeden Nutzer
-ersichtlich war, in wie vielen monatlichen Zusammenfassungen er
-auftaucht, sprich: wie viele Monate er sich aktiv beteiligt hat.
-
-\textbf{PLACEHOLDER USER AGESPLACEHOLDER USER AGES}
-
-Wie in Abbildung\textasciitilde{}\ref{fig:virt_alter} ersichtlich liegen
-75\% der Daten unterhalb des Mittelwerts, viele User sind also weniger
-als 6 Monate auf Reddit aktiv. Um sinnvolle Aussagen über die zeitliche
-Entwicklung treffen zu können, werden nur Nutzer betrachtet, die
-mindestens 6 Monate aktiv waren. Damit verbleiben
-7\textsubscript{047}535 Nutzer im Datensatz, was etwa 25\% der
-Gesamtzahl entspricht.
-Abbildung\textasciitilde{}\ref{fig:virt_alter_geschnitten} zeigt die
-Verteilung für diesen neuen Datensatz.
-
-Für diese Nutzer werden die Subreddits erfasst, in denen sie aktiv sind.
-Über die Reddit-API werden zu jedem dieser Subreddits 50 Beiträge aus
-der \textit{Top}-Kategorie abgerufen, welche die höchstbewerteten Posts
-dieser Community auflistet, unabhängig vom Erstellungsdatum des
-Beitrags. Diese Top-Beiträge dienen im weiteren Verlauf dazu, ein
-Subreddit inhaltlich zu charakterisieren; ihre Titel werden einer
-Topic-Analyse unterzogen.
-
-\textbf{PLACEHOLDER USER AGES}
-
-\begin{table}[h]
-    \centering
-    \begin{tabular}{lccccc}
-        \toprule
-        & N & Mittel & Median & Min & Max \\
-        \midrule
-        voller Datensatz & 28~029~500 & 6,665$\pm$12,407 & 2 & 1 & 124 \\
-        mindestens 6 Monate aktiv & 7~047~535 & 21,593$\pm$17,634 & 15 & 6 & 124 \\
-        \bottomrule
-    \end{tabular}
-    \caption{Altersverteilungen}%
-    \label{tab:altersverteilungen}
-\end{table}
-
-Beim Abrufen der insgesamt 419\textasciitilde{}616 Subreddits antwortete
-die Reddit-API in XY Fällen mit \glqq{}404 Not Found\grqq{}, und in XY
-Fällen mit \glqq{}403 Forbidden\grqq{}. Die genaue Ursache dieser Fehler
-kann nicht bestimmt werden, aber 404 lässt vermuten, dass das Subreddit
-gelöscht wurde, und 403 deutet auf eine zugangsbeschränkte Community
-hin, die nicht frei einsehbar ist.
-
-Wegen eines Programmierfehlers wurden zu 499 Usern nicht die Subreddits
-abgerufen, in die sie gepostet hatten. Eine nachträgliche Analyse ergab,
-dass diese Nutzer im Mittel einen Monat aktiv waren und 1,17 Kommentare
-verfassten. Aufgrund dieser geringen Aktivität wurde keine Nacherfassung
-der Subreddits durchgeführt.
 
 \hypertarget{verteilung-von-topics}{%
 \subsubsection{Verteilung von Topics}\label{verteilung-von-topics}}
@@ -600,6 +693,78 @@ der Subreddits durchgeführt.
 \hypertarget{zusammenfassung-und-ausblick}{%
 \section{Zusammenfassung und
 Ausblick}\label{zusammenfassung-und-ausblick}}
+
+\cleardoublepage
+
+\hypertarget{part-anhang}{%
+\part*{Anhang}\label{part-anhang}}
+
+
+\hypertarget{appendix-anhang}{%
+\appendix}
+
+
+\hypertarget{haufigste-worter-je-subreddit}{%
+\section{Häufigste Wörter je
+Subreddit}\label{haufigste-worter-je-subreddit}}
+
+
+
+
+
+
+\begin{longtable}[t]{cr >{\raggedright\arraybackslash}p{\textwidth}}
+\caption{\label{tab:app-top-words-tab}Charakteristische Wörter der größten Topics.
+Aufgeführt sind jeweils die Topic-ID, die Anzahl an zugeordneten
+Subreddits (\(n\), mit der Einschränkung \(n \ge 500\)) sowie die 25
+häufigsten Wörter in dem jeweiligen Topic.}\\
+\toprule
+Topic & n & Wörter\\
+\midrule
+235 & 45.577 & the, a, to, i, is, you, this, of, and, in, it, that, on, for, when, my, are, what, me, not, be, your, have, like, just\\
+122 & 34.240 & to, a, for, the, and, i, you, is, of, in, how, on, what, with, this, your, do, my, it, help, can, or, are, have, anyone\\
+69 & 18.504 & my, a, i, the, this, of, and, to, in, for, on, it, from, is, with, me, first, just, you, was, at, new, so, got, made\\
+194 & 13.146 & the, to, for, of, on, and, new, is, in, a, now, we, at, with, this, be, will, update, from, our, has, are, up, first, out\\
+92 & 12.511 & in, her, and, a, the, with, on, girl, xpost, ass, hot, sexy, big, from, she, pussy, cock, gif, tits, black, teen, sex, blonde, girls, porn\\
+\addlinespace
+210 & 11.476 & the, to, of, in, and, a, for, on, is, with, trump, by, us, from, as, that, are, after, at, be, not, his, who, about, has\\
+70 & 8.818 & by, book, the, online, download, movie, p, free, full, read, how, link, without, of, watch, no, ipad, pc, mp, english, iphone, format, android, tablet, pdf\\
+129 & 7.118 & in, the, at, of, a, to, from, on, for, and, city, park, new, this, area, looking, xpost, local, san, lake, near, st, night, th, with\\
+219 & 5.922 & the, of, and, a, in, to, is, on, for, by, from, how, an, that, with, are, as, about, why, what, world, science, life, be, new\\
+181 & 5.894 & the, music, song, video, album, by, new, of, cover, live, remix, on, band, official, ft, rock, songs, feat, mix, love, guitar, tour, show, full, in\\
+\addlinespace
+239 & 3.885 & to, with, for, a, in, and, on, how, using, google, windows, data, app, web, from, code, released, tutorial, linux, use, free, is, software, an, source\\
+37 & 3.839 & the, of, a, and, part, in, story, by, from, world, war, dark, wp, book, death, an, king, one, history, battle, man, books, life, first, ii\\
+89 & 3.608 & the, episode, season, and, of, show, on, movie, podcast, film, with, se, in, series, spoilers, trailer, tv, from, discussion, john, his, review, s, movies, watch\\
+58 & 3.223 & vs, the, game, league, team, season, to, in, round, football, match, win, cup, week, for, draft, thread, fc, at, highlights, player, nfl, sports, goal, players\\
+116 & 2.052 & game, games, play, video, ps, youtube, pc, lets, part, gameplay, super, xbox, gaming, mario, gta, steam, nintendo, trailer, channel, funny, new, v, fallout, best, switch\\
+\addlinespace
+21 & 1.825 & game, update, play, new, v, guide, patch, players, steam, beta, player, level, games, map, character, playing, build, bug, alpha, server, version, battle, mode, notes, event\\
+46 & 1.701 & de, la, a, en, el, que, y, para, o, del, los, no, e, do, un, por, da, con, se, em, las, es, como, una, al\\
+223 & 1.378 & bitcoin, blockchain, ico, crypto, coin, exchange, wallet, token, trading, mining, cryptocurrency, network, ethereum, price, btc, platform, market, tokens, –, listed, coins, with, buy, —, decentralized\\
+148 & 1.181 & free, for, w, code, h, sale, off, and, card, selling, amazon, trade, giveaway, buy, gift, or, cards, shipping, price, codes, get, k, gold, paypal, account\\
+131 & 1.166 & food, and, with, chicken, recipe, pizza, cheese, vegan, eat, chocolate, ice, coffee, cream, eating, cake, tea, recipes, sauce, make, breakfast, milk, bread, bacon, meat, meal\\
+\addlinespace
+117 & 1.152 & in, best, business, your, for, online, company, top, services, marketing, money, service, market, how, social, management, to, sales, india, tips, home, blog, credit, media, real\\
+88 & 933 & review, with, pro, k, x, gb, g, camera, pc, gaming, build, tv, laptop, setup, mm, v, best, usb, power, drone, led, mini, wireless, battery, pi\\
+72 & 881 & die, der, in, und, für, von, mit, das, ist, im, auf, ein, den, zu, ich, es, aus, des, was, nicht, am, an, bei, dem, wie\\
+177 & 879 & water, home, with, diy, machine, glass, house, wood, table, make, design, steel, paper, wall, cleaning, hand, made, build, metal, knife, custom, set, kit, room, door\\
+3 & 875 & cat, dog, baby, a, xpost, dogs, cats, fish, his, little, bear, cute, animal, her, puppy, boy, pet, fishing, he, meet, kitty, bird, animals, kitten, she\\
+\addlinespace
+251 & 773 & chapter, anime, no, cosplay, manga, ch, english, original, fanart, spoilers, hentai, japanese, naruto, volume, girl, episode, girls, art, chapters, japan, sakura, translation, disc, maid, wa\\
+198 & 724 & car, insurance, bike, race, ride, cars, truck, driver, ford, racing, auto, road, gt, drive, driving, speed, s, motorcycle, honda, miles, engine, electric, r, bmw, crash\\
+110 & 667 & by, x, art, oc, artist, ×, drawing, wallpaper, painting, draw, deviantart, tattoo, photo, xpost, sketch, image, portrait, wallpapers, digital, concept, artists, canvas, photography, ink, artwork\\
+217 & 611 & de, la, le, les, et, du, à, des, en, un, pour, sur, au, une, dans, france, pas, est, par, avec, je, que, », ce, qui\\
+180 & 571 & black, red, blue, dress, fashion, wedding, shoes, white, leather, boots, jacket, shirt, size, wear, style, sale, tshirt, hat, vintage, mens, clothing, socks, bag, color, wearing\\
+\addlinespace
+195 & 566 & health, weight, cancer, treatment, pain, body, loss, workout, surgery, diet, fat, medical, and, therapy, care, fitness, disease, sleep, brain, drug, lbs, skin, depression, blood, after\\
+96 & 553 & f, me, looking, m, for, mf, fm, fun, kik, chat, daddy, snapchat, friends, fa, add, mm, play, yo, want, girl, sissy, message, snap, pics, seeking\\
+45 & 507 & looking, war, clan, guild, recruiting, join, raid, group, ps, players, server, for, members, destiny, community, active, reddit, pvp, discord, th, rp, pc, base, crew, xbox\\
+18 & 506 & i, in, up, found, killed, a, levelled, xp, completed, treasure, trail, dragon, crystal, boss, elite, invention, hard, skills, over, events, all, fragment, quest, triskelion, recent\\
+\bottomrule
+\end{longtable}
+
+\cleardoublepage
 
 \printbibliography
 

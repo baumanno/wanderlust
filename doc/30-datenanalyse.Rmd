@@ -25,7 +25,7 @@ Zu beachten ist hier insbesondere, dass der eigentliche Textinhalt des Kommentar
 knitr::kable(
   tribble(
     ~Schlüssel, ~Wert,
-    "author", "Username des Kommentar-Erstellers",
+    "author", "Nutzername des Kommentar-Erstellers",
     "id", "eindeutige ID des Kommentars",
     "parent_id", "eindeutige ID des Elements, auf das sich der Kommentar bezieht",
     "subreddit", "Name des Subreddits, in dem der Kommentar erstellt wurde"
@@ -48,7 +48,7 @@ Da Reddit auch Anfragen nach gelöschten Elementen sinnvoll beantwortet, also ni
 Gaffney und Matias stellen jedoch für den Zeitraum Dezember 2005 bis Februar 2016 fest, dass 943.755 Kommentar- und 1.539.583 Beitrags-IDs nicht in den Datensätzen enthalten sind.
 Als mögliche Gründe für das Fehlen nennen Gaffney und Matias dreierlei: sog. "dangling references", also Verweise, bei denen das Element, auf das verwiesen wird, nicht auffindbar ist; öffentlich zugängliche Daten, die aus unbekanntem Grund nicht von Reddit an Baumgartners System übertragen wurden; oder Daten aus als privat eingestuften Communities, die nicht öffentlich sondern nur von Mitgliedern mit Zugangsberechtigung einsehbar sind [@Gaffney2018].
 
-(ref:gf4cap) Anteil fehlender Kommentare. Die hellblauen Quadrate (obere Linie) stellen den gleitenden Mittelwert fehlender Kommentare in Prozent dar, die mittelblauen Punkte (mittlere Linie) den prozentualen Anteil fehlender Kommentare, und die dunkelblauen Kreuze (untere Linie)  die kumlierte Gesamtzahl fehlender Kommentare [@Gaffney2018]
+(ref:gf4cap) Anteil fehlender Kommentare. Die hellblauen Quadrate (obere Linie) stellen den gleitenden Mittelwert fehlender Kommentare in Prozent dar, die mittelblauen Punkte (mittlere Linie) den prozentualen Anteil fehlender Kommentare, und die dunkelblauen Kreuze (untere Linie)  die kumulierte Gesamtzahl fehlender Kommentare [@Gaffney2018]
 ```{r gf4, fig.cap='(ref:gf4cap)'}
 knitr::include_graphics("./images/gaffneymatias_fig4.eps")
 ```
@@ -78,6 +78,7 @@ if (!(exists("res") && is.data.frame(res) && nrow(res) > 0)) {
 
 res_counted <- res %>% 
   count(active)
+
 num_users <- nrow(res)
 summary_age <- tribble(
     ~N, ~"arithm. Mittel", ~SD, ~Min, ~"Q1", ~Median, ~"Q3", ~Max,
@@ -85,7 +86,7 @@ summary_age <- tribble(
   )
 ```
 Nach der zeitlichen Eingrenzung der Daten liegen für den betrachteten Zeitraum von 124 Monaten etwa 3,6 Milliarden `r # fmt(3615667286)` Kommentare vor, verfasst von ca. 28 Millionen `r # fmt(num_users)` Nutzern.
-Für jeden dieser Nutzer wurde bestimmt, in wie vielen Monaten er insgesamt im Datensatz enthalten ist; nachfolgend wird dies als "virtuelles Alter" oder schlicht "Alter" des Users bezeichnet.
+Für jeden dieser Nutzer wurde bestimmt, in wie vielen Monaten er insgesamt im Datensatz enthalten ist; nachfolgend wird dies als "virtuelles Alter" oder schlicht "Alter" des Nutzers bezeichnet.
 
 (ref:lab) Zusammenfassung der Altersverteilung.
 ```{r summary-age-tab, cache=FALSE}
@@ -102,7 +103,7 @@ knitr::kable(
 Tabelle \@ref(tab:summary-age-tab) bietet eine Übersicht über die Verteilung der Alterswerte.
 50% der Nutzer sind zwischen einem und sechs Monaten auf Reddit aktiv (unteres resp. oberes Quartil), und 50% sind in zwei Monaten oder weniger enthalten (Median).
 Der arithmetische Altersdurchschnitt liegt bei etwa sieben Monaten.
-Da ein User mindestens einen Kommentar verfasst haben muss, um gezählt zu werden, liegt das minimale Alter bei einem Monat.
+Da ein Nutzer mindestens einen Kommentar verfasst haben muss, um gezählt zu werden, liegt das minimale Alter bei einem Monat.
 
 ```{r age-distribution-1, fig.cap="Verteilung der Alterswerte."}
 ggplot(data = res_counted) +
@@ -111,6 +112,8 @@ ggplot(data = res_counted) +
     x = "Alter in Monaten",
     y = "Anteil Nutzer"
   ) +
+  labs(x = "Alter in Monaten",
+       y = "Anteil Nutzer") +
   scale_x_continuous(breaks = seq(0, 124, by = 12)) +
   scale_y_continuous(labels = scales::percent)
 ```
@@ -127,21 +130,23 @@ ggplot(data = res_counted) +
     x = "Alter in Monaten",
     y = "Anzahl Nutzer"
   ) +
+  labs(x = "Alter in Monaten",
+       y = "Anzahl Nutzer") +
   scale_x_continuous(breaks = seq(0, 124, by = 12)) +
   scale_y_log10(label = scales::comma_format(decimal.mark = ",", big.mark = "."))
 ```
 Markant ist bei dieser Visualisierung der Ausschlag am äußersten rechten Rand.
 Offenbar entfallen auf die Altersgruppe "124 Monate" noch einmal deutlich mehr Nutzer als noch auf die vorhergehenden Gruppen.
 In der Tat beträgt der Unterschied zwischen den beiden letzten Altersgruppen `r subset(res_counted, active == 124, n) - subset(res_counted, active == 123, n)` Nutzer
-Obwohl an dieser Stelle keine Erklärung für diese Beobachtung geliefert werden kann, ist es denkbar, dass es einen "harten Kern" von Usern gibt, die Reddit seit langer Zeit, möglicherweise sogar von Anfang an nutzen, und regelmäßig aktiv sind.
+Obwohl an dieser Stelle keine Erklärung für diese Beobachtung geliefert werden kann, ist es denkbar, dass es einen "harten Kern" von Nutzern gibt, die Reddit seit langer Zeit, möglicherweise sogar von Anfang an nutzen, und regelmäßig aktiv sind.
 
 #### Kriterien für die Stichprobe
 
 Um Nutzer für die weitere Datenanalyse auszuwählen, wurden zwei Kriterien festgelegt.
 Zum einen sollte ein Nutzer über einen ausreichend langen Zeitraum hinweg aktiv sein.
-Damit wird sichergestellt, dass zeitliche Verläufe keine Lücken aufweisen und genügend Daten vorliegen, um Trends zu identifizieren.
-Zum anderen sollte der User ein Mindestmaß an Interaktionen pro Monat hervorbringen.
 Da diese Arbeit Interaktionsgraphen analysiert, sollten di
+Hierdurch wird sichergestellt, dass zeitliche Verläufe möglichst keine Lücken enthalten und genügend Daten vorliegen, um Trends zu identifizieren.
+Zum anderen sollte der Nutzer ein Mindestmaß an Interaktionen pro Monat aufweisen, damit Aussagen sowohl über seine thematische Affinität als auch die sozialen Kreise möglich sind, in denen er sich bewegt.
 
 Für die Analyse treffen wir eine Zufallsauswahl aus den ältesten 1000 Usern.
 Dadurch stellen wir sicher, dass wir User über einen genügend langen Zeitraum beobachten können. Das folgende Histogramm zeigt die Verteilung dieses Ausschnitts aus dem Long Tail.

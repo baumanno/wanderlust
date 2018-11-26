@@ -29,17 +29,6 @@ if (!(exists("res") && is.data.frame(res) && nrow(res) > 0)) {
   
   dbDisconnect(con)
 }
-
-geom_histogram_original <- ggplot2::geom_histogram
-geom_histogram <- function(...) {
-  geom_histogram_original(..., )
-}
-
-geom_bar_orig <- ggplot2::geom_bar
-
-geom_bar <- function(...) {
-  geom_bar_orig(..., fill = "grey", colour = "black", size = .2)
-}
 ```
 
 In dem Analysezeitraum von November 2007 bis Februar 2018 sind `r nrow(res)` User enthalten. Das nachfolgende Diagramm zeigt die

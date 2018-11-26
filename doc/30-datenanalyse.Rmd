@@ -80,23 +80,31 @@ res_counted <- res %>%
   count(active)
 
 num_users <- nrow(res)
-summary_age <- tribble(
-    ~N, ~"arithm. Mittel", ~SD, ~Min, ~"Q1", ~Median, ~"Q3", ~Max,
-    nrow(res), mean(res$active), sd(res$active), min(res$active), quantile(res$active, .25), median(res$active), quantile(res$active, .75), max(res$active)
+summary_age <-
+  res %>% 
+  summarise(
+    N = n(),
+    "arithm. Mittel" = mean(active),
+    SD = sd(active),
+    Min = min(active),
+    Q1 = quantile(active, .25),
+    Median = median(active),
+    Q3 = quantile(active, .75),
+    Max = max(active)
   )
 ```
 Nach der zeitlichen Eingrenzung der Daten liegen für den betrachteten Zeitraum von 124 Monaten etwa 3,6 Milliarden `r # fmt(3615667286)` Kommentare vor, verfasst von ca. 28 Millionen `r # fmt(num_users)` Nutzern.
 Für jeden dieser Nutzer wurde bestimmt, in wie vielen Monaten er insgesamt im Datensatz enthalten ist; nachfolgend wird dies als "virtuelles Alter" oder schlicht "Alter" des Nutzers bezeichnet.
 
-(ref:lab) Zusammenfassung der Altersverteilung.
-```{r summary-age-tab, cache=FALSE}
+(ref:summary-age-lab) Kennzahlen der Altersverteilung.
+```{r summary-age-tab}
 knitr::kable(
   summary_age,
   digits = 2,
   align = c("l", "c", "c", "c", "c", "c", "c", "c"),
   booktabs = TRUE,
   format.args = list(big.mark = ".", decimal.mark = ","),
-  caption = "(ref:lab)"
+  caption = "(ref:summary-age-lab)"
 )
 ```
 

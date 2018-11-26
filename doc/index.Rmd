@@ -25,6 +25,8 @@ site: bookdown::bookdown_site
 library(tidyverse)
 library(glue)
 library(DBI)
+library(R.utils)
+library(data.table)
 
 # ignore chunk output
 knitr::opts_chunk$set(

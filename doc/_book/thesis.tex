@@ -384,7 +384,7 @@ sind \autocite{Gaffney2018}.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{./images/gaffneymatias_fig4} 
+{\centering \includegraphics[width=0.75\linewidth]{./images/gaffneymatias_fig4} 
 
 }
 
@@ -450,7 +450,7 @@ liegt das minimale Alter bei einem Monat.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/age-distribution-1-1} 
+{\centering \includegraphics[width=0.75\linewidth]{thesis_files/figure-latex/age-distribution-1-1} 
 
 }
 
@@ -468,7 +468,7 @@ Darstellung.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/age-distribution-2-1} 
+{\centering \includegraphics[width=0.75\linewidth]{thesis_files/figure-latex/age-distribution-2-1} 
 
 }
 
@@ -507,7 +507,7 @@ Altersgruppen nachdem die beiden Einschränkungen vorgenommen wurden.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/sample-users-hist-1} 
+{\centering \includegraphics[width=0.75\linewidth]{thesis_files/figure-latex/sample-users-hist-1} 
 
 }
 
@@ -555,8 +555,11 @@ gesperrt oder gelöscht.
 Die Titel der 207.056 erfolgreich abgerufenen Beiträge wurden
 konkateniert und zusammen mit dem Namen des Subreddits gespeichert.
 Jedes Subreddit entspricht damit einem Dokument, dessen Inhalt die Titel
-der Top 50 Beiträge bilden. Diese Aufstellung diente in der Folge dem
-LDA-Algorithmus als Eingabe.
+der Top 50 Beiträge bilden. Die Inhalte wurden in Kleinschreibung
+umgewandelt und um Satzzeichen und Ziffern bereinigt; redundante
+Leerzeichen wurden entfernt. Zudem wurden Dokumente verworfen, deren
+Inhalt weniger als 500 Zeichen umfasste. Diese Aufstellung diente in der
+Folge dem LDA-Algorithmus als Eingabe.
 
 Wegen der hohen Anzahl an Dokumenten wurde wurde eine effiziente
 Implementierung des LDA-Algorithmus benötigt. Die Wahl fiel dabei auf
@@ -587,20 +590,16 @@ bestimmenden Topics auf 256 festgelegt. Unklar ist, ob diese Zahl in der
 Nähe eines Optimums liegt; dies festzustellen wird jedoch nicht
 Gegenstand dieser Arbeit sein.
 
-Der LDA-Algorithmus arbeitet mit der Annahme, jedes Dokument setze sich
-aus verschiedenen (latenten) Themen zusammen. Das Ergebnis liefert daher
-für jedes Dokument eine Wahrscheinlichlichkeitsverteilung über die zu
-bestimmenden Topics. Für die weitere Betrachtung wird daraus eine
-1:1-Zuordnung abgeleitet, indem für jedes Dokument das Topic als
-maßgebend angesehen wurde, dem der Algorithmus die höchste
-Wahrscheinlichkeit zugewiesen hatte.
-
-An dieser Stelle sei darauf hingewiesen, dass die Topic-IDs keine
-natürliche Ordnung besitzen sondern lediglich eine Form von Bezeichner
-darstellen. Eine inhaltliche Analyse der Topics würde es durchaus
-ermöglichen, diesen Topics semantisch wertvolle Bezeichner zuzuweisen,
-etwa \enquote{Politik} oder \enquote{Sport}. Für die Zwecke dieser
-Arbeit ist dies jedoch nicht weiter von Bedeutung.
+Der LDA-Algorithmus beruht auf der Annahme, dass sich jedes Dokument aus
+verschiedenen (latenten) Themen\footnote{In dieser Arbeit wird
+  hauptsächlich die englische Wortform \enquote{topic(s)} gebraucht, um
+  explizit die algorithmisch bestimmten Themenkomplexe zu bezeichnen}
+zusammen setzt. Das Ergebnis liefert für jedes Dokument eine
+Wahrscheinlichlichkeitsverteilung über die zu bestimmenden Topics. Für
+die weitere Analyse in dieser Arbeit wird aus dieser Verteilung von
+Topic-Wahrscheinlichkeiten eine 1:1-Zuordnung abgeleitet, indem für
+jedes Dokument das Topic als maßgebend angesehen wird, dem der
+Algorithmus die höchste Wahrscheinlichkeit zuweist.
 
 
 
@@ -610,7 +609,7 @@ Arbeit ist dies jedoch nicht weiter von Bedeutung.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/topic-assignments-total-1} 
+{\centering \includegraphics[width=0.75\linewidth]{thesis_files/figure-latex/topic-assignments-total-1} 
 
 }
 
@@ -621,14 +620,16 @@ eine Auszeichnung der x-Achse verzichtet; die Sortierung erfolgt
 absteigend nach Anzahl der Subreddits.}\label{fig:topic-assignments-total}
 \end{figure}
 
-Abbildung \ref{fig:topic-assignments-total} stellt diese Zuordnung von
+Abbildung \ref{fig:topic-assignments-total} stellt die Zuordnung von
 Subreddits zu Topics als Histogramm dar. Jede Klasse entlang der x-Achse
 entspricht einem der 256 Topics, die der LDA-Algorithmus identifizieren
 sollte. Die y-Achse ist logarithmisch skaliert und notiert die Anzahl an
 Subreddits, die dem jeweiligen Topic zugewiesen wurden. Wie bereits
 zuvor beim Alter der Nutzer zeigt diese Darstellung eine Verteilung mit
 einem Long Tail: auf einen großen Teil der Topics entfallen
-vergleichsweise wenige Subreddits.
+vergleichsweise wenige Subreddits; 50\% der Topics sind weniger als neun
+Subreddits zugeordnet (siehe auch Tabelle
+\ref{tab:topic-assignments-summary}).
 
 
 
@@ -645,12 +646,6 @@ N & arithm. Mittel & SD & Min & Q1 & Median & Q3 & Max\\
 \end{tabular}
 \end{table}
 
-Die Kennzahlen dieser Verteilung in Tabelle
-\ref{tab:topic-assignments-summary} verdeutlichen dies: 25\% der Topics
-enthalten weniger als sechs bzw. mehr als 97 Subreddits, dem größten
-Topic sind über 45.000, dem oder den kleinsten nur ein einzelnes
-Subreddit zugewiesen.
-
 
 
 
@@ -659,7 +654,7 @@ Subreddit zugewiesen.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{thesis_files/figure-latex/topic-assignments-top-1} 
+{\centering \includegraphics[width=0.75\linewidth]{thesis_files/figure-latex/topic-assignments-top-1} 
 
 }
 
@@ -669,6 +664,17 @@ zugeordnet wurden. Die Sortierung erfolgt analog zu Abbildung
 \ref{fig:topic-assignments-total} nach Anzahl Zuordnungen in
 absteigender Folge.}\label{fig:topic-assignments-top}
 \end{figure}
+
+LDA liefert nicht nur für jedes Dokument eine Verteilung von Topics,
+sondern auch zu jedem Topic eine Wahrscheinlichkeitsverteilung von
+Wörtern. Sortiert man die Auftretenswahrscheinlichkeiten der Wörter
+eines Topics, erhält man die für dieses Thema charakteristischen
+Begriffe. Tabelle \ref{tab:app-top-words-tab} im Anhang enthält für alle
+Topics, denen mindestens 500 Subreddits zugeordnet wurden, die 25
+häufigsten Wörter. Dabei fällt auf, dass die Topics 235, 122, 69 und 194
+beinahe ausschließlich aus Stoppwörtern bestehen. Da dies keine
+sinnvollen Rückschlüsse auf Nutzerinteressen zulassen, werden bei sie
+der weiteren Analyse zwar aufgeführt, jedoch nicht näher berücksichtigt.
 
 \hypertarget{ego-netzwerke-und-soziale-netzwerkanalyse}{%
 \subsubsection{Ego-Netzwerke und soziale

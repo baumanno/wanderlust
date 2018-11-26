@@ -374,6 +374,11 @@ write.csv(x = top_words_pretty, file = "../data/lda/largest_topics_top_words.csv
 
 ```
 
+LDA liefert nicht nur für jedes Dokument eine Verteilung von Topics, sondern auch zu jedem Topic eine Wahrscheinlichkeitsverteilung von Wörtern.
+Sortiert man die Auftretenswahrscheinlichkeiten der Wörter eines Topics, erhält man die für dieses Thema charakteristischen Begriffe.
+Tabelle \@ref(tab:app-top-words-tab) im Anhang enthält für alle Topics, denen mindestens 500 Subreddits zugeordnet wurden, die 25 häufigsten Wörter.
+Dabei fällt auf, dass die Topics 235, 122, 69 und 194 beinahe ausschließlich aus Stoppwörtern bestehen.
+Da dies keine sinnvollen Rückschlüsse auf Nutzerinteressen zulassen, werden bei sie der weiteren Analyse zwar aufgeführt, jedoch nicht näher berücksichtigt.
 
 ### Ego-Netzwerke und soziale Netzwerkanalyse
 

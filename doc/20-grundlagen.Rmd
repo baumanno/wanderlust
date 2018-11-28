@@ -1,16 +1,14 @@
 \cleardoublepage
-# Grundlagen und verwandte Forschung
+# Grundlagen und verwandte Forschung {#grundlagen}
 
-## Topic-Modelle
+## Reddit {#reddit}
+
+## Topic-Modelle {#topicmodelle}
 ### LDA
-### Verwandte Arbeiten
 
-## Soziale Netzwerkanalyse
+## Soziale Netzwerkanalyse {#sna}
 ### Graphen und Netzwerke
 ### Ego-Netzwerke
-### Verwandte Arbeiten
 
-## Reddit
-### Begriffsklärung
-### Verwandte Arbeiten
+## Verwandte Arbeiten {#relatedwork}
 

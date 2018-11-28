@@ -1,2 +1,10 @@
 \cleardoublepage
-# Zusammenfassung und Ausblick
+# Zusammenfassung und Ausblick {#zusammenfassung}
+
+Gemeinsam ist diesen qualitativen Werkzeugen, dass es Menschen selbst sind, die Auskunft über ihre sozialen Handlungen und Beziehungen geben.
+Problematisch kann dabei die Subjektivität der Ergebnisse sein.
+Beispielsweise kann es vorkommen, dass beim Ausfüllen von Fragebögen eher Antworten gegeben werden, die in Richtung der (vermuteten) Mehrheit tendieren, oder dass Interviewer (bewusst oder unbewusst) Einfluss auf die Antworten ihrer Gesprächspartner nehmen.
+
+Quantitative Methoden hingegen sehen sich dieser Subjektivität nicht ausgesetzt, beobachten sie doch nur das, was objektiv messbar ist.
+Dabei stellen sie keineswegs die Panazee soziologischer Forschung dar.
+Im Gegenteil ist vieles von dem, was quantitative messbar ist, ohne qualitative Ergänzung sozusagen nur "die halbe Wahrheit".

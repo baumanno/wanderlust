@@ -6,17 +6,43 @@
 
 Diese Antwort gab der Schriftsteller seinem Freund Richard Dawkins auf die Frage, was an der Wissenschaft sein Blut so richtig in Wallung bringe [@Dawkins2004, S. 170].
 Diese Trias -- komplex, reichhaltig, seltsam -- aufzubrechen, haben sich die verschiedenen wissenschaftlichen Fakultäten zum Ziel gemacht.
-Die Wissenschaft versucht, mit den ihr zur Verfügung stehenden Mitteln die komplexen Verhältnisse zu simplifizieren, zu entwirren;
+Wissenschaft versucht, mit den ihr zur Verfügung stehenden Mitteln die komplexen Verhältnisse zu simplifizieren, zu entwirren;
 die reichhaltigen auszudünnen, auf das Wesentliche zu destillieren; und die seltsamen zu verstehen und ihnen Sinn zu geben.
 
-Dies trifft auch auf die Soziologie zu, deren Kern es ist, das Handeln des Individuums in der Gesellschaft zu ergründen, in die er eingebettet ist.
-Diese Gesellschaft kann dabei verschiedene Formen annehmen; man denke an die vielen Arten sozialer Gruppen, in denen wir uns bewegen, wie etwa der Familie, dem Freundeskreis, dem Umfeld an Arbeitskollegen, aber auch religiöse Gruppen, Vereine, oder schlicht "Interessensgemeinschaften".
-Ihnen allen ist gemeinsam, dass das Individuum Beziehungen zu anderen aufbaut und pflegt, ganz gleich, ob dies willentlich geschieht -- einem Verein tritt man meist aus Interesse bei -- oder sich eher dem freien Willen entzieht -- es obliegt etwa nicht der freien Wahl, in welche Familie man geboren wird.
+Dies trifft auch auf die Soziologie zu, deren Kern es ist, das Handeln des Individuums in der sozialen Situation zu verstehen, in der es sich befindet.
+Eine solche Situation kann verschiedene Formen annehmen; man denke an die vielen Arten sozialer Gruppen, in denen wir uns bewegen:
+die Familie, der Freundeskreis, das Umfeld an Arbeitskollegen, aber auch religiöse Gruppen, Vereine, oder schlicht "Interessensgemeinschaften".
+Ihnen allen gemeinsam ist das "soziale Element": Menschen innerhalb einer Gruppe bauen Beziehungen zueinander auf und pflegen sie, ganz gleich, ob dies willentlich geschieht -- einem Verein tritt man meist aus Interesse bei -- oder sich eher dem freien Willen entzieht -- es obliegt etwa nicht der freien Wahl, in welche Familie man geboren wird.
 
-Diese Beziehungen lassen sich soziologisch erforschen, beispielsweise hinsichtlich ihrer Quantität und Qualität.
-Um qualitative Aussagen zur Beziehung zwischen zwei Menschen zu treffen, bedarf es meist zusätzlicher Hilfe.
-Beispielsweise kann einer der beiden die Auskunft geben, "Diese Person ist meine Mutter", oder ein (an der Beziehung nicht teilhabender) Dritter, stellt fest, dass es sich um eine Mutter-Tochter-Beziehung handelt.
-Anders verhält es sich mit quantitativen Fragestellungen, etwa danach, ob eine Gruppe dicht vernetzt ist (nahezu alle Beteiligten kennen sich untereinander) oder ob eine Person als Bindeglied zwischen Gruppen gesehen werden kann.
-Dies sind Merkmale, die sozusagen "von außen" beobachtet werden können ohne in die Beziehungen selbst eingeweiht zu sein.
+Beziehungen lassen sich soziologisch erforschen, beispielsweise hinsichtlich ihrer Quantität und Qualität.
+Um qualitative Aussagen treffen zu können, bedarf es meist zusätzlicher Hilfe von an der Beziehung teilhabenden Personen oder einem informierten Dritten.
+Zu den Methoden qualitativer Forschung zählen etwa Fragebögen, Leitfadeninterviews oder Gruppendiskussionen, bzw. allgemein Ansätze, in denen Menschen Auskunft über ihr Handeln oder das anderer geben.  
+Anders verhält es sich mit quantitativen Fragestellungen.
+Sie versuchen, Phänomene zu erfassen und zu erklären, die numerisch meßbar sind und sich mit statistischen Methoden untersuchen lassen.
+Die Beobachtung richtet sich sozusagen "von außen" auf soziale Situationen, ohne auf Kenntnis interner Prozesse angewiesen zu sein.
 
-Die Kür ist dann wohl die Verbindung diese beiden Herangehensweisen, also die quantitative Strukturanalyse eines Beziehungsgeflechts, angereichert mit dem "geheimen Wissen" über die Art der individuellen Ausprägungen.
+Ein wichtiges Werkzeug quantitaver Sozialforschung stellt die soziale Netzwerkanalyse dar.
+Hier werden Beziehungsgeflechte zwischen Personen als Netzwerke mit Knoten und Kanten gesehen.
+Ein Knoten stellt dabei meist einen *Akteur* dar, eine Kante zwischen Akteuren kennzeichnet eine Beziehung beliebiger Art.
+Wählt man als Knoten etwa die Angehörigen eines Freundeskreises können Kanten eine "kennt"-Beziehung darstellen.
+Die Modellierung sozialer Beziehungen als Netzwerk ermöglicht es, diese mit den Methoden der Graphentheorie, einem Teilgebiet der Mathematik, zu analysieren.
+Um ein solches Netzwerk zu konstruieren, können qualitativ erhobene Daten herangezogen werden, etwa Antworten auf die Frage "Mit wem haben Sie in der vergangenen Woche telefoniert?".
+Sammelt man die Antworten aller Befragten, erhält man neben einem Ausschnitt des Telefonnetzes auch Auskunft darüber, welche Personen sich untereinander kennen.
+
+Seit dem Aufstieg sozialer Online Communities wie Facebook, Twitter und Reddit findet soziales Handeln jedoch nicht mehr ausschließlich in der physischen Welt statt.
+Auch in der virtuellen Sphäre vernetzen sich Menschen, kommunizieren und interagieren, tauschen Informationen aus und spannen ein Geflecht aus Beziehungen auf, das sich analysieren lässt.
+Die hierbei anfallenden Daten sind oft so zahlreich und reichhaltig, dass eine maschinelle Auswertung unumgänglich ist.
+Das Gebiet der *computational social science* nutzt computergestützte Methoden, um sozialwissenschaftliche Problemstellungen zu behandeln, vor allem solche, deren Komplexität aufgrund immenser Datenmengen auf traditionellem Weg nicht Herr zu werden ist.
+Hierzu zählen auch die Topic-Analyse von Social Media Inhalten sowie die Netzwerkanalyse großer Akteursstrukturen, die in dieser Arbeit Anwendung finden.
+
+Eine Topic-Analyse von Inhalten der Social Media Plattform "Reddit" soll klären, welchen Themen sich das Interesse von Nutzern widmet.
+Für jeden Nutzer lässt sich so ein zeitlicher Verlauf von Themen bestimmen, in denen er aktiv ist.
+Wie sich herausstellt ändern sich diese Interessen mit der Zeit.
+Daher wird in einem zweiten Schritt mit Methoden der sozialen Netzwerkanalyse das virtuelle soziale Umfeld der Nutzer betrachtet.
+Wegen der hohen Zahl an potentiellen Nutzern und der damit einhergehenden schwer zu bewältigenden Menge an Daten wurde eine Fallstudie dreier Nutzer durchgeführt.
+Insbesondere soll dabei der Frage nachgegangen werden, ob es Wechselwirkungen zwischen Nutzerinteressen und -interaktionen gibt.
+Denn auch wenn sie von einem Thema zum nächsten wandern, bedeutet dies noch lange nicht, dass sich Nutzer tatsächlich auch verirrt haben.
+
+Diesen einleitenden Worten folgt in Kapitel \@ref(grundlagen) eine Erläuterung der grundlegenden Begriffe und methodischen Werkzeuge; Kapitel \@ref(reddit) erläutert das Prinzip der Plattform Reddit, ihren Aufbau und warum sie als Gegenstand der Forschung von Bedeutung ist; Kapitel \@ref(topicmodelle) führt in die Idee der Topic-Analyse ein und stellt das Verfahren "Latent Dirichlet Allocation" (*LDA*) vor, das sich zur algorithmischen Bestimmung von Topics eignet; die Grundlagen der sozialen Netzwerkanalyse werden in Kapitel \@ref(sna) besprochen, ebens für diese Arbeit relevante Maße und Berechnungen; dieser Teil schließt in Kapitel \@ref(relatedwork) mit einer Einordnung der Arbeit in die bestehende Forschung zu sozialen Netzwerken und medialer Inhaltsanalyse.  
+In Kapitel \@ref(datenanalyse) wird die eigentliche Datenanalyse beschrieben; einleitend erläutert Kapitel \@ref(methodik) das methodische Vorgehen bei der Auswahl der Daten, wertet die Ergebnisse der Topic-Analyse aus und stellt dar, wie aus dem genutzten Datensatz Akteur-Netzwerke erzeugt wurden; die Ergebnisse der Fallstudie zu den sozialen Netzwerken der Nutzer führt Kapitel \@ref(ergebnisse) aus.
+Eine Diskussion der Ergebnisse sowie des analytischen Vorgehens findet in Kapitel \@ref(diskussion) statt, bevor Kapitel \@ref(zusammenfassung) mit einem Ausblick auf mögliche weitere Forschungsarbeit schließt.

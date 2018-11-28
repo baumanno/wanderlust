@@ -52,3 +52,7 @@ data/lda/*
 
 # ignore bookdown caches
 _bookdown_files
+
+# ignore build artefacts
+doc/_book/*.tex
+doc/_book/*.pdf

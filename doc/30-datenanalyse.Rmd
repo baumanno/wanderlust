@@ -109,7 +109,7 @@ ggplot(data = res_counted) +
     mapping = aes(x = active, y = n / sum(n)),
     stat = "identity"
   ) +
-  labs(x = "Alter in Monaten",
+  labs(x = "Aktivität in Monaten",
        y = "Anteil Nutzer") +
   scale_x_continuous(breaks = seq(0, 124, by = 12)) +
   scale_y_continuous(labels = scales::percent_format(decimal.mark = ",", accuracy = 1))
@@ -121,7 +121,7 @@ ggplot(data = res_counted) +
     mapping = aes(x = active, y = n),
     stat = "identity"
   ) +
-  labs(x = "Alter in Monaten",
+  labs(x = "Aktivität in Monaten",
        y = "Anzahl Nutzer") +
   scale_x_continuous(breaks = seq(0, 124, by = 12)) +
   scale_y_log10(label = scales::comma_format(decimal.mark = ",", big.mark = "."))
@@ -175,7 +175,7 @@ top_active_users %>%
     stat = "identity"
   ) +
   labs(
-    x = "Alter in Monaten",
+    x = "Aktivität in Monaten",
     y = "Anzahl Nutzer"
   )
 ```

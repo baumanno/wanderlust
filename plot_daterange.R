@@ -47,7 +47,7 @@ ego_prop <- function(user, lower, upper) {
            prop = num_posts / sum(num_posts)) %>%
     ungroup()
   
-  save(ego_filtered, file = glue("output/{user}_ego-filtered.rda"))
+  save(ego_filtered, file = glue("/home/oliver/Masterarbeit/output/{user}_ego-filtered.rda"))
   
   ego_filtered
 }
@@ -80,7 +80,7 @@ alters_prop <- function(user, lower, upper) {
     ungroup()
   
   save(alters_filtered,
-       file = glue("output/{user}_alters-filtered.rda"))
+       file = glue("/home/oliver/Masterarbeit/output/{user}_alters-filtered.rda"))
   
   alters_filtered
 }

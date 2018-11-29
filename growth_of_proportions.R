@@ -21,7 +21,7 @@ alters_topics <- read_alters_topics(USERNAME)
 
 # 4: Load cached data -----------------------------------------------------
 
-load(glue("output/{USERNAME}_corr-df.rda"))
+load(glue("/home/oliver/Masterarbeit/output/{USERNAME}_corr-df.rda"))
 
 # 5: Compute cumulative sums ----------------------------------------------
 

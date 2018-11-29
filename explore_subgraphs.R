@@ -27,9 +27,9 @@ source("R/constants.R")
 
 # 4: load external objects ------------------------------------------------
 
-load(glue("output/{USERNAME}-graph_df.rda"))
-load(glue("output/{USERNAME}_corr-df.rda"))
-load(glue("output/{USERNAME}-graph_analysis.rda"))
+load(glue("/home/oliver/Masterarbeit/output/{USERNAME}-graph_df.rda"))
+load(glue("/home/oliver/Masterarbeit/output/{USERNAME}_corr-df.rda"))
+load(glue("/home/oliver/Masterarbeit/output/{USERNAME}-graph_analysis.rda"))
 
 # 5: compute measures on the graph data -----------------------------------
 

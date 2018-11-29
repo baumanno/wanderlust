@@ -27,6 +27,7 @@ library(glue)
 library(DBI)
 library(R.utils)
 library(data.table)
+library(tm)
 
 # ignore chunk output
 knitr::opts_chunk$set(

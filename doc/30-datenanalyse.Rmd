@@ -23,17 +23,19 @@ Zu beachten ist hier insbesondere, dass der eigentliche Textinhalt des Kommentar
 Das maschinenlesbare JSON-Format, in dem die Daten abgelegt sind, ermöglicht die effiziente computergestützte Auswertung.
 
 ```{r importantkeys}
+#t <- 
 knitr::kable(
   tribble(
-    ~Schlüssel, ~Wert,
-    "author", "Nutzername des Kommentar-Erstellers",
+    ~Feld, ~Wert,
+    "author", "Nutzername des Kommentar-Autors",
     "id", "eindeutige ID des Kommentars",
     "parent_id", "eindeutige ID des Elements, auf das sich der Kommentar bezieht",
     "subreddit", "Name des Subreddits, in dem der Kommentar erstellt wurde"
   ),
   booktabs = TRUE,
-  caption = "wichtige Schlüssel-Wert-Paare des Datensatzes"
+  caption = "Verwendete Metadaten zu Kommentaren"
 )
+# kableExtra::kable_styling(t, latex_options = "hold_position")
 ```
 
 #### Kohärenz

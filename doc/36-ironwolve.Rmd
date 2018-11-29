@@ -1,0 +1,663 @@
+## Daten und Definitionen
+
+```{r ironwolve-setup}
+user <- "IronWolve"
+date_range_full_start <- "2007-01-01"
+date_range_full_end <- "2018-02-01"
+date_range_cut_start <- "2007-01-01"
+date_range_cut_end <- "2018-02-01"
+
+date_range_full <-
+    seq.Date(as.Date(date_range_full_start),
+             as.Date(date_range_full_end),
+             by = "1 month")
+
+date_range <-
+  seq.Date(from = as.Date(date_range_cut_start),
+           to = as.Date(date_range_cut_end),
+           by = "1 month")
+
+ego_topics_full <-
+  read_ego_topics(user = user, date = date_range_full)
+alters_topics_full <-
+  read_alters_topics(user = user, date = date_range_full)
+
+ego_proportions_full <- post_proportions(ego_topics_full)
+alters_proportions_full <- user_proportions(alters_topics_full)
+
+
+ego_topics <- read_ego_topics(user = user, date = date_range)
+ego_proportions <- post_proportions(ego_topics)
+
+alters_topics <- read_alters_topics(user = user, date = date_range)
+alters_proportions <- user_proportions(alters_topics)
+
+topics_present <-
+  union(ego_proportions_full$topic, alters_proportions_full$topic)
+cols <- fill_colours(topics_present)
+
+edgelists <-
+  read_edgelist(user, date = date_range) %>%
+  select(-year, -month, edgelist = data)
+
+topics_of_alters <-
+  read_alters_topics(user, date = date_range) %>%
+  select(-year, -month, topics = data)
+```
+Wir betrachten im folgenden den User "`r user`"; er wurde zufällig aus dem Long
+Tail der Nutzerverteilung gezogen.
+
+Als Analysezeitraum wählen wir November 2007 bis Februar 2018. Ab November 2007
+reduzieren sich die fehlenden Beiträge in den Baumgartner-Datensätzen (Caveat Emptor, 2018).
+
+Für jeden Monat in diesem Zeitraum identifizieren wir Kommentare, die entweder an
+den User gerichtet sind, oder von ihm ausgehen, sowie die User, die an diesen Interaktionen
+beteiligt sind.
+
+Für einen Post des Users stellen wir fest, in welchem Subreddit dieser verfasst wurde.
+Ein oder mehrere Subreddits fassen wir unter einem Topic zusammen, sodass man sagen kann,
+dass ein Post zu einem Topic gehört.
+
+Ähnliches lässt sich über die User sagen, mit denen Ego interagiert: sie sind in
+einem Topic aktiv, wenn sie in dem betrachteten Monat dort die meisten ihrer Kommentare verfasst haben.
+
+## Verteilungen
+Aus dem Datensatz können wir entnehmen, wie viele (absolute) Posts ein User zu einem Topic erstellt.
+
+```{r ironwolve-num-posts}
+ego_proportions_full %>%
+  group_by(date, topic) %>%
+  mutate(sum = sum(num_posts)) %>%
+  ggplot(mapping = aes(x = date, y = num_posts, colour = topic)) +
+  geom_point(alpha = .2) +
+  geom_smooth(method = "loess") +
+  labs(
+    x = "Jahr",
+    y = "# Posts"
+  ) +
+  facet_wrap(~ topic) +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  ) +
+  guides(colour = guide_legend(title = "Topic"))
+```
+
+```{r ironwolve-topic-distribution}
+ego_proportions_full %>%
+  ggplot(mapping = aes(
+    x = factor(topic),
+    y = num_posts
+  )) +
+  geom_boxplot() + 
+  labs(
+    x = "Topic",
+    y = "# Posts"
+  )
+```
+
+```{r ironwolve-topic-dist-table}
+ego_proportions_full %>% 
+  group_by(topic) %>% 
+  summarise(
+    median = median(num_posts),
+    min = min(num_posts),
+    max = max(num_posts),
+    lower_q = quantile(num_posts, .25),
+    upper_q = quantile(num_posts, .75)
+  ) %>% 
+  knitr::kable()
+```
+
+
+Für die meisten Topics ist die Zahl der Kommentare eher gering, der Median liegt um 0. Einzig Topics
+210, 219 und 235 zeugen von höherer Aktivität des Users.
+
+Um die Verteilung der Kommentare bzw. User sinnvoller vergleichen zu können, 
+normalisieren wir die absoluten Zahlen indem wir ihren Anteil an der jeweiligen 
+Gesamtzahl berechnen. Die so erhaltenen relativen Verteilungen untersuchen wir 
+im folgenden auf Auffälligkeiten.
+
+```{r ironwolve-area-chart-comms-full}
+
+area_chart(ego_proportions_full) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  geom_vline(aes(xintercept = as.Date(date_range_cut_start)),
+             linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date(date_range_cut_end)),
+             linetype = "dotted") +
+  # annotate(
+  #   "rect",
+  #   xmin = as.Date(date_range_cut_start),
+  #   xmax = as.Date(date_range_cut_end),
+  #   ymin = 0,
+  #   ymax = Inf,
+  #   fill = "lightgrey",
+  #   alpha = .5
+  # ) +
+  labs(title = "Topic-Zugehörigkeit der Posts von Ego") +
+  theme(legend.position = "bottom")
+```
+
+```{r ironwolve-area-chart-alters-full}
+area_chart(alters_proportions_full) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  geom_vline(aes(xintercept = as.Date(date_range_cut_start)),
+             linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date(date_range_cut_start)),
+             linetype = "dotted") +
+  # annotate(
+  #   "rect",
+  #   xmin = as.Date(date_range_cut_start),
+  #   xmax = as.Date(date_range_cut_end),
+  #   ymin = 0,
+  #   ymax = Inf,
+  #   fill = "lightgrey",
+  #   alpha = .5
+  # ) +
+  labs(title = "Topic-Zugehörigkeit der Alteri") +
+  theme(legend.position = "bottom")
+
+```
+In dem mit gepunkteter Linie markierten Zeitraum fällt der Anteil an Topic 235 auf ein Minimum von 0; der User
+"verlässt" das Topic.
+
+Wenn wir versuchen, die Anziehungskraft oder "Interessantheit" eines Topics messbar zu machen, bieten sich ebenfalls die
+beiden erhobenen Größen an. Wir können die Verteilungen auch als Wahrscheinlichkeiten auffassen, dass ein Post von Ego einem Topic zugerechnet wird ($p_{e}$), bzw. dass einer der Peers sich für dieses Topic interessiert ($p_{a}$).
+Die Wahrscheinlichkeit, dass sich ein User einem Topic zuwendet, also die Anziehungskraft oder Interessantheit des Topics, definieren wir als das Produkt dieser beiden Größen:
+
+$$
+Int = p_a p_e
+$$
+Wir plotten $Int$ zuerst für den gesamten, und dann für den gewählten Analysezeitraum.
+
+```{r ironwolve-interestingness}
+left_join(ego_proportions_full,
+          alters_proportions_full,
+          by = c("date", "topic")) %>%
+  rename(prop_ego = prop.x, prop_alters = prop.y) %>%
+  mutate(pa_pe = prop_alters * prop_ego) %>%
+  select(date, topic, pa_pe) %>%
+  group_by(topic) %>%
+  filter(sum(pa_pe) > 0) %>%
+  ggplot(mapping = aes(x = date, y = pa_pe, colour = topic)) +
+  geom_point(alpha = .1) +
+  geom_smooth(method = "loess") +
+  # geom_line() +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  ) +
+  scale_x_date(
+    date_breaks = "2 years",
+    date_minor_breaks = "1 month",
+    date_labels = "%Y"
+  ) +
+  geom_vline(mapping = aes(xintercept = as.Date("2011-01-01")), linetype = "dashed", size = .3) +
+  geom_vline(mapping = aes(xintercept = as.Date("2015-01-01")), linetype = "dashed", size = .3) +
+  facet_wrap(~ topic)
+```
+
+### Korrelation der Verteilungen
+
+Fasst man die relative Häufigkeit der Posts bzw. Alteri als Wahrscheinlichkeiten auf, lässt sich deren Korrelation untersuchen. Intuitiv vermuten wir, dass mit höherer Post-Wahrscheinlichkeit auch die Interaktionswahrscheinlichkeit in einem Topic steigt, bzw. vice versa: wenn mehr Interaktionen mit Alteri aus einem Topic zustande kommen, werden auch mehr Beiträge zu diesem Thema verfasst.
+
+```{r ironwolve-prob-corr}
+left_join(ego_proportions_full,
+          alters_proportions_full,
+          by = c("date", "topic")) %>%
+  rename(prop_ego = prop.x, prop_alters = prop.y) %>%
+  ggplot(mapping = aes(x = prop_ego * 100, y = prop_alters * 100, colour = topic)) +
+  geom_point(alpha = P_ALPHA) +
+  geom_smooth(method = "lm") +
+  geom_abline() +
+  labs(
+    x = "% Posts von Ego",
+    y = "% Alteri"
+  ) +
+  facet_wrap(~ topic)
+```
+
+
+------------
+
+**TODO**: Korrelations-Matrix
+
+------------
+
+In der Tat bestätigen die meisten Topics unsere Vermutung und folgen einer positiven linearen Korrelation. Bei Topic 219 fällt auf, dass der Zusammhang sublinear zu sein scheint. Beispielsweise entspricht die höchste Post-Wahrscheinlichkeit von ca 90% nur einer Alter-Wahrscheinlichkeit von 25%. Der Großteil der Posts wird also zu diesem Topic verfasst, obwohl nur ein Viertel der Interaktionspartner in diesem Monat auch zu diesem Thema Beiträge verfassen. 
+
+Wir wählen daher für die weitere Analyse diesen Zeitraum, um die Dynamik des "Verlassens" zu ergründen.
+
+### Verteilung der Posts im Analysezeitraum
+```{r ironwolve-area-chart-comms-zoom}
+area_chart(ego_proportions) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  labs(title = "Topic-Zugehörigkeit der Posts von Ego") +
+  theme(legend.position = "bottom")
+  
+```
+
+### Verteilung der Alteri im Analysezeitraum
+
+```{r ironwolve-area-chart-alters-zoom}
+area_chart(alters_proportions) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  labs(title = "Topic-Zugehörigkeit der Alteri") +
+  theme(legend.position = "bottom")
+```
+
+
+```{r ironwolve-total-posts}
+ego_proportions %>%
+  group_by(date) %>%
+  mutate(sum = sum(num_posts)) %>%
+  group_by(topic) %>%
+  filter(sum(num_posts) > 1) %>%
+  ggplot(mapping = aes(x = date, y = num_posts, colour = topic)) +
+  # geom_point(alpha = .5) +
+  geom_line(size = .2) +
+  geom_line(
+    mapping = aes(y = sum),
+    colour = "red",
+    size = .3,
+    linetype = "dashed"
+  ) +
+  geom_vline(mapping = aes(xintercept = as.Date("2012-10-01")),
+             linetype = "dotted") +
+    geom_vline(mapping = aes(xintercept = as.Date("2011-11-01")),
+             linetype = "dotted") +
+  labs(
+    x = "Jahr", 
+    y = "# Posts", 
+    legend = "Foo"
+  ) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", date_minor_breaks = "1 month")
+  
+```
+Die vertikale gepunktete Linie markiert den Zeitpunkt des Austritts im Oktober 2017; die rote gestrichelte Linie stellt die
+aggregierte Zahl der Posts für einen Monat dar. Auch diese Kurve fällt im Oktober stark ab, der User erstellt kaum Kommentare.
+
+## Interaktion von Verteilungen
+
+Um herauszufinden, wie Posting-Verhalten und Zusammensetzung des Egonetzwerks zusammenhängen,
+visualisieren wir die beiden Verteilungen.
+
+```{r ironwolve-prob-corr-zoom}
+df <-
+  left_join(ego_proportions,
+            alters_proportions,
+            by = c("date", "topic")) %>%
+  rename(prop_ego = prop.x, prop_alters = prop.y)
+
+df %>%
+  ggplot(mapping = aes(x = prop_ego, y = prop_alters, colour = topic)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  geom_abline(size = .1) +
+  scale_colour_manual("topic",
+                      values = cols) +
+  facet_wrap(~ topic)
+```
+
+Es scheint eine Tendenz zu einem positiven linearen Zusammenhang dieser beiden Verteilungen zu geben. 
+
+Dennoch scheint es Topics zu geben, in denen Ego Kommentare verfasst obwohl vergleichsweise wenig Alteri in diesem Topic posten. Siehe Topic 239: 40-50% Posts bei weniger als 30% Alteri. Aber auch der gegenteilige Fall ist erkennbar:
+mehr Alteri als Posts, etwa bei Topic 69 oder 235.
+
+-----
+
+**TODO: KLÄREN OB MAN DAS WEITER VERFOLGT, GGF BESSER MIT VOLLSTÄNDIGEM ZEITRAUM ??**
+
+Dies wirft die Frage auf, auf welchen Zeitraum diese "markanten" Verhältnisse entfallen. Hierzu unterteilen wir den
+Analysezeitraum nochmals in drei Abschnitte ("früh", "mittel", "spät") und ordnen jeden Datenpunkt einem dieser Abschnitte
+zu. 
+
+-----
+
+```{r ironwolve-interestingness-zoom}
+df %>%
+  group_by(topic) %>%
+  mutate(pa_pe = prop_ego * prop_alters) %>%
+  filter(sum(pa_pe) > 0) %>%
+  ggplot(mapping = aes(date, pa_pe, colour = topic)) +
+  geom_point(alpha = P_ALPHA) +
+  geom_smooth() +
+  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
+  labs(y = "Int") +
+  scale_colour_manual("topic",
+                      values = cols) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  facet_wrap(~ topic)
+```
+
+Im Juli 2013 sinkt die Wahrscheinlichkeit eines Ego-Posts in Topic 239 auf `r round(subset(ego_proportions, date == "2013-07-01" & topic == 239, prop)$prop, 2)`. Im Oktober 2013 verlässt der User Topic 239 gänzlich, $p_e$ sinkt auf `r round(subset(ego_proportions, date == "2013-10-01" & topic == 239, prop)$prop, 2)`. Die Wahrscheinlichkeit steigt danach wieder, bis sie im Januar 2015 den zweithöchsten Wert in diesem Zeitraum erreicht von `r round(subset(ego_proportions, date == "2015-01-01" & topic == 239, prop)$prop, 2)`.
+
+## Analyse des Netzwerks
+
+```{r ironwolve-egonets}
+
+# identify the single top topic of ego for a month in the dataset
+ego_top_topics <-
+  ego_proportions %>%
+  group_by(date) %>%
+  summarize(user = user,
+            topic = topic[which.max(prop)]) %>%
+  select(date, user = user, topic)
+
+vertex_data <-
+  topics_of_alters %>%
+  unnest() %>%
+  select(date, user = author1, topic) %>%
+  rbind(ego_top_topics) %>%
+  group_by(date) %>%
+  nest() %>%
+  rename(topics = data)
+
+graph_data <-
+  left_join(edgelists, vertex_data, by = "date") %>%
+  mutate(graph = map2(edgelist, topics, egonet_from_edgelist)) %>%
+  select(date, graph)
+```
+
+### Knoten und Kanten im Graphen
+
+Um eine Übersicht über die Struktur des sozialen Netzes des Nutzers zu erhalten, betrachten wir die Entwicklung 
+der Größe dieses Netzes.
+
+```{r ironwolve-network-structure}
+graph_data %>%
+  ggplot(mapping = aes(x = date, y = count, colour = variable)) +
+  geom_line(mapping = aes(y = vvcount(graph), colour = "vertices")) +
+  geom_line(mapping = aes(y = vecount(graph), colour = "edges")) +
+  ylab("count") +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_minor_breaks = "3 month",
+    date_labels = "%Y"
+  ) +
+  scale_y_continuous(breaks = seq(0, 200, 10),
+                     minor_breaks = seq(0, 200, 5)) +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  ) + 
+  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
+  labs(
+    x = "Zeit",
+    y = "Anzahl"
+  ) +
+  scale_colour_discrete(name = "Variable", labels = c("edges" = "Kanten", "vertices" = "Knoten"))
+```
+
+Im Oktober 2013 besteht das Ego-Netz des Nutzers aus `r # vcount(subset(graph_data, date == as.Date("2013-10-01"))$graph[[1]])` Knoten, es finden also Interaktionen mit 4 weiteren Nutzern statt; im Graphen gibt es `r # ecount(subset(graph_data, date == as.Date("2013-10-01"))$graph[[1]])` Kanten, also zu jedem Nutzer eine.
+
+Das soziale Netz ist als Multigraph modelliert, ein Post entspricht einer Kante. Die Visualisierung zeigt, dass im Oktober 2013 auch die Anzahl an Posts des Users auf ein Minimum fällt. Um mögliche Ursachen hierfür zu erforschen, betrachten wir die Reziprozität der Interaktionen.
+
+### Reziprozität
+
+Wir bestimmen zuerst die Reziprozität im gesamten Graphen.
+
+```{r ironwolve-katz-powell}
+
+graph_data %>%
+  mutate(
+    katz_powell = katz_powell_mutuality(graph),
+    centered_reciprocity = map_dbl(graph, degree_ratio)
+  ) %>%
+  ggplot(mapping = aes(x = date, y = value, colour = measure)) +
+  geom_line(mapping = aes(y = katz_powell, colour = "kp")) +
+  geom_line(mapping = aes(y = centered_reciprocity, colour = "inout")) +
+  geom_smooth(mapping = aes(y = katz_powell, colour = "kp")) +
+  geom_smooth(mapping = aes(y = centered_reciprocity, colour = "inout")) +
+  scale_y_continuous(limits = c(0, NA) ) + # breaks = seq(-0.5, 1.5, by = 0.1), minor_breaks = seq(-0.5, 1.5, by = .05)) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_minor_breaks = "3 month",
+    date_labels = "%Y"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  ) +
+  labs(x = "Zeit", y = "Wert") +
+  scale_color_discrete(name = "Maß", labels = c("kp" = "Katz-Powell-Index", "inout" = expression(frac("d"^"+", "d"^"-"))))+
+  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted")
+```
+Es bietet sich ein ähnliches Bild wie zuvor: der Katz-Powell Index schwankt zwischen ca. 0.35 und 0.55, und fällt im Oktober 2013 stark ab; der Index nimmt sogar einen negativen Wert an, was bedeutet, dass zu wenig Beobachtungen (Knoten) vorliegen, um eine fundierte Aussage treffen zu können.
+Dass das Verhältnis eingehender zu ausgehender Kanten teilweise Werte $>= 1$ annimmt, zeigt, dass in diesen Monaten die Zahl der eingehenden Kanten die der ausgehenden übertrifft. Im Mittel bleibt das Verhältnis unter 1, es gibt also mehr ausgehende Kanten von Ego zu den Alteri.
+
+Der gesamte Snapshot-Graph $G$ des Nutzers umfasst alle Interaktionen, die in einem Monat stattfinden. Kanten manifestieren
+sich von Ego zu Alteri wenn der eine auf einen Kommentar des anderen reagiert. Dabei bestimmen wir sowohl für Ego als auch 
+die Alteri das Topic, wo sie in dem Monat die meisten Interatkionen verzeichnen. Für Ego kennen wir zudem die Top 5 Topics
+eines Monats. Stellen wir uns das Attribut "Topic" als Farbe des Knotens vor, hat jeder der Alteri eine Färbung, und Ego
+ist ähnlich einem Tortendiagramm in fünf Farben gegliedert. Dabei ist es keineswegs eine Voraussetzung, dass Ego und Alteri
+Farben teilen! Kanten können durchaus auch zu anderen Usern bestehen, die einen anderen thematischen Schwerpunkt aufweisen.
+
+Die Knoten, die (mindestens) eine Farbe mit dem zentralen Ego-Knoten gemeinsam haben, formen einen Teilgraph $G'$, den wir als "thematisch ähnlich" bezeichnen. Wir stellen den Grad der beiden Graphen $G$ und $G'$, sowie deren Größenunterschied $V(G) - V(G')$ im zeitlichen Verlauf dar.
+
+```{r ironwolve-topical-subgraph}
+# TODO: Filter topical subgraphs, then compute weighted degree
+
+graph_topical_subgraph <-
+  graph_data %>%
+  left_join(ego_topics, by = c("date")) %>%
+  mutate(topical_subgraph = map2(graph, data, function(graph, df) {
+    filter_graph(graph, unique(df$topic))
+  }))
+
+graph_topical_subgraph %>%
+  mutate(size_diff = vvcount(graph) - vvcount(topical_subgraph)) %>%
+  select(date, graph, topical_subgraph, size_diff) %>%
+  ggplot(mapping = aes(x = date, y = nodes, colour = graph)) +
+  geom_line(mapping = aes(y = vvcount(graph), colour = "G")) +
+  geom_line(mapping = aes(y = vvcount(topical_subgraph), colour = "G'")) +
+  geom_line(mapping = aes(y = size_diff, colour = "G - G'")) +
+  geom_smooth(mapping = aes(y = size_diff, colour = "G - G'")) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_minor_breaks = "3 month",
+    date_labels = "%Y"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  ) +
+  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted")
+```
+
+Der Größenunterschied steigt im Zeitraum tendenziell an, wobei ein "auf und ab"-Muster erkennbar ist; zum Ende des 
+analysierten Zeitraums ist die Tendenz dann wieder eher fallend. Der User interagiert also durchaus vermehrt mit
+anderen, die sein thematisches Interesse nicht zwingend teilen.
+
+---------
+
+**TODO**: Für gesamten Zeitraum ebenfalls darstellen
+
+----------
+
+Um einen Grund für das Verlassen des Topics, wie auch offenbar der Plattform generell zu finden, bietet sich eine genauere
+Untersuchung der sozialen Netzwerkgraphen an.
+
+Für einen Monat im Untersuchungszeitraum kennen wir für Ego die Verteilung der fünf häufigsten Topics. Ebenso wissen wir
+für jeden der Alteri, in welchem Topic er oder sie am aktivsten waren. Aus diesen Beobachtungen können wir erneut einen
+Teilgraphen konstruieren, der je Ego-Topic nur diejenigen Alteri enthält, die ebenfalls in diesem Topic aktiv waren.
+Für diesen Teilgraphen berechnen wir erneut Reziprozitätsmaße.
+
+Im Folgenden betrachten wir einige Maße, die diese Graphen charakterisieren.
+
+```{r ironwolve-single-topic-subgraph}
+
+graph_single_topic_subgraph <-
+  ego_proportions %>%
+  rename("prop_ego" = prop) %>% 
+  left_join(graph_data, by = "date") %>%
+  left_join(alters_proportions, by = c("date", "topic")) %>% 
+  rename("prop_alters" = prop) %>% 
+  mutate(
+    topic_graph = map2(graph, topic, filter_graph_wrapper)
+    )
+```
+
+```{r ironwolve-subgraph-per-topic}
+graph_single_topic_subgraph %>% 
+  mutate(
+    vs = vvcount(topic_graph) - 1,
+    es = vecount(topic_graph)
+  ) %>% 
+  ggplot(mapping = aes(x = date, y = value, colour = variable)) +
+  geom_line(mapping = aes(y = vs, colour = "vertices")) +
+  geom_line(mapping = aes(y = es, colour = "edges")) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_minor_breaks = "3 month",
+    date_labels = "%Y"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  ) +
+  labs(
+    x = "Zeit",
+    y = "Anzahl"
+  ) +
+  scale_color_discrete(name = "Variable", labels = c("vertices" = "Knoten", "edges" = "Kanten")) +
+  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
+  facet_wrap(~topic)
+```
+
+```{r ironwolve-subgraph-one-topic}
+graph_single_topic_subgraph %>% 
+  filter(topic == 235) %>% 
+  mutate(
+    vs = vvcount(topic_graph) - 1,
+    es = vecount(topic_graph)
+  ) %>% 
+  ggplot(mapping = aes(x = date, y = value, colour = variable)) +
+  geom_line(mapping = aes(y = vs, colour = "vertices")) +
+  geom_line(mapping = aes(y = es, colour = "edges")) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_minor_breaks = "3 month",
+    date_labels = "%Y"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  ) +
+  labs(
+    x = "Zeit",
+    y = "Anzahl"
+  ) +
+  scale_color_discrete(name = "Variable", labels = c("vertices" = "Knoten", "edges" = "Kanten")) +
+  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
+  facet_wrap(~topic)
+```
+
+Auch in der Verteilung der Kanten und Knoten der Teilgraphen können wir kein unmittelbares Indiz für ein Verlassen des Topics 239 erkennen; in den Monaten unmittelbar vor dem Verlassen weist der Interaktionsgraph von Topic 239 für vergleichsweise wenige Knoten eine hohe Kantenzahl auf. Unter Umständen gibt eine Analyse der Beiträge auf inhaltlicher Ebene Aufschluss über die Qualität der Interaktionen.
+
+Für jeden dieser Teilgraphen können wir wiederum die Reziprozität messen. Wie bereits zuvor wählen wir als Maß den
+Katz-Powell Index.
+
+```{r ironwolve-subgraph-reciprocity}
+kpdata <- graph_single_topic_subgraph %>%
+  mutate(kp = katz_powell_mutuality(topic_graph))
+
+ggplot(data = na.omit(kpdata), mapping = aes(x = date, y = kp, colour = topic)) +
+  geom_line() +
+  geom_point(size = .4) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_minor_breaks = "3 month",
+    date_labels = "%Y"
+  ) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(
+    x = "Zeit",
+    y = "Katz-Powell-Index"
+  ) +
+  scale_colour_discrete(name = "Topic") +
+  facet_wrap( ~ topic)
+```
+Bis auf 235 weisen alle Topics im Oktober 2013 ein Loch auf, was auf einen leeren Graphen zurückzuführen ist. Im Fall von Topic 
+235 enthält der Graph zwar Kanten, jedoch zu wenig, um ein sinnvolles Indexmaß berechnen zu können.
+
+```{r ironwolve-weighted-degree}
+graph_single_topic_subgraph %>%
+  mutate(
+    topic_graph_degree_ratio = map_dbl(topic_graph, degree_ratio_wrapper),
+    ego_weighted_degree = topic_graph_degree_ratio * prop_ego,
+    alters_weighted_degree = topic_graph_degree_ratio * prop_alters,
+    ) %>%
+  select(-num_posts,
+         -graph) %>% 
+  ggplot(mapping = aes(x = date, y = ego_weighted_degree, colour = topic)) +
+  geom_line() +
+  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
+  facet_wrap(~topic)
+```
+
+```{r ironwolve-degree-distribution}
+graph_single_topic_subgraph %>%
+  mutate(
+    in_degree = vdegree(topic_graph, v = user, mode = c("in")),
+    out_degree = vdegree(topic_graph, v = user, mode = c("out"))
+  ) %>%
+  ggplot(mapping = aes(x = date, y = degree, colour = degree)) +
+  geom_line(mapping = aes(y = in_degree, colour = "in")) +
+  geom_line(mapping = aes(y = out_degree, colour = "out")) +
+    geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
+  labs(x = "Zeit", y = "Wert") +
+  scale_colour_discrete(name = "Knoten-Grad", labels = c("in" = "Ein", "out" = "Aus")) +
+  facet_wrap(~ topic)
+```
+
+
+
+
+Offensichtlich stoßen wir bei dieser Untersuchung an die Grenzen der Computational Social Science. Wir können nur
+diejenigen Effekte versuchen zu erklären, die wir anhand der vorliegenden Daten beobachten können. Es ist durchaus
+denkbar, dass eine reduzierte Aktivität nicht anhand intrinsicher Messungen erklärt werden kann, sondern dass externe 
+Faktoren dafür verantwortlich sind. Ein geeignetes Mittel, um diese Beobachtungen verstehen zu können, wäre etwa der
+in den Sozialwissenschaften häufig gebrauchte Fragebogen, oder das Interview. 

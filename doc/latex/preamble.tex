@@ -46,7 +46,7 @@
 
 % include bibliography in ToC - special case for biblatex (bookdown doesn't handle this atm)
 \let\oldpb\printbibliography
-\renewcommand{\printbibliography}{\oldpb[heading=bibintoc]}
+\renewcommand{\printbibliography}{\oldpb[heading=bibintoc,title=Referenzen]}
 
 \let\oldpar\paragraph
 \renewcommand{\paragraph}{\oldpar*}

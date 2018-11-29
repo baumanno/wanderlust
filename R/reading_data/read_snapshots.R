@@ -69,7 +69,7 @@ read_edgelist <-
   function(user, ...) {
     read_snapshot(
       user = user,
-      path = "data/{user}/edgelist-{date}.csv",
+      path = "/home/oliver/Masterarbeit/data/{user}/edgelist-{date}.csv",
       cols = cols(source = col_character(),
                   sink = col_character()),
       ...
@@ -98,7 +98,7 @@ read_ego_topics <-
     
     read_snapshot(
       user = user,
-      path = "data/{user}/ego-topics-{date}.csv",
+      path = "/home/oliver/Masterarbeit/data/{user}/ego-topics-{date}.csv",
       cols = cols(
         year = col_integer(),
         month = col_integer(),
@@ -129,7 +129,7 @@ read_alters_topics <-
   function(user, ...) {
     read_snapshot(
       user = user,
-      path = "data/{user}/alters-topics-{date}.csv",
+      path = "/home/oliver/Masterarbeit/data/{user}/alters-topics-{date}.csv",
       cols = cols(
         author = col_character(),
         subreddit = col_character(),

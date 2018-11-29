@@ -40,7 +40,7 @@ post_proportions <- function(data) {
   
   saveRDS(df,
           file = glue(
-            "output/{user}_ego-proportions_{date_range}.rds"
+            "/home/oliver/Masterarbeit/output/{user}_ego-proportions_{date_range}.rds"
           ))
   
   df
@@ -87,7 +87,7 @@ user_proportions <- function(data) {
   
   saveRDS(df,
           file = glue(
-            "output/{user}_alters-proportions_{date_range}.rds"
+            "/home/oliver/Masterarbeit/output/{user}_alters-proportions_{date_range}.rds"
           ))
   
   df

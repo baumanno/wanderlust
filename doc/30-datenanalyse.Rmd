@@ -93,20 +93,6 @@ summary_age <-
     Max = max(active)
   )
 ```
-Nach der zeitlichen Eingrenzung der Daten liegen für den betrachteten Zeitraum von 124 Monaten etwa 3,6 Milliarden `r # fmt(3615667286)` Kommentare vor, verfasst von ca. 28 Millionen `r # fmt(num_users)` Nutzern.
-Für jeden dieser Nutzer wurde bestimmt, in wie vielen Monaten er insgesamt im Datensatz enthalten ist; nachfolgend wird dies als "virtuelles Alter" oder schlicht "Alter" des Nutzers bezeichnet.
-
-(ref:summary-age-lab) Kennzahlen der Altersverteilung.
-```{r summary-age-tab}
-knitr::kable(
-  summary_age,
-  digits = 2,
-  align = c("l", "c", "c", "c", "c", "c", "c", "c"),
-  booktabs = TRUE,
-  format.args = list(big.mark = ".", decimal.mark = ","),
-  caption = "(ref:summary-age-lab)"
-)
-```
 
 Für den Beobachtungszeitraum von 124 Monaten liegen etwa 3,6 Milliarden `r # fmt(3615667286)` Kommentare vor, verfasst von ca. 28 Millionen `r # fmt(num_users)` Nutzern.
 Für jeden dieser Nutzer wurde bestimmt, in wie vielen Monaten er im Datensatz enthalten ist.
@@ -240,32 +226,13 @@ Die so aufbereiteten 207.056 Dokumente dienen dem LDA-Algorithmus als Eingabe-Ko
 
 #### Auswertung der Topicanalyse
 
-Wegen der hohen Anzahl an Dokumenten wurde wurde eine effiziente Implementierung des LDA-Algorithmus benötigt.
-Die Wahl fiel dabei auf "GLDA", eine "verbesserte Version" [@Lu2013] der "GibbsLDA++"-Implementierung [@Phan2007], welche sich die hohe Rechenleistung moderner Grafikkarten zunutze macht.
-Die Start-Parameter des Algorithmus führt Tabelle \@ref(tab:lda-params) auf.
+Die Start-Parameter des Algorithmus sind in Tabelle\ \@ref(tab:lda-params) im Anhang aufgeführt.
+Um zügig mit der eigentlichen Analyse der Nutzerhistorien und -netzwerke beginnen zu können, wurde für den Parameter *k*, der die zu bestimmende Zahl an Topics angibt, ein fester Wert von 256 gewählt.
+Ob sich diese Zahl an Topics für die betrachteten Subreddits bzw. Reddit allgemein in der Nähe eines Optimums befindet, bleibt zu klären.
 
-```{r lda-params}
-knitr::kable(
-  tribble(~ Parameter, ~ Wert,
-          #-----------------#
-          "$\\alpha$", round(0.195312, 3),
-          "$\\beta$", 0.100000,
-          "k", "256",
-          "niter", "2000"),
-  escape = FALSE,
-  align = c("c"),
-  booktabs = TRUE,
-  format.args = list(big.mark = ".", decimal.mark = ","),
-  caption = "Startparameter des LDA-Algorithmus"
-)
-```
-
-Da sich eine Evaluation verschiedener *k*-Parameter wegen der hohen Zahl an Dokumenten als schwierig herausstellte, wurde die Zahl der zu bestimmenden Topics auf 256 festgelegt.
-Unklar ist, ob diese Zahl in der Nähe eines Optimums liegt; dies festzustellen wird jedoch nicht Gegenstand dieser Arbeit sein.
-
-Der LDA-Algorithmus beruht auf der Annahme, dass sich jedes Dokument aus verschiedenen (latenten) Themen^[In dieser Arbeit wird  hauptsächlich die englische Wortform "topic(s)" gebraucht, um explizit die algorithmisch bestimmten Themenkomplexe zu bezeichnen] zusammen setzt.
-Das Ergebnis liefert für jedes Dokument eine Wahrscheinlichlichkeitsverteilung über die zu bestimmenden Topics.
-Für die weitere Analyse in dieser Arbeit wird aus dieser Verteilung von Topic-Wahrscheinlichkeiten eine 1:1-Zuordnung abgeleitet, indem für jedes Dokument das Topic als maßgebend angesehen wird, dem der Algorithmus die höchste Wahrscheinlichkeit zuweist.
+Der LDA-Algorithmus beruht auf der Annahme, dass sich jedes Dokument aus verschiedenen latenten Themen^[In dieser Arbeit wird  die englische Wortform "topic(s)" gebraucht, um explizit die algorithmisch bestimmten Themen zu bezeichnen.] zusammen setzt.
+Das Ergebnis liefert für jedes Dokument eine Wahrscheinlichkeitsverteilung über die zu bestimmenden Topics.
+Für die weitere Analyse in dieser Arbeit wird aus dieser Verteilung von Topic-Wahrscheinlichkeiten eine Zuordnung von Subreddits zu Topics abgeleitet, indem für jedes Dokument das Topic als charakteristisch angesehen wird, dem der Algorithmus die höchste Wahrscheinlichkeit zuweist.
 
 ```{r topic-assignments}
 sub_topic_hist <-
@@ -299,30 +266,18 @@ ggplot() +
     y = "Anzahl Subreddits"
   ) +
   scale_y_log10(labels = scales::comma_format(big.mark = ".", decimal.mark = ",")) +
+  scale_x_discrete(breaks = NULL, expand = expand_scale(mult = 0.05)) +
   theme(
-    axis.text.x = element_blank(),
-    axis.ticks.x = element_blank()
+    #axis.text.x = element_blank(),
+    #axis.ticks.x = element_blank()
   )
 ```
 
 
 Abbildung \@ref(fig:topic-assignments-total) stellt die Zuordnung von Subreddits zu Topics als Histogramm dar.
-Jede Klasse entlang der x-Achse entspricht einem der 256 Topics, die der LDA-Algorithmus identifizieren sollte.
-Die y-Achse ist logarithmisch skaliert und notiert die Anzahl an Subreddits, die dem jeweiligen Topic zugewiesen wurden.
-Wie bereits zuvor beim Alter der Nutzer zeigt diese Darstellung eine Verteilung mit einem Long Tail: auf einen großen Teil der Topics entfallen vergleichsweise wenige Subreddits; 50% der Topics sind weniger als neun Subreddits zugeordnet (siehe auch Tabelle \@ref(tab:topic-assignments-summary)).
-
-(ref:topic-assignments-summary-lab) Kennzahlen der Topic-Verteilung
-```{r topic-assignments-summary}
-knitr::kable(
-  sub_topic_summary,
-  digits = 2,
-  align = c("l", "c", "c", "c", "c", "c", "c", "c"),
-  booktabs = TRUE,
-  format.args = list(big.mark = ".", decimal.mark = ","),
-  caption = "(ref:topic-assignments-summary-lab)"
-)
-```
-
+Auf einen großen Teil der Topics entfallen vergleichsweise wenig Subreddits; 50% der Topics sind weniger als neun Subreddits zugeordnet, 75% weniger als 97,5 (s. Tabelle\ \@ref(tab:topic-assignments-summary) im Anhang).
+Offensichtlich gibt es zusätzlich zu großen bis sehr großen Topics auch eine hohe Anzahl an Nischenthemen mit weniger als 100 zugeordneten Subreddits.
+\todo{Braucht man den Zoom-Plot??}
 
 (ref:topic-assignments-top-lab) Anzahl der Zuordnungen von Subreddits zu Topics. Dargestellt sind alle Topics, denen 500 oder mehr Subreddits zugeordnet wurden. Die Sortierung erfolgt analog zu Abbildung \@ref(fig:topic-assignments-total) nach Anzahl Zuordnungen in absteigender Folge.
 ```{r topic-assignments-top, fig.cap="(ref:topic-assignments-top-lab)", fig.height=5.5}

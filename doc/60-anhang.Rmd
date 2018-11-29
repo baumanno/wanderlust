@@ -3,6 +3,72 @@
 # (PART\*) Anhang {-}
 # (APPENDIX) Anhang {-}
 
+# Tabellen
+```{r activity-summary-full}
+
+kableExtra::kable_styling(
+  knitr::kable(
+    summary_age,
+    digits = 2,
+    align = c("l", "c", "c", "c", "c", "c", "c", "c"),
+    booktabs = TRUE,
+    format.args = list(big.mark = ".", decimal.mark = ","),
+    caption = "(ref:summary-age-lab)"
+  ),
+  latex_options = "hold_position"
+)
+```
+
+```{r activity-summary-cut}
+kableExtra::kable_styling(
+  knitr::kable(
+    left_join(top_age, total_posts, by = c("author" = "username")) %>%
+    filter(total_count / active >= thresh_posts) %>%
+      makeSummary(top_active_users$active),
+  digits = 2,
+  align = c("l", "c", "c", "c", "c", "c", "c", "c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "(ref:summary-age-lab)"
+  ),
+  latex_options = "hold_position"
+  )
+```
+
+```{r lda-params}
+kableExtra::kable_styling(
+knitr::kable(
+  tribble(~ Parameter, ~ Wert,
+          #-----------------#
+          "$\\alpha$", round(0.195312, 3),
+          "$\\beta$", 0.100000,
+          "k", "256",
+          "niter", "2000"),
+  escape = FALSE,
+  align = c("c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "Startparameter des LDA-Algorithmus"
+),
+  latex_options = "hold_position"
+  )
+```
+
+(ref:topic-assignments-summary-lab) Kennzahlen der Topic-Verteilung
+```{r topic-assignments-summary}
+kableExtra::kable_styling(
+knitr::kable(
+  sub_topic_summary,
+  digits = 2,
+  align = c("l", "c", "c", "c", "c", "c", "c", "c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "(ref:topic-assignments-summary-lab)"
+),
+  latex_options = "hold_position"
+  )
+```
+
 # Häufigste Wörter je Subreddit
 
 (ref:app-top-words-lab) Charakteristische Wörter der größten Topics.

@@ -85,4 +85,18 @@ update_geom_defaults("col",
 fmt <- function(x) {
   format(x, big.mark = ".", decimal.mark = ",")
 }
+
+makeSummary <- function(df, column) {
+  df %>% 
+  summarise(
+    N = n(),
+    "arithm. Mittel" = mean(column),
+    SD = sd(column),
+    Min = min(column),
+    Q1 = quantile(column, .25),
+    Median = median(column),
+    Q3 = quantile(column, .75),
+    Max = max(column)
+  )
+}
 ```

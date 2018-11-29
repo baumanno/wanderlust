@@ -1,4 +1,5 @@
 \cleardoublepage
+
 # Zusammenfassung und Ausblick {#zusammenfassung}
 
 Gemeinsam ist diesen qualitativen Werkzeugen, dass es Menschen selbst sind, die Auskunft über ihre sozialen Handlungen und Beziehungen geben.
@@ -8,3 +9,9 @@ Beispielsweise kann es vorkommen, dass beim Ausfüllen von Fragebögen eher Antw
 Quantitative Methoden hingegen sehen sich dieser Subjektivität nicht ausgesetzt, beobachten sie doch nur das, was objektiv messbar ist.
 Dabei stellen sie keineswegs die Panazee soziologischer Forschung dar.
 Im Gegenteil ist vieles von dem, was quantitative messbar ist, ohne qualitative Ergänzung sozusagen nur "die halbe Wahrheit".
+
+## Future Work
+- ldatuning: griffiths metrik
+Aufgrund der hohen Zahl an Dokumenten und damit der vergleichsweise langen ist eine Evaluierung verschiedener *k*-Parameter nicht möglich, da jede 
+Da sich eine Evaluation verschiedener *k*-Parameter wegen der hohen Zahl an Dokumenten als schwierig herausstellte, wurde die Zahl der zu bestimmenden Topics auf 256 festgelegt.
+Unklar ist, ob diese Zahl in der Nähe eines Optimums liegt; dies festzustellen wird jedoch nicht Gegenstand dieser Arbeit sein.

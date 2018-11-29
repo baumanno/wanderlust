@@ -2,6 +2,11 @@
 # Grundlagen und verwandte Forschung {#grundlagen}
 
 ## Reddit {#reddit}
+* "Front Page of the Internet"
+* Subreddits
+* Links vs. Comments
+* Up/Down vote
+* API
 
 ## Topic-Modelle {#topicmodelle}
 ### LDA

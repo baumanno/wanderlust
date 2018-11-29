@@ -341,6 +341,13 @@ Da diese einen zeitlich abgegrenzten Ausschnitt aus dem gesamten sozialen Netzwe
 
 ### Verwendete Software {#software}
 
-### Verteilung von Topics
+Um die Inhalte der Subreddits über die Reddit-API abzurufen, wurde die Python-Bibliothek *PRAW*\ [@PRAW] verwendet, ein API-Client speziell für Reddit.  
+Die Vorbereitung der Textkorpora für die Topic-Analyse wurde mit dem Text-Mining-Package *tm*\ [@R-tm] in R realisiert.  
+Für die LDA selbst wurde wegen der hohen Zahl an Inhalten eine effiziente Implementierung benötigt, die in akzeptabler Zeit ein Topic-Model berechnet. Die Wahl fiel dabei auf "GLDA"\ [@Lu2013], das sich die hohe Rechenleistung moderner Grafikkarten zunutze machen kann; die Software stellt eine Weiterentwicklung von "GibbsLDA++"\ [@Phan2007] dar.  
+Die Datenanalyse erfolgt in R mit einschlägigen Bibliotheken, größtenteils aus dem *tidyverse*\ [@R-tidyverse]; Visualisierungen wurden mit *ggplot2*\ [@R-ggplot2] erstellt.  
+Die Modellierung der Interaktionsgraphen wurde mit der R-Bibliothek *igraph*\ [@R-igraph] realisiert, die neben der Konstruktion auch Funktionalität zur Analyse von Netzwerken bietet.  
+Die Arbeit selbst wurde mit *bookdown*\ [@R-bookdown] angefertigt, das es ermöglicht, Dokumente im Markdown-Format zu verfassen, Codeblöcke im Text zu definieren und deren Ausgabe direkt in den Text zu integrieren.
+
+## Ergebnisse {#ergebnisse}
 
 ### Fallstudie

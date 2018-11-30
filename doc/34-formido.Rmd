@@ -108,7 +108,7 @@ ego_proportions_full %>%
     lower_q = quantile(num_posts, .25),
     upper_q = quantile(num_posts, .75)
   ) %>% 
-  knitr::kable()
+  knitr::kable(booktabs = TRUE)
 ```
 
 

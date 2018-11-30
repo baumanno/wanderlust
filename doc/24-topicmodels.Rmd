@@ -1,0 +1,4 @@
+## Topic-Modelle {#topicmodelle}
+In der vorliegenden Arbeit wird ein algorithmisch erstelltes Topic-Modell genutzt
+
+### Latent Dirichlet Allocation

@@ -1,3 +1,10 @@
 ## Soziale Netzwerkanalyse {#sna}
-### Graphen und Netzwerke
-### Ego-Netzwerke
+#### Graphen und Netzwerke
+#### Ego-Netzwerke
+
+#### Grad-Maße
+
+#### Reziprozität
+
+#### Homophilie
+

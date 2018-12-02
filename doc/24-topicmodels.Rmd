@@ -3,7 +3,7 @@
 Um die im vorangegangen Abschnitt angesprochenen Themenhistorien der Nutzer zu erzeugen, werden Topic-Modelle eingesetzt.
 Dabei handelt es sich um statistische Modelle, die es ermöglichen, thematische Assoziationen von Texten aufzudecken, ohne eine Inhaltsanalyse "von Hand" durchführen zu müssen.
 Damit lassen sich vor allem große Datenmengen strukturieren, einordnen und erschließen.
-Zu beachten ist vor allem, dass die Verfahren kein Vorwissen über die zugrundeliegende Themenstruktur besitzen, sondern diese als Teil des Prozesses selbst entdecken.  
+Zu beachten ist vor allem, dass die Verfahren kein Vorwissen über die zugrunde liegende Themenstruktur besitzen, sondern diese als Teil des Prozesses selbst entdecken.  
 
 #### *Text as data*
 Topic-Modelling ist einer Reihe von Verfahren zuzuordnen, die Text als Daten auffassen, auf denen sich wie auf numerischen Daten Berechnungen ausführen und Modelle erzeugen lassen.
@@ -22,30 +22,52 @@ Diesem Umstand tragen *mixed membership*-Modelle Rechnung, indem sie statt eines
 Zu beachten ist, dass diese Verfahren keineswegs auf textuelle Daten beschränkt sind und auch in anderen Gebieten Anwendung finden, wie etwa der Genetik oder Computergrafik\ [@Blei2012].
 
 #### Latent Dirichlet Allocation (LDA)
-Auch LDA\ [@Blei2012] zählt zur Klasse der *mixed membership*-Modelle.
-Diesem Ansatz liegt die Idee zugrunde, dass Dokumente durch einen generativen probabilistischen Prozess erzeugt werden.
-Dabei stellen Topics eine Multinomialverteilung über den Wörtern eines Vokabulars dar, und jedes Dokument ist eine Multinomialverteilung über diese Topics; ein Dokument enthält also mehrere Topics zu unterschiedlichen Anteilen.
+Auch LDA\ [@Blei2003] zählt zur Klasse der *mixed membership*-Modelle.
+Die Grundidee dieses Verfahrens ist, dass Dokumente aus mehreren Topics zusammengesetzt sind und von einem probabilistischen Prozess generiert werden\ [@Blei2012].
+Ein Topic setzt sich aus verschiedenen Wörtern eines Korpus zusammen, jedes Wort kommt mit einer bestimmten Wahrscheinlichkeit in diesem Topic vor. 
+Damit lassen sich Topics als Wahrscheinlichkeitsverteilungen über dem festen Vokabular eines Korpus an Dokumenten auffassen, die dem Prozess als latente ("versteckte") Variablen zugrunde liegen.
+Der generative Prozess wählt nun für jedes Dokument des Korpus eine zufällige Verteilung über Topics, für jedes zu erzeugende Wort des Dokuments zufällig ein Topic aus dieser Dokument-Topic-Verteilung und zieht zufällig ein Wort aus diesem Topic.
 
+Damit lässt sich die Erzeugung eines Dokuments auch als gemeinsame Wahrscheinlichkeitsverteilung über den sichtbaren und versteckten Variablen auffassen\ [@Blei2012].
+Formal sei dazu $D$ die Anzahl an Dokumenten $d_{1:D}$ eines Korpus und $N$ die Anzahl an Wörtern $w_{1:N}$ eines Dokuments, $w_{d,n}$ bezeichne dabei das $n$te Wort in Dokument $d$.
+Weiter seien $\beta_{1:K}$ die Verteilungen über Wörter für die $K$ Topics, aus denen Dokumente zusammengesetzt sind; auf die Bedeutung von $K$ wird im Folgenden noch eingegangen werden.
+Für jedes Dokument $d$ bezeichne $\theta_d$ die Verteilung der einzelnen Topics und $z_{d,n}$ die Topic-Zuordnung eines Wortes $n$ in Dokument $d$.
+Das konkrete und zu beobachtende Wort schließlich bezeichne $w_{d,n}$.
+Die Dokument-Topic-Verteilung $\theta_{d}$ wird aus einer Dirichlet-Verteilung gezogen, einer "Verteilung von Verteilungen", woraus sich auch der Name des Verfahrens herleitet.
 
-In der vorliegenden Arbeit wird ein algorithmisch erstelltes Topic-Modell genutzt
+Die gemeinsame Wahrscheinlichkeitsverteilung des Modells ist damit gegeben durch (vgl.\ [@Blei2012])
 
-* Text as data
+\begin{equation}
+p(\beta, \theta, z, w) = \prod_{i=1}^{K}p(\beta_i) \prod_{d=1}^{D}p(\theta_d)\left( \prod_{n=1}^{N}p(z_{d,n} | \theta_{d})p(w_{d,n}|\beta_{1:K}, z_{d,n}) \right).
+(\#eq:jointdist)
+\end{equation}
 
-* informationsgewinnung aus textuellen daten
+Zu beachten ist, dass die Zuordnung $z_{d,n}$ von der dokumentspezifischen Verteilung $\theta_d$ abhängt, ebenso wie die Wortinstanzen $w_{d,n}$ von der Topic-Zuordnung $z_{d,n}$ und allen Topic-Verteilungen $\beta_{1:K}$ abhängen.
 
-* bei großen unkategorisierten dammlungen an dokumenten schwer, "Sinn" zu gewinnen
+Um nun für einen gegebenen Korpus an Dokumenten die ihm zugrunde liegende, latente Topic-Struktur zu bestimmen, wird dieser Prozess sozusagen umgekehrt, indem man die gemeinsame Wahrscheinlichkeitsverteilung \@ref(eq:jointdist) auf die beobachteten Wortinstanzen konditioniert.
+Diese A-posteriori-Verteilung ist gegeben durch
 
-* IR verfahren helfen, Dokumente maschinell auszuwerten bzw. für weitere menschliche verarbeitung vorzubereiten
+\begin{equation}
+p(\beta, \theta, z | w) = \frac{p(\beta_{1:K}, \theta_{1:D}, z_{1:D}, w_{1:D})}{p(w_{1:D})}.
+(\#eq:posterior)
+\end{equation}
 
-* LDA liefert keine "Gold Standard" Topics, sondern gliedert lediglich einen Korpus von Dokumenten
+und folgt aus der Definition der bedingten Wahrscheinlichkeit^[$P(A|B) = \frac{P(A \cap B)}{P(B)}$].
 
-* LDA geht davon aus, dass jedes Dokument Mischung verschiedener Topcis enthält
+Die Wahrscheinlichkeit $p(w_{1:D})$ im Nenner in \@ref(eq:posterior) lässt sich zwar prinzipiell berechnen, indem für alle möglichen Topic-Verteilungen die bedingte Wahrscheinlichkeit \@ref(eq:jointdist) summiert wird; allerdings ist die Zahl der möglichen Topic-Besetzungen zu hoch, um diese Berechnung durchzuführen.
+In der Praxis wird daher die A-posteriori-Verteilung abgeschätzt, etwa mittels probabilistischer Monte-Carlo-Verfahren\ [@Griffiths2004].
 
-* Topic besteht aus Verteilung vopn Wörtern
+Hervorzuheben ist, dass das Modell zu keinem Zeitpunkt zusätzliches Wissen über Struktur oder Inhalt der Topics besitzt.
+Wie bereits angesprochen wird einzig die Anzahl der Topics $K$ dem Modell zugeführt.
+Dieser Parameter hat häufig Auswirkungen auf die Güte eines Modells und kann für einen Satz an Dokumenten experimentell einem Optimum angenähert werden (s. hierzu auch \@ref(relatedwork)).
 
-* LDA beschreibt generativen Prozess: Dokument wird aus diesen Parametern erzeugt
-
-* Umkehrung erhält man a-posteriori-verteilung, die sich abschätzen lässt
-
-
-LDA reiht sich ein in Verfahren wie tf-idf oder Latent Semantic Analysis.
+#### Kontext der Arbeit
+Topic-Modelle, wie sie etwa mit LDA berechnet werden können, besitzen nicht absolute Gültigkeit.
+Sie können vielmehr dabei helfen, einen Satz an Dokumenten zu strukturieren und für weitere Betrachtungen vorzubereiten, indem die den Dokumenten intrinsischen Topic-Strukturen aufgedeckt werden.
+In weiteren Betrachtungen lassen sich dann etwa Ähnlichkeiten zwischen Dokumenten feststellen oder Klassifizierungen vornehmen.
+Auch die vorliegende Arbeit nutzt LDA als Vorstufe zu einer thematischen Klassifizierung von Subreddits.
+Jedes Subreddit wird als Dokument aufgefasst, indem die Titel der Beiträge konkateniert werden.
+Auf diesen Dokumente wird ein Topic-Modell mit 256 Topics erstellt und im Anschluss jedes Subreddit auf das Topic mit der höchsten Wahrscheinlichkeit reduziert.
+Die gefundenen Topics bilden damit den thematischen Überbau der ihnen zugewiesenen Subreddits und werden genutzt, um für Nutzer Themenverläufe zu bestimmen.
+Diese Gruppierung einzelner Subreddits zu einer größeren Einheit erlaubt es, Nutzerinteressen über die vergleichsweise harten Subreddit-Grenzen hinweg zu betrachten.
+Bewegt sich ein Redditor in zwei einander thematisch verwandten Subreddits, etwa /r/android und /r/linux, betrachtet diese Arbeit diese als gemeinsame Einheit.

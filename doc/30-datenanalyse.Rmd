@@ -282,7 +282,7 @@ Offensichtlich gibt es zusätzlich zu großen bis sehr großen Topics auch eine 
 \todo{Braucht man den Zoom-Plot??}
 
 (ref:topic-assignments-top-lab) Anzahl der Zuordnungen von Subreddits zu Topics. Dargestellt sind alle Topics, denen 500 oder mehr Subreddits zugeordnet wurden. Die Sortierung erfolgt analog zu Abbildung \@ref(fig:topic-assignments-total) nach Anzahl Zuordnungen in absteigender Folge.
-```{r topic-assignments-top, fig.cap="(ref:topic-assignments-top-lab)", fig.height=5.5}
+```{r topic-assignments-top, include=FALSE, fig.cap="(ref:topic-assignments-top-lab)", fig.height=5.5}
 large_topics <- subset(sub_topic_hist, n >= 500) 
 
 large_topics %>%

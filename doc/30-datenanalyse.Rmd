@@ -108,7 +108,7 @@ Der Unterschied zwischen den beiden längsten Aktivitätsklassen beträgt `r sub
 Obwohl an dieser Stelle keine Erklärung für diese Beobachtung geliefert werden kann, ist es möglich, dass ein "harter Kern" von Nutzern Reddit seit längerer Zeit, möglicherweise sogar von Anfang an nutzt, und regelmäßig aktiv ist.
 ```{r age-distribution-1, fig.cap="Verteilung der Aktivität"}
 ggplot(data = res_counted) +
-  geom_bar(
+  geom_col(
     mapping = aes(x = active, y = n / sum(n)),
     stat = "identity"
   ) +
@@ -120,7 +120,7 @@ ggplot(data = res_counted) +
 
 ```{r age-distribution-2, fig.cap="Verteilung der Aktivität, logarithmische Darstellung."}
 ggplot(data = res_counted) +
-  geom_bar(
+  geom_col(
     mapping = aes(x = active, y = n),
     stat = "identity"
   ) +
@@ -173,7 +173,7 @@ top_active_users <-
 ```{r sample-users-hist, fig.cap="Verteilung der Aktivität nach vorgenommener Einschränkung auf obere 10.000 Nutzer mit mindestens 50 Kommentaren je Monat."}
 top_active_users %>%
   ggplot() +
-  geom_bar(
+  geom_col(
     mapping = aes(x = active, y = n),
     stat = "identity"
   ) +

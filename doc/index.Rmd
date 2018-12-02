@@ -60,22 +60,26 @@ knitr::write_bib(c(.packages(), 'bookdown', 'knitr', 'rmarkdown'),
 ```{r geom-defaults, cache=FALSE}
 
 theme_set(theme_gray(base_size = 13))
-
+# color scheme
+# 3 Class RdBu
+# red = #ef8a62
+# beige = #f7f7f7
+# blue = #67a9cf (used in bar plots)
 update_geom_defaults("bar",
                      list(
-                       fill = "lightblue",
+                       fill = "#67a9cf",
                        alpha = .8,
                        colour = "black",
                        size = .2
                      ))
 update_geom_defaults("point",
                      list(
-                       colour = "lightblue",
+                       colour = "#67a9cf",
                        alpha = .8
                      ))
 update_geom_defaults("col",
                      list(
-                       fill = "lightblue",
+                       fill = "#67a9cf",
                        alpha = .8
                      ))
 ```

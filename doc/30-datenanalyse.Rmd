@@ -16,15 +16,7 @@ Jason Baumgartner, der unter dem Pseudonym *stuck_in_the_matrix*^[https://www.re
 Er verwendet die Reddit-API, um diese Inhalte systematisch zu archivieren und bietet sie zum Download an [@Baumgartner].
 Der Zeitraum der Daten umfasst derzeit Dezember 2005 bis Oktober 2018.
 
-#### Struktur
-Die monatlichen Schnappschüsse liegen in Form strukturierter Textdateien vor.^[Die nachfolgenden Ausführungen beziehen sich ausschließlich auf den Kommentar-Datensatz, Bezüge zu Beiträgen werden explizit hervorgehoben.]
-Diese enthalten neben dem Inhalt des Kommentars auch Metadaten wie Verfasser oder Datum.
-Die für diese Arbeit relevanten Metadatenfelder sind in Tabelle \@ref(tab:importantkeys) aufgeführt.
-Zu beachten ist hier insbesondere, dass der eigentliche Textinhalt des Kommentars für diese Auswertung nicht genutzt wird.
-Das maschinenlesbare JSON-Format, in dem die Daten abgelegt sind, ermöglicht die effiziente computergestützte Auswertung.
-
 ```{r importantkeys}
-#t <- 
 knitr::kable(
   tribble(
     ~Feld, ~Wert,
@@ -35,9 +27,17 @@ knitr::kable(
   ),
   booktabs = TRUE,
   caption = "Verwendete Metadaten zu Kommentaren"
-)
-# kableExtra::kable_styling(t, latex_options = "hold_position")
+) %>% 
+ kableExtra::kable_styling(latex_options = "hold_position")
 ```
+
+#### Struktur
+Die monatlichen Schnappschüsse liegen in Form strukturierter Textdateien vor.^[Die nachfolgenden Ausführungen beziehen sich ausschließlich auf den Kommentar-Datensatz, Bezüge zu Beiträgen werden explizit hervorgehoben.]
+Diese enthalten neben dem Inhalt des Kommentars auch Metadaten wie Verfasser oder Datum.
+Die für diese Arbeit relevanten Metadatenfelder sind in Tabelle \@ref(tab:importantkeys) aufgeführt.
+Zu beachten ist hier insbesondere, dass der eigentliche Textinhalt des Kommentars für diese Auswertung nicht genutzt wird.
+Das maschinenlesbare JSON-Format, in dem die Daten abgelegt sind, ermöglicht die effiziente computergestützte Auswertung.
+
 
 #### Kohärenz
 Im März 2018 haben Gaffney und Matias [@Gaffney2018] eine Analyse des gesamten Baumgartner-Korpus vorgelegt.

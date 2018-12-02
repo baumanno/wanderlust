@@ -1,7 +1,8 @@
 \cleardoublepage
+
 # Datenanalyse {#datenanalyse}
-Der erste Teil dieses Kapitels liefert einen Überblick über die Forschungsmethodik.
-Im zweiten Teil werden die Ergebnisse der Fallstudie präsentiert.
+Nachdem in den vorangegangen Kapitel die für diese Arbeit relevanten Grundlagen erläutert wurden und eine Einordnung in den bestehenden Forschungsstand erfolgte, widmet sich dieses Kapitel der unternommenen Datenanalyse.
+Der erste Teil dieses Kapitels liefert einen Überblick über die Forschungsmethodik, im zweiten Teil werden die Ergebnisse der Fallstudie präsentiert.
 
 ## Methodik {#methodik}
 Zunächst wird der verwendete Datensatz präsentiert und Kritik daran erörtert.

@@ -257,23 +257,22 @@ sub_topic_summary <-
   )
 ```
 
-(ref:topic-assignments-total-lab) Anzahl der Zuordnungen von Subreddits zu Topics in logarithmischer Darstellung. Jede Säule entlang der x-Achse entspricht einem der 256 Topics, die Sortierung erfolgt absteigend nach Anzahl der zugeordneten Subreddits. Aus Gründen der Darstellung wurde auf eine Auszeichnung der x-Achse verzichtet.
+(ref:topic-assignments-total-lab) Anzahl der Zuordnungen von Subreddits zu Topics. Jede Säule entlang der x-Achse entspricht einem der 256 Topics. Hervorgehoben sind die 10 größten Topics mit den meisten Zuordnungen.
 ```{r topic-assignments-total, fig.cap="(ref:topic-assignments-total-lab)"}
 sub_topic_hist %>% 
 ggplot() +
   geom_col(
-    aes(reorder(topic, -n), n)
+    aes(topic, n)
   ) +
   labs(
     x = "Topic",
     y = "Anzahl Subreddits"
   ) +
-  scale_y_log10(labels = scales::comma_format(big.mark = ".", decimal.mark = ",")) +
-  scale_x_discrete(breaks = NULL, expand = expand_scale(mult = 0.05)) +
-  theme(
-    #axis.text.x = element_blank(),
-    #axis.ticks.x = element_blank()
-  )
+  geom_text_repel(data = sub_topic_hist %>% top_n(10), mapping = aes(topic, n, label = topic)) +
+  scale_y_continuous(labels = scales::comma_format(big.mark = ".", decimal.mark = ",")) +
+  scale_x_discrete(breaks = NULL, expand = expand_scale(mult = 0.05))
+  #scale_x_discrete(breaks = seq(0, 256, 50), expand = expand_scale(mult = 0.05))
+  #scale_x_discrete(breaks = (sub_topic_hist %>% top_n(10))$topic, expand = expand_scale(mult = 0.05))
 ```
 
 

@@ -1,10 +1,137 @@
 ## Soziale Netzwerkanalyse {#sna}
-#### Graphen und Netzwerke
-#### Ego-Netzwerke
+Die zweite Säule dieser Arbeit stellt neben der Topic-Analyse die Untersuchung der Interaktionen zwischen Nutzern eines Online Social Networks dar.
+Diese Interaktionen lassen sich mit Methoden der sozialen Netzwerkanalyse untersuchen.
 
-#### Grad-Maße
+Im Gegensatz zu traditionellen Ansätzen soziologischer Forschung betrachten Methoden der sozialen Netzwerkanalyse nicht das Individuum "für sich" sondern Zusammenschlüsse mehrerer Individuen.
+Insbesondere geht sie davon aus, dass *Akteure* Beziehungen zueinander aufbauen, und dass dieses Beziehungsgeflecht strukturelle Eigenschaften aufweist, die sich analysieren lassen.
+"Sozial" werden diese Beziehungen dadurch, dass als Akteure Individuen oder deren Zusammenschluss in Form von Gruppen und Organisationen in Frage kommen.
+Ein soziales Netzwerk beschreibt also eine endliche Zahl an Akteuren sowie deren Beziehungen zueinander.
+Das Ziel dieser Sichtweise besteht darin, Eigenschaften der soziostrukturellen Umwelt zu verstehen und wie diese mit Merkmalen auf Akteursebene interagieren.
+Sie bietet damit eine Alternative zu traditionellen Ansätzen, die das Individuum als einzelne, unabhängige Einheit betrachten.
+
+Die Darstellung solcher Akteur-Netzwerke kann auf verschiedene Weise erfolgen.
+Eine seit den Anfängen soziometrischer Forschung verbreitete Form stellt die Soziomatrix dar, in der die Zeilen und Spalten einer Matrix auf Akteure verweisen (vgl. [@Wasserman1994, S. 70]); der Wert in Zeile $i$ und Spalte $j$ zeigt an, ob Zwischen Akteuren $i$ und $j$ eine Verbindung besteht oder nicht, bzw. wie viele Verbindungen bekannt sind wenn nicht nur binäre Beziehungen (vorhanden/nicht vorhanden) codiert werden.
+Diese Darstellungsform entspricht damit der Adjazenzmatrix eines Graphen, die wiederum auf dem mathematischen Teilgebiet der Graphentheorie genutzt wird.  
+Die Darstellung sozialer Beziehungen als Graph stellt indes eine weitere Form der Modellierung sozialer Netzwerke dar.
+
+#### Graphen
+Bei einer Darstellung in Form eines Graphen werden Akteure als Knoten und Beziehungen zwischen ihnen als Kanten aufgefasst; mittels Adjazenzlisten bzw. -matrizen lassen sich diese Graphen kompakt darstellen.
+Die Graphentheorie bietet nicht nur eine adäquate Darstellung der Idee von untereinander verbundenen Akteuren; sie stellt auch Konzepte bereit, um die Eigenschaften sozialer Netzwerke untersuchen und beschreiben zu können.
+Graphen lassen sich formal als die endliche, nicht-leere Menge von Knoten $V$ beschreiben, welche über Kanten aus der Menge $E \subseteq V \times V$ aller geordneten Knotenpaare miteinander verbunden sind.
+Da $E$ geordnete Paare von Knoten $(u,v) \in V$ enthält, spricht man von einer gerichteten Kante von $u$ nach $v$; ferner ist $E$ eine Multimenge, enthält also Paare von Knoten mehrfach (vgl. [@Brandes2012]).
+Durch die Darstellung als gerichteter Multigraph lassen sich nicht nur gerichtete Graphen mit Mehrfachkanten realisieren, auch ungerichtete Graphen lassen sich auf diese Weise darstellen, indem zwei einander entgegegesetzte gerichtete Kanten zu einer zusammengefasst werden.
+
+#### Grad von Knoten
+Sind zwei Knoten über eine oder mehrere Kanten miteinander verbunden, sind sie "Nachbarn"; die Zahl der Nachbarn eines Knotens bezeichnet man als dessen Grad.
+Knoten $v$ in einem gerichteten Graphen besitzen einen Ausgangsgrad $d^{+}(v)$, der die Anzahl ausgehender Kanten $(v,w) \in E$ angibt, sowie einen Eingangsgrad $d^{-}(v)$, der der Zahl eingehender Kanten $(v,w) \in E$ entspricht (vgl. [@Brandes2012]); der Grad eines Knotens entspricht der Summe aus Eingangs- und Ausgangsgrad.
+Der Grad eines Knotens gibt im Kontext sozialer Netzwerke Aufschluss über die Zahl der Beziehungen, die ein Akteur zu anderen ausbildet, und kann daher als Maß für die Aktivität des Akteurs gesehen werden (vgl. [@Wasserman1994] S.100).
+In dieser Arbeit werden Betrachtungen des Knotengrads angestellt, um festzustellen, wie aktiv ein Nutzer sich mit anderen in derselben Community austauscht.
+
+\todo{Beispielgraph, butterfly oder so}
+
+#### Egozentrische Netzwerke
+Wird anstatt das Netzwerk *in toto* zu betrachten die Sichtweise eines einzelnen Akteurs eingenommen, spricht man von egozentrischen oder einfach Ego-Netzwerken.
+Diese setzen sich aus einem zentralen Akteur "Ego" zusammen, dessen benachbarten Knoten, den Alteri, sowie den Beziehungen der Alteri untereinander.
+Solche Strukturen, deren Sicht sich auf einen Ausschnitt um einen Akteur beschränkt, werden auch als "lokale" bzw. "persönliche Netzwerke" bezeichnet, da ihre Sicht lokal beschränkt und stark auf die Person des Ego ausgerichtet ist.
+In dieser Arbeit werden Ego-Netzwerke genutzt, um Interaktionsgraphen eines Nutzers zu erstellen.
+Der betrachtete Nutzer nimmt hier die Person des Ego ein, die Alteri sind alle weiteren Nutzer, mit denen er auf Reddit in Form von Kommentaren kommuniziert hat.
+Diese Kommunikation kann einseitig von Ego oder den Alteri ausgehen, sie kann aber auch vom jeweils anderen erwidert werden; ebenso sind diese Kommuniaktionsakte nicht in ihrer Anzahl beschränkt, weshalb Kanten im Graph des Ego-Netzwerks als gerichtete Multikanten umgesetzt werden.
+Da zudem einzig die Strukturen von Bedeutung sind, die sich zwischen Ego und Alteri manifestieren, werden die Beziehungen zwischen den Alteri außer Acht gelassen.
 
 #### Reziprozität
+Strukturen aus zwei Knoten eines Graphen und deren möglichen Verbindungen werden auch als dyadische Beziehung bezeichnet.
+Dyaden kennen drei mögliche Zustände, die durch die Art der Verbindung der beiden Knoten bestimmt sind:
+
+* Null-Dyade: Zwischen den beiden Knoten besteht keine Verbindung,
+* Asymmetrische Dyade: Eine einzelne Kante verbindet die beiden Knoten, für Knoten $u,v$ entweder die Kante $(u,v)$ oder $(v,u)$ 
+* Wechselseitige^[engl. "mutual"] Dyade: Die Verbindung wird von beiden Partnern erwidert, für Knoten $u,v$ also das **Paar** gerichteter Kanten $(u,v)$ **und** $(v,u)$ (bzw. in kompakterer Darstellung auch $u \leftrightarrow v$, vgl [@Wasserman1994, S. 510])
+
+Die "nächstgrößere" Struktur, die sich beobachten ließe, stellen Triaden dar, also Muster bestehend aus drei Knoten.
+Für diese Arbeit ist eine solche Betrachtung wenig zielführend, da eine Triade immer Ego als einen Eckpunkt enthalten wird oder die Null-Triade ist (zur Erinnerung: Verbindungen unter den Alteri werden hier nicht berücksichtigt).
+Aus letzterer Beobachtung lässt sich kein Schluss ziehen, da sie durch das das Forschungsdesign bedingt ist; erstere Betrachtung zerfällt immer in die Betrachtung zweier dyadischer Beziehungen, die Ego enthalten.
+
+Von besonderem Interesse ist die Frage, ob Dyaden von Ego und Alteri zu wechselseitigen Beziehungen neigen, oder ob es sich eher um einseitige Verbindungen handelt.
+Da eine Kante zwischen Nutzern eine Kommunikationshandlung darstellt entsprechen asymmetrische Dyaden Interaktionen, die nicht erwidert werden, der Kommentar bleibt ohne Wirkung.
+Bei wechselseitigen Interaktionen liegt hingegen ein Rede-Gegenrede-Akt vor, die Aktion des einen provoziert eine Reaktion des anderen Partners.
+
+Die Betrachtung dieser Reziprozität von Beziehungen kann Aufschluss geben über die Art von Diskursen im lokalen Netzwerk eines Nutzers.
+Um die Tendenz wechselseitiger Kanten zu bestimmen, nutzt diese Arbeit ein 1953 von Katz und Powell vorgeschlagenes Maß [@Katz1953], einen "index of tendency toward reciprocation"\ [@Katz1955].
+Dieser Index $\rho_{KP}$ lässt sich entweder für ein festes oder ein freies Design bilden ("fixed choice" v. "free choice"), abhängig davon, ob alle Knoten nur eine bestimmte Zahl an Beziehungen ausbliden dürfen, oder ob deren Zahl unbeschränkt ist.
+Da Nutzer untereinander beliebig viele Kommentare austauscen können, nutzt diese Arbeit den Index der freien Wahl; für eine Beschreibung der festen Wahl sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
+
+#### Katz-Powell-Index
+In Ermanglung einer angemessen prägnanten Übersetzung wird statt der Bezeichnung im urprünglichen Aufsatz hier die Umschreibung "Katz-Powell-Index" oder, wo angemessen, schlicht $\rho_{KP}$ verwendet.
+Der Index wird 
+
+\begin{equation}
+\rho_{KP} = \frac
+{2(g-1)^2M-L^2+L_2}
+{L(g-1)^2-L^2+L_2}
+\end{equation}
 
 #### Homophilie
 
+----------------------
+
+zudem betrachten wir veränderungen struktureller eigenschafte über die zeit hinweg
+
+katz-powell $\rho_{KP}$, to measure the tendency for actors in a group to reciprocate choices mroe freqeuently than would occur simply by chance; dimensionslos, 0 und 1 als benchmarks; 0: keine reziprocitat, 1, alle kanten reziprok); kleienr 0: zu wenige gegenseitige dyaden (mutual dyads), "less than chance tendency toward reciprocation", negative "tendencies away from mutual dyads toward asymmetric and nulls"
+
+fiexed choice, free choice, kommt auf design der datenerhebung an; in usnerem fall keine auskunft von akteur (ego), daher freie wahl
+
+formel (Wf 517)
+
+--------------------
+
+Die soziale Netzwerkanalyse betrachtet Beziehungen zwischen Akteuren 
+Beziehungen als Verbindungen zwischen Einheiten sind Bestandteil von Netzwerktheorie
+Betrachtungseinheit ist nicht das Individuum, sondern eine Menge von Individuen und deren VErbindung untereinander
+
+"The task is to understand properties of the social (economic or political) structural environment, and how these structural properties influence observerd characteristics and associations among characteristics" (WassermanFaust, S.8)
+
+"auxiliary network studies": network theories and measurements become explanatory factors or variables in understanding individual behavior (WF, S. 9)
+
+betrachtet muster in beziehungen die sich zwischen akteuren ausbilden
+
+Moreno und das Sozogramm als beginn der soziometrie (Moreno 1934)
+
+alternative betrachtugnsweise zum unabhängigen individuum
+
+matheamtische Grundlagen: graphentheorie, wahrscheinlichkeitstheorie, algebren (algebraische modelle)
+
+graphentheorie bietet angemessene darstellung eines sozialen entzwerks sowie konzepte die genutzt werden können, eigenschaften sozialer entzwerke zu untersuchen
+
+neben graph-darstellung auch sociometric notation (sociomatrix, zeilen und spalten sind akteure)
+
+graph, knoten, kanten
+
+kanten gerichtet, ungerichtet
+
+Brandes:
+Graph menge an Kanten und Knoten, blabla
+
+soziales netzwerk besteht aus endlicher zahl an akteuren und deren beziehungen zueinander. 
+
+Akteur, endpuntke von beziehungen; individuelle oder kollektive einheiten
+
+graph darstellung entspricht den konzepten von akteuren und deren verbindung und liefert mathematsich begründete und erprobte verfahren, um strukturelle eigenschaften zu messen
+
+one-mode (unimodal) wenn alle akteure gleicher art sind (nutzer eines OSN)
+
+Knotengrad, Eingang, Ausgang
+
+mean degree? 2L/g
+
+egozentrische oder ego-netzwerke, zentraler akteur "ego", "alteri" zu denen er beziehungen pflegt, sowie beziehungen der alteri untereinander
+
+heissen auch "personal network"
+
+dyade, dyadische beziehung, zwei akteure
+
+
+
+da egonetz, hauptsächlich untersuchung von dyaden
+
+drei typen von dyaden: mutual (gegenseitig, i->j und j->i)
+asymmetrisch, i->j oder j->i
+null-dyade, keine verbindung; alteri untereinander

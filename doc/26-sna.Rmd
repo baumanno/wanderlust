@@ -60,8 +60,26 @@ Dieser Index $\rho_{KP}$ lässt sich entweder für ein festes oder ein freies De
 Da Nutzer untereinander beliebig viele Kommentare austauscen können, nutzt diese Arbeit den Index der freien Wahl; für eine Beschreibung der festen Wahl sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
 
 #### Katz-Powell-Index
-In Ermanglung einer angemessen prägnanten Übersetzung wird statt der Bezeichnung im urprünglichen Aufsatz hier die Umschreibung "Katz-Powell-Index" oder, wo angemessen, schlicht $\rho_{KP}$ verwendet.
-Der Index wird 
+In Ermangelung einer angemessen prägnanten Übersetzung wird statt der Bezeichnung im urprünglichen Aufsatz hier die Umschreibung "Katz-Powell-Index" oder, wo angemessen, schlicht $\rho_{KP}$ verwendet.
+Der Index stellt eine Abschätzung der Wahrscheinlichkeit dar, dass zwei Akteure gegenseitige Kanten ausbilden.
+Formal lässt sich dies als Wahrscheinlichkeit  auffassen, dass eine Kante $(u,v)$ und deren Gegenstück $(v,u)$ existiert (vgl. [@Wasserman1994], S. 515):
+\begin{equation}
+P(u \to v \wedge v \to u) = P(u \to v)P(v \to u|u\to v)
+(\#eq:probmut)
+\end{equation}
+
+Die Idee von Katz und Powell besteht darin, die bedingte Wahrscheinlichkeit im letzten Term von \@ref(eq:probmut) mittels eines Maßes $\rho_{KP}$ aufzuschlüsseln (vgl. [@Wasserman1994]):
+  
+\begin{equation}
+P(v \to u|u\to v) = P(v \to u) + \rho_{KP}P(v \nrightarrow u)
+(\#eq:rhomut)
+\end{equation}
+
+Die Wahrscheinlichkeit einer zu $(u,v)$ erwiderten Kante setzt sich also zusammen aus der Wahrscheinlichkeit der Gegenkante, plus einem Anteil $\rho_{KP}$ der Wahrscheinlichkeit, dass diese Gegenkante nicht existiert.
+Die Formulierung der Wahrscheinlichkeit in \@ref(eq:rhomut) bringt einige interessante Eigenschaften von $\rho_{KP}$ mit:
+0:
+1:
+-1:
 
 \begin{equation}
 \rho_{KP} = \frac

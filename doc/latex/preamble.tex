@@ -6,12 +6,12 @@
 % \usepackage{epstopdf}
 
 \usepackage[labelfont=bf]{caption}
-% \usepackage{changepage}
+\usepackage[strict]{changepage}
 % \usepackage{subcaption}
 % \usepackage{hanging}
 
 \usepackage{array}
-
+\usepackage{calc}
 \usepackage{epigraph}
 \renewcommand{\epigraphsize}{\small}
 \setlength{\epigraphwidth}{.6\textwidth}
@@ -54,13 +54,32 @@
 \let\oldsubpar\subparagraph
 \renewcommand{\subparagraph}{\oldsubpar*}
 
-\renewcommand{\textfraction}{0.05}
-\renewcommand{\topfraction}{0.8}
-\renewcommand{\bottomfraction}{0.8}
-\renewcommand{\floatpagefraction}{0.75}
+
+\newlength{\bcorlength}
+\setlength{\bcorlength}{12mm}              % binding correction
+\newlength{\lmuprintspace}
+\setlength{\lmuprintspace}{5mm}            % additional margin for title pages
+
+\newcommand{\lmuemptypage}[1]{%
+   \begin{adjustwidth}{-\oddsidemargin-1in+\lmuprintspace+\bcorlength}{-\evensidemargin-1in+\lmuprintspace}
+      \vspace*{-\topmargin}\vspace{-1in}%
+      \vspace{-\headheight}\vspace{-\headsep}%
+      \vspace{-\topskip}%
+      \vspace{+\lmuprintspace}
+      \parbox[t][\textheight][t]{\linewidth}{%
+         \parbox[t][\paperheight-3\baselineskip-\parskip][t]{\linewidth}{%
+            \setlength{\parskip}{0pt}%
+            \setlength{\parindent}{0pt}%
+            \setlength{\parfillskip}{0pt plus 1fil}
+            #1
+          }%
+      }%
+      
+   \end{adjustwidth}
+}
 
 \newcommand{\todo}[1]{{\textcolor{red}{\textbf{TODO:}~#1}}}
-
+\usepackage{layout}
 % römische numerale für Inhaltsverzeichnis; wird in index.Rmd zurückgesetzt
 \fancyhead[LE,RO,LO,RE]{}
 \fancyfoot[CE,CO,RE,LO]{}

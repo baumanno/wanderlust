@@ -98,7 +98,7 @@ Dann lässt sich die Größe $\rho_{KP}$ abschätzen^[Eine Herleitung dieser Abs
 (\#eq:rhokp)
 \end{equation}
 
-Die Werte dieses Index bewegen sich in $-\infty \lt \rho_{KP} \le 1$.
+Die Werte dieses Index bewegen sich in $-\infty < \rho_{KP} \leq 1$.
 Ein Wert von 0 bedeutet, dass keine Tendenz vorliegt, dass Kanten wechselseitig angelegt sind, ein Wert von 1 signalisiert maximale Tendenz, alle Kanten werden erwidert.
 Nimmt der Index negative Werte an, bedeutet dies, dass weniger wechselseitige Dyaden beobachtet wurden als in einem rein dem Zufall unterworfenen Prozess möglich wären; es liegt die gegenteilige Tendenz vor, hin zu asymmetrischen bzw. Null-Dyaden.
 
@@ -112,8 +112,10 @@ Indem die Veränderung bspw. des Knotengrads über die Zeit betrachtet wird, lä
 
 
 #### Homophilie
+
 \todo{Braucht man das? Derzeit nicht}
 
+<!--
 ----------------------
 
 zudem betrachten wir veränderungen struktureller eigenschafte über die zeit hinweg
@@ -178,3 +180,5 @@ da egonetz, hauptsächlich untersuchung von dyaden
 drei typen von dyaden: mutual (gegenseitig, i->j und j->i)
 asymmetrisch, i->j oder j->i
 null-dyade, keine verbindung; alteri untereinander
+
+-->

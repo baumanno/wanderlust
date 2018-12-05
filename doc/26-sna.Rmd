@@ -55,39 +55,64 @@ Da eine Kante zwischen Nutzern eine Kommunikationshandlung darstellt entsprechen
 Bei wechselseitigen Interaktionen liegt hingegen ein Rede-Gegenrede-Akt vor, die Aktion des einen provoziert eine Reaktion des anderen Partners.
 
 Die Betrachtung dieser Reziprozität von Beziehungen kann Aufschluss geben über die Art von Diskursen im lokalen Netzwerk eines Nutzers.
-Um die Tendenz wechselseitiger Kanten zu bestimmen, nutzt diese Arbeit ein 1953 von Katz und Powell vorgeschlagenes Maß [@Katz1953], einen "index of tendency toward reciprocation"\ [@Katz1955].
+Um die Tendenz wechselseitiger Kanten zu bestimmen, nutzt diese Arbeit ein 1955 von Katz und Powell vorgeschlagenes Maß, einen "index of tendency toward reciprocation"\ [@Katz1955].
 Dieser Index $\rho_{KP}$ lässt sich entweder für ein festes oder ein freies Design bilden ("fixed choice" v. "free choice"), abhängig davon, ob alle Knoten nur eine bestimmte Zahl an Beziehungen ausbliden dürfen, oder ob deren Zahl unbeschränkt ist.
 Da Nutzer untereinander beliebig viele Kommentare austauscen können, nutzt diese Arbeit den Index der freien Wahl; für eine Beschreibung der festen Wahl sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
 
 #### Katz-Powell-Index
-In Ermangelung einer angemessen prägnanten Übersetzung wird statt der Bezeichnung im urprünglichen Aufsatz hier die Umschreibung "Katz-Powell-Index" oder, wo angemessen, schlicht $\rho_{KP}$ verwendet.
+In Ermangelung einer angemessen prägnanten Übersetzung wird statt der Bezeichnung im urprünglichen Aufsatz hier die Umschreibung "Katz-Powell-Index" oder, wo angemessen, schlicht $\rho_{KP}$ verwendet.  
 Der Index stellt eine Abschätzung der Wahrscheinlichkeit dar, dass zwei Akteure gegenseitige Kanten ausbilden.
-Formal lässt sich dies als Wahrscheinlichkeit  auffassen, dass eine Kante $(u,v)$ und deren Gegenstück $(v,u)$ existiert (vgl. [@Wasserman1994], S. 515):
+Formal lässt sich dies als Wahrscheinlichkeit  auffassen, dass eine Kante $(u,v)$ und deren Gegenstück $(v,u)$ existieren (vgl. [@Wasserman1994], S. 515). Es folgt aus der Definition der bedingten Wahrscheinlichkeit:
 \begin{equation}
 P(u \to v \wedge v \to u) = P(u \to v)P(v \to u|u\to v)
 (\#eq:probmut)
 \end{equation}
 
-Die Idee von Katz und Powell besteht darin, die bedingte Wahrscheinlichkeit im letzten Term von \@ref(eq:probmut) mittels eines Maßes $\rho_{KP}$ aufzuschlüsseln (vgl. [@Wasserman1994]):
+Die Idee von Katz und Powell besteht darin, den letzten Term von \@ref(eq:probmut) als gewichtete Summe von Wahrscheinlichkeiten darzustellen.
+Dazu führen sie einen Faktor $\rho_{KP}$ ein (vgl. [@Wasserman1994]):
   
 \begin{equation}
 P(v \to u|u\to v) = P(v \to u) + \rho_{KP}P(v \nrightarrow u)
 (\#eq:rhomut)
 \end{equation}
 
-Die Wahrscheinlichkeit einer zu $(u,v)$ erwiderten Kante setzt sich also zusammen aus der Wahrscheinlichkeit der Gegenkante, plus einem Anteil $\rho_{KP}$ der Wahrscheinlichkeit, dass diese Gegenkante nicht existiert.
-Die Formulierung der Wahrscheinlichkeit in \@ref(eq:rhomut) bringt einige interessante Eigenschaften von $\rho_{KP}$ mit:
-0:
-1:
--1:
+Der Faktor $\rho_{KP}$ spiegelt also die Tendenz wider, mit der eine gegeben Kante $(u,v)$ erwidert wird, er bildet einen "index of tendency toward reciprocation"\ [@Katz1955].
+Anhand der Formulierung in \@ref(eq:rhomut) lassen sich verschiedene Werte für $\rho_{KP}$ betrachten (vgl. [@Wasserman1994]):
+
+* $\rho_{KP} = 0$: damit gilt automatisch $P(v \to u|u\to v) = P(v \to u)$, die bedingte Wahrscheinlichkeit ist gleich der unbedingten, die beiden Ereignisse sind unabhängig; eine Tendenz, Kanten zu erwidern, besteht nicht
+* $\rho_{KP} = 1$: dann gilt wegen der Summe der Wahrscheinlichkeiten für Ereignis und Gegenereignis auch $P(v \to u|u\to v) = 1$, alle Kanten werden erwidert; gegeben eine Kante $(u,v)$ wird beobachtet beträgt die Wahrscheinlichkeit 1, dass auch $(v,u)$ beobachtet wird
+
+Katz und Powell formulieren für ihren Index zwei Varianten, die im wesentlichen in unterschiedlichen Untersuchungsdesigns begründet liegen.
+Fragt man einen Akteur nach einer festen Anzahl Beziehungen, etwa "Nennen Sie die fünf Personen, die Ihnen am nähesten stehen", liegt ein "fixed choice"-Design vor\ [@Katz1955]; wird die Anzahl der Nennungen offen gelassen, liegt die "free choice"-Variante vor.
+Die Datenerhebung in dieser Arbeit liefert alle Kommentare eines Nutzers ohne Einschränkung, weshalb hier nur diese Form der Indexbildung beschrieben wird; für die "fixed choice"-Form sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
+
+Der Index wird immer für ein Netzwerk als ganzes berechent.
+Sei dazu $g$ die Anzahl der Akteure in diesem Netz.
+Jeder Akteur kann $(g - 1)$ Kanten zu anderen ausbilden.
+Sei $x_i$ der Ausgangsgrad eines Knotens $i$, dann ist die Wahrscheinlichkeit, dass zwei Knoten $i, j$ eine gemeinsame Kante ausbilden $\frac{x_i x_j}{(g-1)^2}$.
+Bezeichne L die Summe aller Ausgangsgrade $L = \sum{x_i}$ und $L_2$ die Summe deren Quadrate $L = \sum{x_i^2}$, und sei $M$ die Gesamtzahl aller beobachteten wechselseitigen Kanten.
+Dann lässt sich die Größe $\rho_{KP}$ abschätzen^[Eine Herleitung dieser Abschätzung ist nicht trivial und wird hier nicht wiedergegeben, sondern ist [@Katz1955] zu entnehmen.] als
 
 \begin{equation}
-\rho_{KP} = \frac
-{2(g-1)^2M-L^2+L_2}
-{L(g-1)^2-L^2+L_2}
+\rho_{KP} = \frac{2(g-1)^2M-L^2+L_2}{L(g-1)^2-L^2+L_2}
+(\#eq:rhokp)
 \end{equation}
 
+Die Werte dieses Index bewegen sich in $-\infty \lt \rho_{KP} \le 1$.
+Ein Wert von 0 bedeutet, dass keine Tendenz vorliegt, dass Kanten wechselseitig angelegt sind, ein Wert von 1 signalisiert maximale Tendenz, alle Kanten werden erwidert.
+Nimmt der Index negative Werte an, bedeutet dies, dass weniger wechselseitige Dyaden beobachtet wurden als in einem rein dem Zufall unterworfenen Prozess möglich wären; es liegt die gegenteilige Tendenz vor, hin zu asymmetrischen bzw. Null-Dyaden.
+
+Diese Arbeit betrachtet den Katz-Powell-Index lokaler Ego-Netzwerke, um zu beobachten, ob Kommunikationsbeziehungen eher wechselseitig interaktiv, oder einseitig angelegt sind.
+Dadurch lässt sich beispielsweise untersuchen, ob ein Ego in einem Netz, das mehrheitlich aus Alteri mit den gleichen Interessen wie Ego besteht, dazu neigt, Verbindungen wechselseitig anzulegen als etwa in einem Umfeld, das seine Interessen nicht teilt.
+
+#### Longitudinale Untersuchung
+
+Abschließend sei darauf hingewiesen, dass diese Arbeit eine Longitudinalstudie der in diesem Kapitel beschriebenen Maße darstellt.
+Indem die Veränderung bspw. des Knotengrads über die Zeit betrachtet wird, lässt sich feststellen, ob ein Nutzer eher aktiver wird in seinem Kommunikationsverhalten (Grad nimmt zu), oder ob er dieses eher einschränkt.
+
+
 #### Homophilie
+\todo{Braucht man das? Derzeit nicht}
 
 ----------------------
 

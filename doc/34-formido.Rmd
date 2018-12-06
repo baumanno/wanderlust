@@ -66,7 +66,7 @@ einem Topic aktiv, wenn sie in dem betrachteten Monat dort die meisten ihrer Kom
 
 ## Verteilungen
 Aus dem Datensatz können wir entnehmen, wie viele (absolute) Posts ein User zu einem Topic erstellt.
-
+\todo{Passt es, hier keine Legende zu zeigen?}
 ```{r formido-num-posts}
 ego_proportions_full %>%
   group_by(date, topic) %>%
@@ -80,22 +80,35 @@ ego_proportions_full %>%
   ) +
   facet_wrap(~ topic) +
   theme(
-    axis.text.x = element_text(angle = 90)
+    axis.text.x = element_text(angle = 90),
+    legend.position = "none"
   ) +
-  guides(colour = guide_legend(title = "Topic"))
+  guides(colour = guide_legend(title = "Topic",direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1))
 ```
 
 ```{r formido-topic-distribution}
 ego_proportions_full %>%
   ggplot(mapping = aes(
     x = factor(topic),
-    y = num_posts
+    y = num_posts,
+    colour = topic
   )) +
   geom_boxplot() + 
   labs(
     x = "Topic",
     y = "# Posts"
-  )
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 90),
+    legend.position = "none"
+  ) +
+  guides(colour = guide_legend(title = "Topic",direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1))
 ```
 
 ```{r formido-topic-dist-table}
@@ -108,7 +121,12 @@ ego_proportions_full %>%
     lower_q = quantile(num_posts, .25),
     upper_q = quantile(num_posts, .75)
   ) %>% 
-  knitr::kable(booktabs = TRUE)
+  knitr::kable(
+    align = c("c", "r", "r", "r", "r", "r"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "(ref:topic-assignments-summary-lab)"
+    )
 ```
 
 
@@ -192,7 +210,7 @@ $$
 Int = p_a p_e
 $$
 Wir plotten $Int$ zuerst für den gesamten, und dann für den gewählten Analysezeitraum.
-
+\todo{Axis-Labels!}
 ```{r formido-interestingness}
 left_join(ego_proportions_full,
           alters_proportions_full,
@@ -207,16 +225,18 @@ left_join(ego_proportions_full,
   geom_smooth(method = "loess") +
   # geom_line() +
   theme(
-    axis.text.x = element_text(angle = 90)
+    axis.text.x = element_text(angle = 90),
+    legend.position="none"
   ) +
   scale_x_date(
     date_breaks = "2 years",
-    date_minor_breaks = "1 month",
+    #date_minor_breaks = "1 month",
     date_labels = "%Y"
   ) +
   geom_vline(mapping = aes(xintercept = as.Date("2011-01-01")), linetype = "dashed", size = .3) +
   geom_vline(mapping = aes(xintercept = as.Date("2015-01-01")), linetype = "dashed", size = .3) +
   facet_wrap(~ topic)
+
 ```
 
 ### Korrelation der Verteilungen
@@ -236,7 +256,11 @@ left_join(ego_proportions_full,
     x = "% Posts von Ego",
     y = "% Alteri"
   ) +
-  facet_wrap(~ topic)
+  facet_wrap(~ topic) +
+  theme(
+    axis.text.x = element_text(angle = 90),
+    legend.position="none"
+  )
 ```
 
 
@@ -336,7 +360,11 @@ df %>%
   geom_abline(size = .1) +
   scale_colour_manual("topic",
                       values = cols) +
-  facet_wrap(~ topic)
+  facet_wrap(~ topic)+
+  theme(
+    axis.text.x = element_text(angle = 90),
+    legend.position="none"
+  )
 ```
 
 Es scheint eine Tendenz zu einem positiven linearen Zusammenhang dieser beiden Verteilungen zu geben. 
@@ -368,7 +396,7 @@ df %>%
   labs(y = "Int") +
   scale_colour_manual("topic",
                       values = cols) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") +
   facet_wrap(~ topic)
 ```
 
@@ -420,7 +448,7 @@ graph_data %>%
   scale_y_continuous(breaks = seq(0, 200, 10),
                      minor_breaks = seq(0, 200, 5)) +
   theme(
-    axis.text.x = element_text(angle = 90)
+    axis.text.x = element_text(angle = 90), legend.position = "bottom"
   ) + 
   labs(
     x = "Zeit",
@@ -456,7 +484,7 @@ graph_data %>%
     date_labels = "%Y"
   ) +
   theme(
-    axis.text.x = element_text(angle = 90)
+    axis.text.x = element_text(angle = 90), legend.position = "bottom"
   ) +
   labs(x = "Zeit", y = "Wert") +
   scale_color_discrete(name = "Maß", labels = c("kp" = "Katz-Powell-Index", "inout" = expression(frac("d"^"+", "d"^"-"))))
@@ -497,7 +525,7 @@ graph_topical_subgraph %>%
     date_labels = "%Y"
   ) +
   theme(
-    axis.text.x = element_text(angle = 90)
+    axis.text.x = element_text(angle = 90), legend.position = "bottom"
   )
 ```
 
@@ -549,7 +577,7 @@ graph_single_topic_subgraph %>%
     date_labels = "%Y"
   ) +
   theme(
-    axis.text.x = element_text(angle = 90)
+    axis.text.x = element_text(angle = 90), legend.position = "bottom"
   ) +
   labs(
     x = "Zeit",
@@ -561,7 +589,7 @@ graph_single_topic_subgraph %>%
 
 ```{r formido-subgraph-one-topic}
 graph_single_topic_subgraph %>% 
-  filter(topic == 235) %>% 
+  filter(topic == 58) %>% 
   mutate(
     vs = vvcount(topic_graph) - 1,
     es = vecount(topic_graph)
@@ -575,14 +603,14 @@ graph_single_topic_subgraph %>%
     date_labels = "%Y"
   ) +
   theme(
-    axis.text.x = element_text(angle = 90)
+    axis.text.x = element_text(angle = 90), legend.position = "bottom"
   ) +
   labs(
     x = "Zeit",
     y = "Anzahl"
   ) +
-  scale_color_discrete(name = "Variable", labels = c("vertices" = "Knoten", "edges" = "Kanten")) +
-  facet_wrap(~topic)
+  scale_color_discrete(name = "Variable", labels = c("vertices" = "Knoten", "edges" = "Kanten")) #+
+  # facet_wrap(~topic)
 ```
 
 Auch in der Verteilung der Kanten und Knoten der Teilgraphen können wir kein unmittelbares Indiz für ein Verlassen des Topics 239 erkennen; in den Monaten unmittelbar vor dem Verlassen weist der Interaktionsgraph von Topic 239 für vergleichsweise wenige Knoten eine hohe Kantenzahl auf. Unter Umständen gibt eine Analyse der Beiträge auf inhaltlicher Ebene Aufschluss über die Qualität der Interaktionen.
@@ -602,7 +630,7 @@ ggplot(data = na.omit(kpdata), mapping = aes(x = date, y = kp, colour = topic)) 
     date_minor_breaks = "3 month",
     date_labels = "%Y"
   ) +
-  theme(axis.text.x = element_text(angle = 90)) +
+  theme(axis.text.x = element_text(angle = 90), legend.position = "bottom") +
   labs(
     x = "Zeit",
     y = "Katz-Powell-Index"
@@ -624,6 +652,7 @@ graph_single_topic_subgraph %>%
          -graph) %>% 
   ggplot(mapping = aes(x = date, y = ego_weighted_degree, colour = topic)) +
   geom_line() +
+  theme(axis.text.x = element_text(angle = 90), legend.position = "bottom") +
   facet_wrap(~topic)
 ```
 

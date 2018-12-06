@@ -50,6 +50,6 @@ Die Verknüpfung dieser beiden Betrachtungen findet schließlich Anwendung in ei
 Diesen einleitenden Worten folgt in Kapitel\ \@ref(grundlagen) eine Erläuterung der grundlegenden Begriffe und methodischen Werkzeuge. 
 Hier wird die Plattform Reddit vorgestellt, die Idee der Topic-Analyse sowie das verwendete Verfahren "Latent Dirichlet Allocation" (*LDA*) detailliert besprochen und eine Übersicht über die Methoden der sozialen Netzwerkanalyse geboten, die in dieser Arbeit Anwendung finden.
 Das Kapitel schließt mit einer Einordnung der Arbeit in die bestehende Forschung zu sozialen Netzwerken und medialer Inhaltsanalyse.  
-In Kapitel\ \@ref(datenanalyse) wird die eigentliche Datenanalyse beschrieben. Einleitend wird über das methodische Vorgehen bei der Auswahl der Daten berichtet, die Topic-Analyse von Subreddits ausgewertet sowie die Konstruktion der Interaktionsgraphen erläutert.
-Der zweite Teil des Kapitels widmet sich den Ergebnissen der durchgeführten Fallstudie.
+In Kapitel\ \@ref(datenanalyse) wird die eigentliche Datenanalyse beschrieben. Einleitend wird über das methodische Vorgehen bei der Auswahl der Daten berichtet sowie die Konstruktion der Interaktionsgraphen erläutert.
+Der zweite Teil des Kapitels widmet sich dem Topic-Modell der Subreddits und den Ergebnissen der durchgeführten Fallstudie.
 Eine Diskussion der Ergebnisse sowie des analytischen Vorgehens findet in Kapitel\ \@ref(diskussion) statt, bevor Kapitel\ \@ref(zusammenfassung) mit einem Ausblick auf mögliche weitere Forschungsarbeit schließt.

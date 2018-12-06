@@ -2,7 +2,7 @@
 
 # Datenanalyse {#datenanalyse}
 Nachdem in den vorangegangen Kapitel die für diese Arbeit relevanten Grundlagen erläutert wurden und eine Einordnung in den bestehenden Forschungsstand erfolgte, widmet sich dieses Kapitel der unternommenen Datenanalyse.
-Der erste Teil dieses Kapitels liefert einen Überblick über die Forschungsmethodik, im zweiten Teil werden die Ergebnisse der Fallstudie präsentiert.
+Der erste Teil dieses Kapitels liefert einen Überblick über die Forschungsmethodik, im zweiten Teil folgen die Auswertung des Topic-Modells und der sozialen Netzwerkanalyse.
 
 ## Methodik {#methodik}
 Im Folgenden soll zunächst der verwendete Datensatz kritisch präsentiert werden.
@@ -223,7 +223,7 @@ Die Titel der abgerufenen Beiträge wurden konkateniert, zu Kleinbuchstaben norm
 Damit entspricht jedes Subreddit einem Dokument, dessen Inhalt die Titel der Top-Beiträge bilden.
 Die so aufbereiteten 207.056 Dokumente bilden den Eingabe-Korpus für ein LDA-Modell.
 
-#### Auswertung der Topicanalyse
+#### Verteilung der Topics {#topicverteilung}
 Der Algorithmus zur Erstellung eines LDA-Modells ist parametrisiert durch die Zahl der zu bestimmenden Topics $k$ sowie der Dichte der Topic-Wort- (Parameter $\beta$) bzw. der Dokument-Topic-Verteilung (Parameter $\alpha$).
 Die beiden Parameter $\alpha$ und $\beta$ werden üblicherweise so gewählt, dass die entstehenden Verteilungen dünn besetzt sind, also Dokumente aus wenigen Topics und Topics aus wenigen Wörtern bestehen.
 Der optimale Wert für $k$ variiert zwischen verschiedenen Korpora und lässt sich empirisch ermitteln.
@@ -275,9 +275,8 @@ ggplot() +
 
 
 Abbildung \@ref(fig:topic-assignments-total) stellt die Zuordnung von Subreddits zu Topics als Histogramm dar.
-Auf einen großen Teil der Topics entfallen vergleichsweise wenig Subreddits: der Hälfte aller Topics sind weniger als neun Subreddits zugeordnet (Median: 9), das Maximum liegt bei 45.577; Tabelle\ \@ref(tab:topic-assignments-summary) im Anhang enthält die Kennzahlen dieser Verteilung.
+Auf einen großen Teil der Topics entfallen vergleichsweise wenig Subreddits: der Hälfte aller Topics sind weniger als neun Subreddits zugeordnet (Median: 9), das obere Quartil liegt bei 97.5 Subreddits, das Maximum bei 45.577; Tabelle\ \@ref(tab:topic-assignments-summary) im Anhang enthält die Kennzahlen dieser Verteilung.
 Offensichtlich gibt es zusätzlich zu großen bis sehr großen Topics auch eine hohe Anzahl an Nischenthemen mit weniger als 100 zugeordneten Subreddits.
-\todo{Braucht man den Zoom-Plot??}
 
 (ref:topic-assignments-top-lab) Anzahl der Zuordnungen von Subreddits zu Topics. Dargestellt sind alle Topics, denen 500 oder mehr Subreddits zugeordnet wurden. Die Sortierung erfolgt analog zu Abbildung \@ref(fig:topic-assignments-total) nach Anzahl Zuordnungen in absteigender Folge.
 ```{r topic-assignments-top, include=FALSE, fig.cap="(ref:topic-assignments-top-lab)", fig.height=5.5}
@@ -296,7 +295,7 @@ ggplot() +
   coord_flip()
 ```
 
-```{r top-words, cache=FALSE}
+```{r top-words}
 # this chunk is used merely to generate the top 25 words in the largest topics.
 # this data will be used later on in the appendix to generate a table containing the topics and words.
 trim <- function(x) gsub("^\\s+|\\s+$", "", x)
@@ -326,14 +325,7 @@ write.csv(x = top_words_pretty, file = "../data/lda/largest_topics_top_words.csv
 
 ```
 
-LDA liefert nicht nur für jedes Dokument eine Verteilung von Topics, sondern auch zu jedem Topic eine Wahrscheinlichkeitsverteilung von Wörtern.
-Sortiert man diese, erhält man die für dieses Topic charakteristischen Begriffe.
-Tabelle \@ref(tab:app-top-words-tab) im Anhang enthält für alle Topics, denen mindestens 500 Subreddits zugeordnet wurden, die 25 häufigsten Wörter.
-Dabei fällt auf, dass die Topics 235, 122, 69 und 194 beinahe ausschließlich aus Stoppwörtern bestehen.
-Da diese insbesondere keine Schlagworte wie die anderen Topics enthalten, lässt sich nur wenig auf das tatsächliche Nutzerinteresse schließen.
-Der Vollständigkeit halber werden diese Topics zwar in den Historien der Nutzer aufgeführt, jedoch keiner näheren Analyse unterzogen.
-
-### Interaktionsgraphen aus Kommentaren
+### Interaktionsgraphen aus Kommentaren {#interaktionsgraphen}
 
 Die Kommentarverläufe von Reddit lassen sich als Interaktionsgraphen modellieren.
 Jeder Knoten in einem solchen Graph stellt einen Akteur in einem sozialen Netzwerk dar.
@@ -354,11 +346,7 @@ Da diese einen zeitlich abgegrenzten Ausschnitt aus dem gesamten sozialen Netzwe
 
 Um die Inhalte der Subreddits über die Reddit-API abzurufen, wurde die Python-Bibliothek *PRAW*\ [@PRAW] verwendet, ein API-Client speziell für Reddit.  
 Die Vorbereitung der Textkorpora für die Topic-Analyse wurde mit dem Text-Mining-Package *tm*\ [@R-tm] in R realisiert.  
-Für die LDA selbst wurde wegen der hohen Zahl an Inhalten eine effiziente Implementierung benötigt, die in akzeptabler Zeit ein Topic-Model berechnet. Die Wahl fiel dabei auf "GLDA"\ [@Lu2013], das sich die hohe Rechenleistung moderner Grafikkarten zunutze machen kann; die Software stellt eine Weiterentwicklung von "GibbsLDA++"\ [@Phan2007] dar.  
+Für die LDA selbst wurde wegen der hohen Zahl an Inhalten eine effiziente Implementierung benötigt, die in akzeptabler Zeit ein Topic-Model berechnet. Die Wahl fiel dabei auf *GLDA*\ [@Lu2013], das sich die hohe Rechenleistung moderner Grafikkarten zunutze machen kann; die Software stellt eine Weiterentwicklung von *GibbsLDA++*\ [@Phan2007] dar.  
 Die Datenanalyse erfolgt in R mit einschlägigen Bibliotheken, größtenteils aus dem *tidyverse*\ [@R-tidyverse]; Visualisierungen wurden mit *ggplot2*\ [@R-ggplot2] erstellt.  
 Die Modellierung der Interaktionsgraphen wurde mit der R-Bibliothek *igraph*\ [@R-igraph] realisiert, die neben der Konstruktion auch Funktionalität zur Analyse von Netzwerken bietet.  
 Die Arbeit selbst wurde mit *bookdown*\ [@R-bookdown] angefertigt, das es ermöglicht, Dokumente im Markdown-Format zu verfassen, Codeblöcke im Text zu definieren und deren Ausgabe direkt in den Text zu integrieren.
-
-## Ergebnisse {#ergebnisse}
-
-### Fallstudie

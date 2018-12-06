@@ -5,12 +5,11 @@ Nachdem in den vorangegangen Kapitel die für diese Arbeit relevanten Grundlagen
 Der erste Teil dieses Kapitels liefert einen Überblick über die Forschungsmethodik, im zweiten Teil werden die Ergebnisse der Fallstudie präsentiert.
 
 ## Methodik {#methodik}
-Zunächst wird der verwendete Datensatz präsentiert und Kritik daran erörtert.
-Anschließend wird dargelegt, wie die betrachteten Topic-Modelle erzeugt werden und welche Methoden der sozialen Netzwerkanalyse Anwendung finden.
-Das Kapitel schließt mit einem Überblick über verwendete Software-Komponenten.
+Im Folgenden soll zunächst der verwendete Datensatz kritisch präsentiert werden.
+Anschließend folgt ein Überblick über die Erstellung der Topic-Modelle sowie die Vorbereitung der Netzwerkanalyse.
+Die dazu verwendete Software wird am Ende des Kapitels aufgeführt.
 
 ### Datensatz
-
 Die Grundlage der Analyse bildet ein frei zugänglicher Datensatz mit Reddit-Kommentaren.
 Jason Baumgartner, der unter dem Pseudonym *stuck_in_the_matrix*^[https://www.reddit.com/user/stuck_in_the_matrix] selbst auf Reddit aktiv ist, unterhält monatliche Schnappschuss-Datensätze mit allen Beiträgen und Nutzerkommentaren.
 Er verwendet die Reddit-API, um diese Inhalte systematisch zu archivieren und bietet sie zum Download an [@Baumgartner].
@@ -59,7 +58,7 @@ knitr::include_graphics("./images/gaffneymatias_fig4.eps")
 
 In Abbildung \@ref(fig:gf4) stellen die mittelblauen Punkte bzw. die anfangs mittlere der drei Linien den Anteil fehlender Kommentare in Prozent dar.
 Ab April 2007 beginnt dieser Anteil zu sinken, fällt ab etwa August 2007 stark ab und stabilisiert sich ab November 2007 im niedrigen einstelligen Bereich.
-Um den Einfluss fehlender Kommentare so gering wie möglich zu halten, wurde setzt die Auswertung der Daten im November 2007 an und erstreckt sich bis Februar 2018.  
+Um den Einfluss fehlender Kommentare so gering wie möglich zu halten, setzt die Auswertung der Daten im November 2007 an und erstreckt sich bis Februar 2018.  
 Jason Baumgartner hat als Folge der Veröffentlichung von Gaffney und Matias angekündigt, fehlende Kommentare und Beiträge nachträglich zu erfassen [@Baumgartner2018].
 
 ### Stichprobe von Nutzern {#stichprobe}
@@ -99,13 +98,13 @@ summary_age <-
 
 Für den Beobachtungszeitraum von 124 Monaten liegen etwa 3,6 Milliarden `r # fmt(3615667286)` Kommentare vor, verfasst von ca. 28 Millionen `r # fmt(num_users)` Nutzern.
 Für jeden dieser Nutzer wurde bestimmt, in wie vielen Monaten er im Datensatz enthalten ist.
-Diese Aktivitätsspanne reicht von nur einem Monat bis zur Gesamtzeit von 124 Monaten, und 50% der Nutzer sind zwischen einem und sechs Monaten auf Reddit aktiv; Tabelle \@ref(tab:activity-summary-full) im Anhang bietet eine Übersicht über die Verteilung der Aktivitäten.
+Diese Aktivitätsspanne reicht von nur einem Monat bis zur Gesamtzeit von 124 Monaten.
+Die Hälfte der Nutzer ist zwischen einem und sechs Monaten auf Reddit aktiv; Tabelle \@ref(tab:activity-summary-full) im Anhang enthält die wichtigsten Kennzahlen der Aktivitätsverteilung.
 
 Stellt man diese Verteilung wie in Abbildung\ \@ref(fig:age-distribution-1) als Histogramm dar, fällt die hohe Häufung eher kurzer Aktivität auf.
 Abbildung \@ref(fig:age-distribution-2) wählt für dieselbe Verteilung eine logarithmische Darstellung, die einen besseren Blick in den "Long Tail" der Verteilung bietet.
 Auffällig ist bei der logarithmischen Darstellung der Ausschlag am äußersten rechten Rand.
 Der Unterschied zwischen den beiden längsten Aktivitätsklassen beträgt `r subset(res_counted, active == 124, n) - subset(res_counted, active == 123, n)` Nutzer.
-Obwohl an dieser Stelle keine Erklärung für diese Beobachtung geliefert werden kann, ist es möglich, dass ein "harter Kern" von Nutzern Reddit seit längerer Zeit, möglicherweise sogar von Anfang an nutzt, und regelmäßig aktiv ist.
 ```{r age-distribution-1, fig.cap="Verteilung der Aktivität"}
 ggplot(data = res_counted) +
   geom_col(
@@ -183,20 +182,17 @@ top_active_users %>%
   )
 ```
 Um sicherzustellen, dass die Historien der Nutzer möglichst frei von Lücken sind, erfolgt die Auswahl aus den `r fmt(thresh_size)` am längsten aktiven Nutzern.
-Um sicherzustellen, dass für diese auch aussagekräftige Interaktionsgraphen generiert werden können, müssen sie zudem über ihren Aktivitätszeitraum hinweg pro Monat mindestens `r thresh_posts` Kommentare erstellt haben.
+Diese müssen zudem über ihren Aktivitätszeitraum hinweg pro Monat mindestens `r thresh_posts` Kommentare erstellt haben, um aussagekräftige Interaktionsgraphen generieren zu können.
 Abbildung \@ref(fig:sample-users-hist) zeigt die dadurch erhaltene Verteilung der Aktivitätsklassen als Histogramm.
 Die kleinste Aktivitätsspanne in dieser neuen Verteilung liegt bei `r min_age_in_sample` Monaten.
-Dies entspricht einer Überschneidung mit dem gesamten Untersuchungszeitraum zu ca. `r round(min_age_in_sample / length(date_range) * 100)`%; die Kennzahlen dieser Verteilung sind Tabelle\ \@ref(tab:activity-summary-cut) im Anhang zu entnehmen.
+Dies entspricht einer Überschneidung mit dem gesamten Untersuchungszeitraum zu ca. `r round(min_age_in_sample / length(date_range) * 100)`%; die Kennzahlen dieser Verteilung sind Tabelle\ \@ref(tab:activity-summary-cut) im Anhang zu entnehmen.  
+Da eine Analyse aller in dieser Stichprobe enthaltenen Nutzer aus Zeitgründen nicht möglich war, wurden drei zufällig ausgewählt und in einer Fallstudie näher betrachtet.
 
 ### Topic-Modelle
-
-Subreddits stellen thematisch eigenständige Communities dar.
-Da Nutzer selbst neue Subreddits erstellen können, kommt es schnell zu einer Balkanisierung verschiedener Themen.
-So existiert zwar mit */r/politics* ein Subreddit, das sich politischen Inhalten verschrieben hat, aber ebenso gibt es die nuancierten Varianten */r/uspolitics* und */r/ukpolitics*.
-Da nicht alle Subreddits über ihre Namen eindeutig einem Thema zugeordnet werden können, bietet sich eine computergestützte Topic-Analyse an.
+Um zu einer Zuordnung von Subreddits zu Themenkomplexen zu gelangen, wird mittels Latent Dirichlet Allocation ein Topic-Modell erstellt und ausgewertet.
 Dadurch können Communities, die ähnliches Vokabular benutzen, unter einem Topic zusammengefasst werden.
 
-#### Eingabe-Korpus
+#### Korpus
 
 Für alle Nutzer, deren Aktivität über dem Gesamtdurchschnitt von `r round(subset(summary_age, TRUE, "arithm. Mittel"), 2)` Monaten liegt, werden die Subreddits erfasst, in denen sie Kommentare erstellen.
 Durch diese Einschränkung wird verhindert, dass Subreddits in das Topic-Modell eingehen, die ausschließlich von Nutzern aufgesucht werden, die die Plattform nach kurzer Aktivität verlassen.
@@ -219,22 +215,24 @@ subreddit_topic_mapping <- tibble(sub = subreddits, topic = factor(topics))
 ```
 
 Für diese Subreddits wurden über die Reddit-API jeweils maximal 50 Beiträge aus dem Listing "Top" abgerufen.
-Diese Listing liefert eine Sortierung der Beiträge mit der besten Gesamtwertung (*Score*), also der Differenz aus Up- und Downvotes [@RedditSrc].
+Dieses Listing liefert eine Sortierung der Beiträge mit der besten Gesamtwertung (*Score*), also der Differenz aus Up- und Downvotes [@RedditSrc].
 In der Folge erhält man so diejenigen Beiträge, die von der Community am besten bewertet wurden.
 In dieser Arbeit wird davon ausgegangen, dass ein Beitrag mit hohem Score auch repräsentativ für die Inhalte der Community ist.
 
-Die Titel der abgerufenen Beiträge werden konkateniert, zu Kleinbuchstaben normalisiert, Satzzeichen und Ziffern sowie redundante Leerzeichen entfernt; Stoppwörter werden nicht entfernt und Zeichenketten mit weniger als 300 Zeichen verworfen.
+Die Titel der abgerufenen Beiträge wurden konkateniert, zu Kleinbuchstaben normalisiert, Satzzeichen und Ziffern sowie redundante Leerzeichen entfernt; Stoppwörter wurden nicht entfernt und Zeichenketten mit weniger als 300 Zeichen verworfen.
 Damit entspricht jedes Subreddit einem Dokument, dessen Inhalt die Titel der Top-Beiträge bilden.
-Die so aufbereiteten 207.056 Dokumente dienen dem LDA-Algorithmus als Eingabe-Korpus.
+Die so aufbereiteten 207.056 Dokumente bilden den Eingabe-Korpus für ein LDA-Modell.
 
 #### Auswertung der Topicanalyse
-
-Die Start-Parameter des Algorithmus sind in Tabelle\ \@ref(tab:lda-params) im Anhang aufgeführt.
-Um zügig mit der eigentlichen Analyse der Nutzerhistorien und -netzwerke beginnen zu können, wurde für den Parameter *k*, der die zu bestimmende Zahl an Topics angibt, ein fester Wert von 256 gewählt.
+Der Algorithmus zur Erstellung eines LDA-Modells ist parametrisiert durch die Zahl der zu bestimmenden Topics $k$ sowie der Dichte der Topic-Wort- (Parameter $\beta$) bzw. der Dokument-Topic-Verteilung (Parameter $\alpha$).
+Die beiden Parameter $\alpha$ und $\beta$ werden üblicherweise so gewählt, dass die entstehenden Verteilungen dünn besetzt sind, also Dokumente aus wenigen Topics und Topics aus wenigen Wörtern bestehen.
+Der optimale Wert für $k$ variiert zwischen verschiedenen Korpora und lässt sich empirisch ermitteln.
+Wegen der hohen Zahl an Dokumenten und damit einhergehenden Zeitaufwands wurde dies jedoch unterlassen und stattdessen $k = 256$ gewählt.
 Ob sich diese Zahl an Topics für die betrachteten Subreddits bzw. Reddit allgemein in der Nähe eines Optimums befindet, bleibt zu klären.
+Die Start-Parameter des Algorithmus sind in Tabelle\ \@ref(tab:lda-params) im Anhang aufgeführt.
 
-Der LDA-Algorithmus beruht auf der Annahme, dass sich jedes Dokument aus verschiedenen latenten Themen^[In dieser Arbeit wird  die englische Wortform "topic(s)" gebraucht, um explizit die algorithmisch bestimmten Themen zu bezeichnen.] zusammen setzt.
-Das Ergebnis liefert für jedes Dokument eine Wahrscheinlichkeitsverteilung über die zu bestimmenden Topics.
+Latent Dirichlet Allocation beruht auf der Annahme, dass jedes Dokument aus verschiedenen latenten Themen zusammengesetzt wird.
+Das Modell liefert für jedes Dokument eine Wahrscheinlichkeitsverteilung über die zu bestimmenden Topics.
 Für die weitere Analyse in dieser Arbeit wird aus dieser Verteilung von Topic-Wahrscheinlichkeiten eine Zuordnung von Subreddits zu Topics abgeleitet, indem für jedes Dokument das Topic als charakteristisch angesehen wird, dem der Algorithmus die höchste Wahrscheinlichkeit zuweist.
 
 ```{r topic-assignments}
@@ -277,7 +275,7 @@ ggplot() +
 
 
 Abbildung \@ref(fig:topic-assignments-total) stellt die Zuordnung von Subreddits zu Topics als Histogramm dar.
-Auf einen großen Teil der Topics entfallen vergleichsweise wenig Subreddits; 50% der Topics sind weniger als neun Subreddits zugeordnet, 75% weniger als 97,5 (s. Tabelle\ \@ref(tab:topic-assignments-summary) im Anhang).
+Auf einen großen Teil der Topics entfallen vergleichsweise wenig Subreddits: der Hälfte aller Topics sind weniger als neun Subreddits zugeordnet (Median: 9), das Maximum liegt bei 45.577; Tabelle\ \@ref(tab:topic-assignments-summary) im Anhang enthält die Kennzahlen dieser Verteilung.
 Offensichtlich gibt es zusätzlich zu großen bis sehr großen Topics auch eine hohe Anzahl an Nischenthemen mit weniger als 100 zugeordneten Subreddits.
 \todo{Braucht man den Zoom-Plot??}
 
@@ -321,7 +319,6 @@ c <- tm_map(c, content_transformer(function(x) {
 top_words_pretty <- tibble(
   Topic = large_topics$topic,
   n = large_topics$n,
-  #Wörter = apply(top_words, 1, paste, collapse = ", ")
   Wörter = unlist(sapply(c, `[`, "content"))
 )
 
@@ -350,8 +347,8 @@ Da mehrere Interaktionen zwischen denselben Partnern möglich und erlaubt sind, 
 Da ausgehend von einem Nutzer dessen unmittelbare Kontakte erfasst werden, spricht man hier zudem von egozentrischen Netzwerken.
 Dabei ist zu beachten, dass abweichend von gängigen Definitionen des Begriffs (etwa [@Wasserman1994, S. 42], [@Wolf2010]) in dieser Arbeit keine Strukturen zwischen den Alteri erfasst werden, sondern nur zwischen Ego und Alteri.
 
-Für jeden wie in Abschnitt \@ref(kriterien) beschrieben ausgewählten Nutzer werden monatliche Interaktionsgraphen erstellt.
-Da diese einen zeitlich abgegrenzten Ausschnitt aus dem gesamten sozialen Netzwerk eines Nutzers darstellen, werden sie im folgenden auch als Snapshot-Graphen bezeichnet.
+Für die drei in Abschnitt \@ref(stichprobe) ausgewählten Nutzer werden monatliche Interaktionsgraphen erstellt.
+Da diese einen zeitlich abgegrenzten Ausschnitt aus dem gesamten sozialen Netzwerk eines Nutzers darstellen, werden sie im Folgenden auch als Snapshot-Graphen bezeichnet.
 
 ### Verwendete Software {#software}
 

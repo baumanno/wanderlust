@@ -15,3 +15,8 @@ Im Gegenteil ist vieles von dem, was quantitative messbar ist, ohne qualitative 
 Aufgrund der hohen Zahl an Dokumenten und damit der vergleichsweise langen ist eine Evaluierung verschiedener *k*-Parameter nicht möglich, da jede 
 Da sich eine Evaluation verschiedener *k*-Parameter wegen der hohen Zahl an Dokumenten als schwierig herausstellte, wurde die Zahl der zu bestimmenden Topics auf 256 festgelegt.
 Unklar ist, ob diese Zahl in der Nähe eines Optimums liegt; dies festzustellen wird jedoch nicht Gegenstand dieser Arbeit sein.
+
+* stoppwörter entfernen
+* auch für andere große sprachcommunities
+- Sprachcommunities: DE, FR, ES
+- obwohl topic model erstaunlich gut für 256 themen: tuning

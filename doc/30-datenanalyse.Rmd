@@ -298,19 +298,31 @@ ggplot() +
   coord_flip()
 ```
 
-```{r top-words}
+```{r top-words, cache=FALSE}
 # this chunk is used merely to generate the top 25 words in the largest topics.
 # this data will be used later on in the appendix to generate a table containing the topics and words.
+trim <- function(x) gsub("^\\s+|\\s+$", "", x)
+
 large_topics <- large_topics[order(large_topics$n, decreasing = TRUE), ]
 
 top_words <- read.csv("../data/lda/top_words.csv")
 top_words <- top_words[as.integer(large_topics$topic), ]
-top_words <- top_words[, 1:25]
+
+c <- VCorpus(DataframeSource(data.frame(doc_id = large_topics$topic, text = apply(top_words, 1, paste, collapse = " "), stringsAsFactors = FALSE)))
+c <- tm_map(c, content_transformer(removeWords), stopwords("en"))
+c <- tm_map(c, content_transformer(stripWhitespace))
+c <- tm_map(c, content_transformer(trim))
+
+c <- tm_map(c, content_transformer(function(x) {
+  a <- str_split(x, " ", simplify = TRUE)
+  paste(a[1:25], collapse = ", ")
+}))
 
 top_words_pretty <- tibble(
   Topic = large_topics$topic,
   n = large_topics$n,
-  Wörter = apply(top_words, 1, paste, collapse = ", ")
+  #Wörter = apply(top_words, 1, paste, collapse = ", ")
+  Wörter = unlist(sapply(c, `[`, "content"))
 )
 
 write.csv(x = top_words_pretty, file = "../data/lda/largest_topics_top_words.csv", row.names = FALSE)

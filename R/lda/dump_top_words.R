@@ -13,7 +13,9 @@ wm <- read_wordmap("data/lda/wordmap.txt", showProgress = TRUE)
 wtm <-
   read_word_topic_distribution("data/lda/model-final.phi", showProgress = TRUE)
 
-tw <- top_words(wtm, wm, n = 100)
+tw <- top_words(wtm, wm, n = 500)
+
+rm(wm)
 
 write.csv(x = tw,
           file = "data/lda/top_words.csv",

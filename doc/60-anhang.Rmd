@@ -74,7 +74,7 @@ knitr::kable(
 (ref:app-top-words-lab) Charakteristische Wörter der größten Topics.
 Aufgeführt sind jeweils die Topic-ID, die Anzahl an zugeordneten Subreddits ($n$, mit der Einschränkung $n \ge 500$) sowie die 25 häufigsten Wörter in
 dem jeweiligen Topic.
-```{r app-top-words-tab}
+```{r app-top-words-tab, cache=FALSE}
 
 top_words <- read.csv("../data/lda/largest_topics_top_words.csv")
 

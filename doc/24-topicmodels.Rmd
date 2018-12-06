@@ -6,27 +6,35 @@ Damit lassen sich vor allem große Datenmengen strukturieren, einordnen und ersc
 Zu beachten ist vor allem, dass die Verfahren kein Vorwissen über die zugrunde liegende Themenstruktur besitzen, sondern diese als Teil des Prozesses selbst entdecken.  
 
 #### *Text as data*
-Topic-Modelling ist einer Reihe von Verfahren zuzuordnen, die Text als Daten auffassen, auf denen sich wie auf numerischen Daten Berechnungen ausführen und Modelle erzeugen lassen.
-Ein Beispiel für ein solches Verfahren stellt *tf-idf*\ [@Salton1983, S. 63] dar, ein Gewichtungsverfahren für Wörter in einer Sammlung von Dokumenten.
+Topic-Modelling ist einer Reihe von Verfahren zuzuordnen, die Text als Daten auffassen, auf denen sich wie auf numerischen Daten Berechnungen ausführen und Modelle erzeugen lassen; an den Begriff des *Data-Mining* angelehnt findet sich auch die Bezeichnung *Text-Mining*, da aus textuellen Inhalten Erkenntnisse gewonnen werden, die aufgrund der schieren Größe oder Komplexität erst aus dem Datensatz "herausgeschürft" werden müssen.
+Im Kontext des Text-Mining bezeichnet man die Untersuchungseinheit eines Texts häufig als *Dokument*, Datensätze stellen Sammlungen dieser Dokumente dar; als Dokumente kommen etwa Kapitel eines Buches, Artikel einer Zeitung oder Tweets eines Twitter-Nutzers in Frage.
+Ein Beispiel für solche Text-Mining-Verfahren ist *tf-idf*\ [@Salton1983, S. 63], das eine Gewichtung der Wörter in einer Sammlung von Dokumenten bestimmt; Wörter mit hoher relativer Häufigkeit erhalten hohes Gewicht.
 Hierbei wird jedes Vorkommen eines Begriffs innerhalb eines Dokuments gezählt (*term frequency*).
 Die Anzahl an Dokumenten dividiert durch die Zahl der Dokumenten, welche diesen Begriff enthalten, gibt die *inverse document frequency*.
 Das Produkt dieser beiden Größen ergibt eine Gewichtung dieses Wortes innerhalb des Korpus.
 Dabei wird Begriffen, die in nur wenigen Dokumenten häufig vorkommen, ein höheres Gewicht beigemessen; damit werden insbesondere Funktionswörter wie Artikel und Konjunktionen bestraft, die wenig Informationsgehalt besitzen.
-Diese Gewichtung von Begriffen liefert einen Indikator, welche Worte innerhalb eines Dokuments Bedeutung tragen.
+Diese Gewichtung von Begriffen zeigt an, welche Worte innerhalb eines Dokuments Bedeutung tragen.
 
 #### *Mixed membership*-Modelle
-Gewichtende Verfahren wie tf-idf ermöglichen zwar eine erste grobe Einschätzung, worum es in einem Dokument tendenziell geht, allerdings bilden sie menschliches Verständnis von Themenstrukturen eher schlecht ab.
-Es kommt eher selten vor, dass ein Dokument, bspw. ein Zeitungsartikel, ausschließlich ein Thema zum Gegenstand hat und sich dieses ausschließlich über die numerische Rangfolge charakteristischer Schlagworte definieren lässt.
-Meist entsprechen Dokumente eher einer Zusammensetzung verschiedener Themenkomplexe; so handelt der Zeitungsartikel möglicherweise zu je verschiedenen Anteilen von "Wirtschaft" und "Politik".
+Gewichtende Verfahren wie tf-idf ermöglichen zwar eine erste grobe Einschätzung zum Thema eines Dokuments, allerdings bilden sie menschliches Verständnis von Themenstrukturen eher schlecht ab.
+Es kommt selten vor, dass ein Dokument, bspw. ein Zeitungsartikel, ausschließlich ein Thema zum Gegenstand hat und sich dieses ausschließlich über die numerische Rangfolge charakteristischer Schlagworte definieren lässt.
+Meist entsprechen Dokumente eher einer Zusammensetzung verschiedener Themenkomplexe; so handelt der Zeitungsartikel möglicherweise zu je verschiedenen Anteilen von Wirtschaft und Politik.
 Diesem Umstand tragen *mixed membership*-Modelle Rechnung, indem sie statt eines einzelnen Themas zulassen, dass ein Dokument in mehreren Themenkomplexen enthalten ist.  
 Zu beachten ist, dass diese Verfahren keineswegs auf textuelle Daten beschränkt sind und auch in anderen Gebieten Anwendung finden, wie etwa der Genetik oder Computergrafik\ [@Blei2012].
 
 #### Latent Dirichlet Allocation (LDA)
 Auch LDA\ [@Blei2003] zählt zur Klasse der *mixed membership*-Modelle.
-Die Grundidee dieses Verfahrens ist, dass Dokumente aus mehreren Topics zusammengesetzt sind und von einem probabilistischen Prozess generiert werden\ [@Blei2012].
-Ein Topic setzt sich aus verschiedenen Wörtern eines Korpus zusammen, jedes Wort kommt mit einer bestimmten Wahrscheinlichkeit in diesem Topic vor. 
-Damit lassen sich Topics als Wahrscheinlichkeitsverteilungen über dem festen Vokabular eines Korpus an Dokumenten auffassen, die dem Prozess als latente ("versteckte") Variablen zugrunde liegen.
-Der generative Prozess wählt nun für jedes Dokument des Korpus eine zufällige Verteilung über Topics, für jedes zu erzeugende Wort des Dokuments zufällig ein Topic aus dieser Dokument-Topic-Verteilung und zieht zufällig ein Wort aus diesem Topic.
+Bei diesem Verfahren wird angenommen, dass ein probabilistischer Prozess Dokumente erzeugt, der "geheimes" Wissen über die Struktur der Inhalte besitzt.
+Kehrt man den Prozess um, lässt dies Rückschlüsse auf diese versteckten Strukturen zu.
+
+Die Grundidee dieses Verfahrens ist, dass Dokumente aus mehreren *Topics* zusammengesetzt sind.
+Die Topics sind *a priori* bekannt und stellen Wahrscheinlichkeitsverteilungen über einem festen Vokabular an Wörtern dar.
+Ein Topic enthält zu unterschiedlichen Anteilen Wörter eines Vokabulars, ein Dokument setzt sich aus einer Verteilung von Topics zusammen.
+Diese beiden Wahrscheinlichkeitsverteilungen liegen im Sinne der LDA als latente ("versteckte") Variablen einem generativen Prozess zugrunde, der die Dokumente erzeugt.  
+Beispielsweise könnte ein Topic "Haustiere" aus den Wörtern "Hund, Katze, Maus" bestehen, ein Topic "Computer" aus den Wörtern "Monitor, Maus, Tastatur"; dies ist die *Topic-Wort-Verteilung*.
+Für jedes zu erzeugende Dokument wählt der postulierte Prozess zufällig eine Verteilung über diese Topics, bspw. 10% "Computer" und 90% "Haustiere"; dies ist die *Dokument-Topic-Verteilung*.
+Für jedes zu erzeugende Wort eines Dokuments zieht der Prozess zufällig ein Topic aus der Dokument-Topic-Verteilung; damit ist das Topic dieses Wortes festgelegt, etwa "Haustiere".
+Um schließlich ein konkretes Wort zu erzeugen, wird aus der Topic-Wort-Verteilung "Haustiere" ein Wort gezogen, etwa "Hund".
 
 Damit lässt sich die Erzeugung eines Dokuments auch als gemeinsame Wahrscheinlichkeitsverteilung über den sichtbaren und versteckten Variablen auffassen\ [@Blei2012].
 Formal sei dazu $D$ die Anzahl an Dokumenten $d_{1:D}$ eines Korpus und $N$ die Anzahl an Wörtern $w_{1:N}$ eines Dokuments, $w_{d,n}$ bezeichne dabei das $n$te Wort in Dokument $d$.
@@ -67,7 +75,8 @@ Sie können vielmehr dabei helfen, einen Satz an Dokumenten zu strukturieren und
 In weiteren Betrachtungen lassen sich dann etwa Ähnlichkeiten zwischen Dokumenten feststellen oder Klassifizierungen vornehmen.
 Auch die vorliegende Arbeit nutzt LDA als Vorstufe zu einer thematischen Klassifizierung von Subreddits.
 Jedes Subreddit wird als Dokument aufgefasst, indem die Titel der Beiträge konkateniert werden.
-Auf diesen Dokumente wird ein Topic-Modell mit 256 Topics erstellt und im Anschluss jedes Subreddit auf das Topic mit der höchsten Wahrscheinlichkeit reduziert.
-Die gefundenen Topics bilden damit den thematischen Überbau der ihnen zugewiesenen Subreddits und werden genutzt, um für Nutzer Themenverläufe zu bestimmen.
+Auf diesen Dokumenten wird ein Topic-Modell mit 256 Topics erstellt und im Anschluss jedes Subreddit auf das Topic mit der höchsten Wahrscheinlichkeit reduziert.
+Die gefundenen Topics bilden damit den thematischen Überbau der ihnen zugewiesenen Subreddits.
+Daraus lassen sich die Themenverläufe der Nutzer bestimmen.
 Diese Gruppierung einzelner Subreddits zu einer größeren Einheit erlaubt es, Nutzerinteressen über die vergleichsweise harten Subreddit-Grenzen hinweg zu betrachten.
 Bewegt sich ein Redditor in zwei einander thematisch verwandten Subreddits, etwa /r/android und /r/linux, betrachtet diese Arbeit diese als gemeinsame Einheit.

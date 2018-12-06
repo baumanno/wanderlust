@@ -3,23 +3,24 @@
 Die 2005 von Steve Huffman und Alexis Ohanian gegründete Plattform Reddit ist ein Social-News-Aggregator und bezeichnet sich selbst als "front page of the internet"^[https://www.reddit.com/].
 
 #### Submissions
-Auf Reddit haben Nutzer, auch Redditors genannt, die Möglichkeit, Beiträge zu erstellen, zu bewerten und zu kommentieren.
-Bei diesen sogenannten Submissions handelt es sich entweder um Links zu anderen Webseiten oder um *self posts*, von Nutzern erstellte Bilder, Videos oder Texte.
-Indem sie mittels Up- bzw. Downvotes abstimmen, nehmen Nutzer Einfluss auf Sichtbarkeit und Sortierung der Inhalte; besser bewertete Beiträge landen weiter oben, die bestbewerteten werden auf der Startseite angezeigt.
+Auf Reddit haben Nutzer, auch *Redditors* genannt, die Möglichkeit, Beiträge zu erstellen, zu bewerten und zu kommentieren.
+Bei diesen sogenannten Submissions handelt es sich entweder um Links zu anderen Webseiten oder um *self posts* -- von Nutzern erstellte Bilder, Videos oder Texte.
+Indem sie mittels Up- bzw. Downvotes abstimmen, nehmen Nutzer Einfluss auf Sichtbarkeit und Sortierung der Inhalte; höher bewertete Beiträge landen weiter oben.
+Auf der Startseite werden Submissions angezeigt, die innerhalb kurzer Zeit sehr populär geworden sind.
 Dadurch kann es vorkommen, dass Trends und Nachrichten zuerst auf Reddit zu sehen sind, bevor andere Portale oder Medien diese aufgreifen.
 
 #### Karma
-Verfasser von Links und Kommentaren erhalten für Upvotes ihrer Beiträge sogenanntes "Karma", Downvotes ziehen Karma wieder ab.
-Karmapunkte wirken wie ein Korrektiv gegen schlechtes Verhalten bzw. Inhalte, da sie im Profil eines Nutzers für andere einsehbar sind.
+Verfasser von Links und Kommentaren erhalten für Upvotes ihrer Beiträge virtuelle Punkte, sogenanntes "Karma"; Downvotes ziehen Karmapunkte ab.
+Karma wirkt wie ein Korrektiv gegen schlechtes Verhalten bzw. Inhalte, zumal sie im Profil eines Nutzers auch für andere einsehbar sind.
 Dadurch ist schnell ersichtlich, wer populäre und von der Community akzeptierte Inhalte erstellt.
 
 #### Subreddits
 Jeder Beitrag, egal ob Link oder Self-Post, wird vom Autor einem Subreddit zugeordnet.
 Subreddits bilden thematisch eigenständige Communities innerhalb von Reddit und zeichnen sich durch eigene Community-Richtlinien sowie charakteristisches Vokabular aus.
-Ein expliziter Beitritt zu einer Community ist nicht nötig, obwohl durchaus private Subreddits existieren, die nur ihren Mitgliedern zugänglich sind.
-Meist können Inhalte des Subreddits jedoch einfach abonniert werden, woraufhin sie im persönlichen Feed des Nutzers auftauchen.
+Ein expliziter Beitritt zu einer Community ist meist nicht nötig; es existieren allerdings durchaus private Subreddits, die nur ihren Mitgliedern zugänglich sind.
+Inhalte öffentlicher Subreddits können jedoch ohne Einschränkung abonniert werden, woraufhin sie im persönlichen Feed des Nutzers auftauchen.
 Nutzer können selbst Subreddits erstellen und dadurch Themenkomplexe beliebig aufspalten und untergliedern.
-Die hat zur Folge, dass sich breite Themengebiete wie etwa Politik und Gesellschaft, Technik oder Wissenschaft in viele Subreddits gliedern, die sich zwar einen gemeinsamen thematischen Überbau teilen, unterscheiden sich jedoch in der konkreten inhaltlichen Ausrichtung.
+Dies hat zur Folge, dass sich breite Themengebiete wie etwa Politik und Gesellschaft, Technik oder Wissenschaft auf mehrere Subreddits verteilen, die sich trotz eines gemeinsamen thematischen Überbaus in der konkreten Schwerpunktsetzung unterscheiden.
 Beispielsweise existieren neben dem Subreddit /r/technology auch /r/microsoft, /r/windows, /r/windowsxp und /r/windows10, aber ebenso /r/linux oder /r/android.
 Eine beliebte Feststellung unter Nutzern ist, dass es ein Subreddit für beinahe alles gibt.^["there is a subreddit for almost everything", ein Umstand, der faszinierend genug ist, um ihm ein eigenes Subreddit zu widmen: /r/wowthissubexists sammelt exotische Subreddits.]
 Reddit selbst gibt die Zahl "aktiver" Communities im November 2018 mit über 138.000 an^[https://www.redditinc.com/], allerdings ist nicht ersichtlich, welche Definition von Aktivität hier Anwendung findet.
@@ -33,8 +34,8 @@ Im Gegensatz zu Diensten wie Facebook, Twitter und Instagram, ist es auf Reddit 
 
 #### Reddit-API
 Für Softwareentwickler wie auch für die Wissenschaft von Bedeutung ist zudem die frei zugängliche Reddit-API, eine Softwareschnittstelle, über die u.a. Submissions, Kommentare und Subreddits abgerufen werden können.
-Auf diese Schnittstelle kann beispielsweise über den Browser oder mit Software zugegriffen werden, ein Umstand, den sich auch zahlreiche Reddit-Bots zunutze machen.
-Als Bots bezeichnet man Computerprogramme, die meist auf Kommunikationsplattformen eingesetzt werden, um automatisierte Nachrichten zu versenden.
+Auf diese Schnittstelle kann beispielsweise über den Browser oder mit Software zugegriffen werden, ein Umstand, den sich auch zahlreiche *Bots* zunutze machen.
+Bots sind Computerprogramme, die automatisiert Inhalte erstellen, oft als Reaktion auf das Verhalten anderer Nutzer.
 Beispielsweise können auf Reddit mit dem "RemindMeBot"^[https://www.reddit.com/r/RemindMeBot] zeitgesteuerte Nachrichten erstellt werden, um an einen interessanten Kommentar oder Post zu erinnern.
 
 #### Kontext der Arbeit
@@ -43,5 +44,5 @@ Diese Themenkomplexe werden ihrerseits als Communities angesehen, in der Nutzer 
 Dabei soll der Frage nachgegangen werden, ob und wie sich Interesse auf unterschiedliche Gemeinschaften verteilt.  
 Zudem wird mittels aller Kommentare, die ein Nutzer verfasst und die an ihn gerichtet sind, ein soziales Netzwerk seiner Kontakte generiert.
 Für diese Kontakte lässt sich ebenso die individuelle Affinität zu einem Thema bestimmen, sodass auch für das Netzwerk eine Verteilung von Themen vorliegt.
-Damit lässt sich etwa beobachten, ob ein Nutzer eher ähnlich interessierte Kontakte wählt, oder ob sich sein Netzwerk "bunt" zusammensetzt.
-Es wird sozusagen ein Licht durch die Themenhistorie des Nutzers hindurch auf das zugrundeliegende soziale Netzwerk geworfen, um deren gegenseitigen Einfluss sichtbar zu machen.
+Daraus wird ersichtlich, ob ein Nutzer eher ähnlich interessierte Kontakte wählt, oder ob sich sein Netzwerk "bunt" zusammensetzt.
+Es wird sozusagen ein Licht durch die Themenhistorie des Nutzers hindurch auf das zugrunde liegende soziale Netzwerk geworfen, um deren gegenseitigen Einfluss sichtbar zu machen.

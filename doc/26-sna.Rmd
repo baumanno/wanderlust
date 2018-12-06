@@ -1,8 +1,8 @@
 ## Soziale Netzwerkanalyse {#sna}
-Die zweite Säule dieser Arbeit stellt neben der Topic-Analyse die Untersuchung der Interaktionen zwischen Nutzern eines Online Social Networks dar.
-Diese Interaktionen lassen sich mit Methoden der sozialen Netzwerkanalyse untersuchen.
+Neben der Topic-Analyse stellt die Untersuchung der Interaktionen zwischen Nutzern eines Online Social Networks (OSN) die zweite Säule dieser Arbeit dar.
+Diese Interaktionen lassen sich mit Methoden der sozialen Netzwerkanalyse (SNA) untersuchen.
 
-Im Gegensatz zu traditionellen Ansätzen soziologischer Forschung betrachten Methoden der sozialen Netzwerkanalyse nicht das Individuum "für sich" sondern Zusammenschlüsse mehrerer Individuen.
+Im Gegensatz zu traditionellen Ansätzen soziologischer Forschung betrachtet die SNA nicht das Individuum "für sich" sondern Zusammenschlüsse mehrerer Individuen.
 Insbesondere geht sie davon aus, dass *Akteure* Beziehungen zueinander aufbauen, und dass dieses Beziehungsgeflecht strukturelle Eigenschaften aufweist, die sich analysieren lassen.
 "Sozial" werden diese Beziehungen dadurch, dass als Akteure Individuen oder deren Zusammenschluss in Form von Gruppen und Organisationen in Frage kommen.
 Ein soziales Netzwerk beschreibt also eine endliche Zahl an Akteuren sowie deren Beziehungen zueinander.
@@ -19,7 +19,7 @@ Bei einer Darstellung in Form eines Graphen werden Akteure als Knoten und Bezieh
 Die Graphentheorie bietet nicht nur eine adäquate Darstellung der Idee von untereinander verbundenen Akteuren; sie stellt auch Konzepte bereit, um die Eigenschaften sozialer Netzwerke untersuchen und beschreiben zu können.
 Graphen lassen sich formal als die endliche, nicht-leere Menge von Knoten $V$ beschreiben, welche über Kanten aus der Menge $E \subseteq V \times V$ aller geordneten Knotenpaare miteinander verbunden sind.
 Da $E$ geordnete Paare von Knoten $(u,v) \in V$ enthält, spricht man von einer gerichteten Kante von $u$ nach $v$; ferner ist $E$ eine Multimenge, enthält also Paare von Knoten mehrfach (vgl. [@Brandes2012]).
-Durch die Darstellung als gerichteter Multigraph lassen sich nicht nur gerichtete Graphen mit Mehrfachkanten realisieren, auch ungerichtete Graphen lassen sich auf diese Weise darstellen, indem zwei einander entgegegesetzte gerichtete Kanten zu einer zusammengefasst werden.
+Durch die Darstellung als gerichteter Multigraph lassen sich nicht nur gerichtete Graphen mit Mehrfachkanten realisieren, auch ungerichtete Graphen lassen sich auf diese Weise darstellen, indem zwei einander entgegengesetzte gerichtete Kanten zu einer zusammengefasst werden.
 
 #### Grad von Knoten
 Sind zwei Knoten über eine oder mehrere Kanten miteinander verbunden, sind sie "Nachbarn"; die Zahl der Nachbarn eines Knotens bezeichnet man als dessen Grad.
@@ -31,36 +31,36 @@ In dieser Arbeit werden Betrachtungen des Knotengrads angestellt, um festzustell
 
 #### Egozentrische Netzwerke
 Wird anstatt das Netzwerk *in toto* zu betrachten die Sichtweise eines einzelnen Akteurs eingenommen, spricht man von egozentrischen oder einfach Ego-Netzwerken.
-Diese setzen sich aus einem zentralen Akteur "Ego" zusammen, dessen benachbarten Knoten, den Alteri, sowie den Beziehungen der Alteri untereinander.
+Diese bestehen aus einem zentralen Knoten *Ego*, dessen Nachbarn oder *Alteri*, sowie den Beziehungen der Alteri untereinander.
 Solche Strukturen, deren Sicht sich auf einen Ausschnitt um einen Akteur beschränkt, werden auch als "lokale" bzw. "persönliche Netzwerke" bezeichnet, da ihre Sicht lokal beschränkt und stark auf die Person des Ego ausgerichtet ist.
 In dieser Arbeit werden Ego-Netzwerke genutzt, um Interaktionsgraphen eines Nutzers zu erstellen.
 Der betrachtete Nutzer nimmt hier die Person des Ego ein, die Alteri sind alle weiteren Nutzer, mit denen er auf Reddit in Form von Kommentaren kommuniziert hat.
-Diese Kommunikation kann einseitig von Ego oder den Alteri ausgehen, sie kann aber auch vom jeweils anderen erwidert werden; ebenso sind diese Kommuniaktionsakte nicht in ihrer Anzahl beschränkt, weshalb Kanten im Graph des Ego-Netzwerks als gerichtete Multikanten umgesetzt werden.
+Diese Kommunikation kann einseitig von Ego oder den Alteri ausgehen, sie kann aber auch vom jeweils anderen erwidert werden; ebenso sind diese Kommunikationsakte nicht in ihrer Anzahl beschränkt, weshalb Kanten im Graph des Ego-Netzwerks als gerichtete Multikanten umgesetzt werden.
 Da zudem einzig die Strukturen von Bedeutung sind, die sich zwischen Ego und Alteri manifestieren, werden die Beziehungen zwischen den Alteri außer Acht gelassen.
 
 #### Reziprozität
-Strukturen aus zwei Knoten eines Graphen und deren möglichen Verbindungen werden auch als dyadische Beziehung bezeichnet.
+Strukturen aus zwei Knoten eines Graphen und deren möglichen Verbindungen werden auch als *dyadische* Beziehung bezeichnet.
 Dyaden kennen drei mögliche Zustände, die durch die Art der Verbindung der beiden Knoten bestimmt sind:
 
 * Null-Dyade: Zwischen den beiden Knoten besteht keine Verbindung,
 * Asymmetrische Dyade: Eine einzelne Kante verbindet die beiden Knoten, für Knoten $u,v$ entweder die Kante $(u,v)$ oder $(v,u)$ 
 * Wechselseitige^[engl. "mutual"] Dyade: Die Verbindung wird von beiden Partnern erwidert, für Knoten $u,v$ also das **Paar** gerichteter Kanten $(u,v)$ **und** $(v,u)$ (bzw. in kompakterer Darstellung auch $u \leftrightarrow v$, vgl [@Wasserman1994, S. 510])
 
-Die "nächstgrößere" Struktur, die sich beobachten ließe, stellen Triaden dar, also Muster bestehend aus drei Knoten.
+Die "nächstgrößere" Struktur, die sich beobachten ließe, stellen *Triaden* dar, also Muster bestehend aus drei Knoten.
 Für diese Arbeit ist eine solche Betrachtung wenig zielführend, da eine Triade immer Ego als einen Eckpunkt enthalten wird oder die Null-Triade ist (zur Erinnerung: Verbindungen unter den Alteri werden hier nicht berücksichtigt).
 Aus letzterer Beobachtung lässt sich kein Schluss ziehen, da sie durch das das Forschungsdesign bedingt ist; erstere Betrachtung zerfällt immer in die Betrachtung zweier dyadischer Beziehungen, die Ego enthalten.
 
 Von besonderem Interesse ist die Frage, ob Dyaden von Ego und Alteri zu wechselseitigen Beziehungen neigen, oder ob es sich eher um einseitige Verbindungen handelt.
-Da eine Kante zwischen Nutzern eine Kommunikationshandlung darstellt entsprechen asymmetrische Dyaden Interaktionen, die nicht erwidert werden, der Kommentar bleibt ohne Wirkung.
+Da eine Kante zwischen Nutzern eine Kommunikationshandlung darstellt entsprechen asymmetrische Dyaden Interaktionen, die nicht erwidert werden.
 Bei wechselseitigen Interaktionen liegt hingegen ein Rede-Gegenrede-Akt vor, die Aktion des einen provoziert eine Reaktion des anderen Partners.
 
 Die Betrachtung dieser Reziprozität von Beziehungen kann Aufschluss geben über die Art von Diskursen im lokalen Netzwerk eines Nutzers.
 Um die Tendenz wechselseitiger Kanten zu bestimmen, nutzt diese Arbeit ein 1955 von Katz und Powell vorgeschlagenes Maß, einen "index of tendency toward reciprocation"\ [@Katz1955].
-Dieser Index $\rho_{KP}$ lässt sich entweder für ein festes oder ein freies Design bilden ("fixed choice" v. "free choice"), abhängig davon, ob alle Knoten nur eine bestimmte Zahl an Beziehungen ausbliden dürfen, oder ob deren Zahl unbeschränkt ist.
-Da Nutzer untereinander beliebig viele Kommentare austauscen können, nutzt diese Arbeit den Index der freien Wahl; für eine Beschreibung der festen Wahl sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
+Dieser Index $\rho_{KP}$ lässt sich entweder für ein festes oder ein freies Design bilden ("fixed choice" v. "free choice"), abhängig davon, ob alle Knoten nur eine bestimmte Zahl an Beziehungen ausbilden dürfen, oder ob deren Zahl unbeschränkt ist.
+Da Nutzer untereinander beliebig viele Kommentare austauschen können, nutzt diese Arbeit den Index der freien Wahl; für eine Beschreibung der festen Wahl sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
 
 #### Katz-Powell-Index
-In Ermangelung einer angemessen prägnanten Übersetzung wird statt der Bezeichnung im urprünglichen Aufsatz hier die Umschreibung "Katz-Powell-Index" oder, wo angemessen, schlicht $\rho_{KP}$ verwendet.  
+In Ermangelung einer angemessen prägnanten Übersetzung wird statt der Bezeichnung im ursprünglichen Aufsatz hier die Umschreibung "Katz-Powell-Index" oder, wo angemessen, schlicht $\rho_{KP}$ verwendet.  
 Der Index stellt eine Abschätzung der Wahrscheinlichkeit dar, dass zwei Akteure gegenseitige Kanten ausbilden.
 Formal lässt sich dies als Wahrscheinlichkeit  auffassen, dass eine Kante $(u,v)$ und deren Gegenstück $(v,u)$ existieren (vgl. [@Wasserman1994], S. 515). Es folgt aus der Definition der bedingten Wahrscheinlichkeit:
 \begin{equation}
@@ -82,15 +82,11 @@ Anhand der Formulierung in \@ref(eq:rhomut) lassen sich verschiedene Werte für 
 * $\rho_{KP} = 0$: damit gilt automatisch $P(v \to u|u\to v) = P(v \to u)$, die bedingte Wahrscheinlichkeit ist gleich der unbedingten, die beiden Ereignisse sind unabhängig; eine Tendenz, Kanten zu erwidern, besteht nicht
 * $\rho_{KP} = 1$: dann gilt wegen der Summe der Wahrscheinlichkeiten für Ereignis und Gegenereignis auch $P(v \to u|u\to v) = 1$, alle Kanten werden erwidert; gegeben eine Kante $(u,v)$ wird beobachtet beträgt die Wahrscheinlichkeit 1, dass auch $(v,u)$ beobachtet wird
 
-Katz und Powell formulieren für ihren Index zwei Varianten, die im wesentlichen in unterschiedlichen Untersuchungsdesigns begründet liegen.
-Fragt man einen Akteur nach einer festen Anzahl Beziehungen, etwa "Nennen Sie die fünf Personen, die Ihnen am nähesten stehen", liegt ein "fixed choice"-Design vor\ [@Katz1955]; wird die Anzahl der Nennungen offen gelassen, liegt die "free choice"-Variante vor.
-Die Datenerhebung in dieser Arbeit liefert alle Kommentare eines Nutzers ohne Einschränkung, weshalb hier nur diese Form der Indexbildung beschrieben wird; für die "fixed choice"-Form sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
-
-Der Index wird immer für ein Netzwerk als ganzes berechent.
+Der Index wird immer für ein Netzwerk als ganzes berechnet.
 Sei dazu $g$ die Anzahl der Akteure in diesem Netz.
 Jeder Akteur kann $(g - 1)$ Kanten zu anderen ausbilden.
 Sei $x_i$ der Ausgangsgrad eines Knotens $i$, dann ist die Wahrscheinlichkeit, dass zwei Knoten $i, j$ eine gemeinsame Kante ausbilden $\frac{x_i x_j}{(g-1)^2}$.
-Bezeichne L die Summe aller Ausgangsgrade $L = \sum{x_i}$ und $L_2$ die Summe deren Quadrate $L = \sum{x_i^2}$, und sei $M$ die Gesamtzahl aller beobachteten wechselseitigen Kanten.
+Bezeichne $L$ die Summe aller Ausgangsgrade $L = \sum{x_i}$ und $L_2$ die Summe deren Quadrate $L = \sum{x_i^2}$, und sei $M$ die Gesamtzahl aller beobachteten wechselseitigen Kanten.
 Dann lässt sich die Größe $\rho_{KP}$ abschätzen^[Eine Herleitung dieser Abschätzung ist nicht trivial und wird hier nicht wiedergegeben, sondern ist [@Katz1955] zu entnehmen.] als
 
 \begin{equation}
@@ -99,7 +95,7 @@ Dann lässt sich die Größe $\rho_{KP}$ abschätzen^[Eine Herleitung dieser Abs
 \end{equation}
 
 Die Werte dieses Index bewegen sich in $-\infty < \rho_{KP} \leq 1$.
-Ein Wert von 0 bedeutet, dass keine Tendenz vorliegt, dass Kanten wechselseitig angelegt sind, ein Wert von 1 signalisiert maximale Tendenz, alle Kanten werden erwidert.
+Ein Wert von 0 bedeutet, dass keine Tendenz zu wechselseitigen Kanten erkennbar ist; ein Wert von 1 signalisiert maximale Tendenz, alle Kanten werden erwidert.
 Nimmt der Index negative Werte an, bedeutet dies, dass weniger wechselseitige Dyaden beobachtet wurden als in einem rein dem Zufall unterworfenen Prozess möglich wären; es liegt die gegenteilige Tendenz vor, hin zu asymmetrischen bzw. Null-Dyaden.
 
 Diese Arbeit betrachtet den Katz-Powell-Index lokaler Ego-Netzwerke, um zu beobachten, ob Kommunikationsbeziehungen eher wechselseitig interaktiv, oder einseitig angelegt sind.
@@ -108,7 +104,7 @@ Dadurch lässt sich beispielsweise untersuchen, ob ein Ego in einem Netz, das me
 #### Longitudinale Untersuchung
 
 Abschließend sei darauf hingewiesen, dass diese Arbeit eine Longitudinalstudie der in diesem Kapitel beschriebenen Maße darstellt.
-Indem die Veränderung bspw. des Knotengrads über die Zeit betrachtet wird, lässt sich feststellen, ob ein Nutzer eher aktiver wird in seinem Kommunikationsverhalten (Grad nimmt zu), oder ob er dieses eher einschränkt.
+Indem die Veränderung bspw. des Knotengrads über die Zeit betrachtet wird, lässt sich feststellen, ob ein Nutzer eher in seinem Kommunikationsverhalten aktiver wird (Grad nimmt zu), oder ob er dieses eher einschränkt.
 
 
 #### Homophilie

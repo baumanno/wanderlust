@@ -5,5 +5,5 @@
 In diesem Kapitel werden die theoretischen Grundlagen der Arbeit dargelegt.
 Zuerst werden Prinzip und Aufbau der Social-Media-Plattform Reddit sowie ihre Relevanz für soziologische Forschungsvorhaben erläutert.
 Daran reiht sich eine Einführung in die Methoden des Topic-Modelling, mit besonderem Schwerpunkt auf dem in dieser Arbeit verwendeten Verfahren "Latent Dirichlet Allocation" (LDA).
-Der Abschnitt zur sozialen Netzwerkanalyse legt die Ursprünge dieser Disziplin dar und erklärt die wichtigsten Begriffe und Verfahren ein, mit einem Fokus auf für diese Arbeit relevante Verfahren und Maße.
+Der Abschnitt zur sozialen Netzwerkanalyse legt die Ursprünge dieser Disziplin dar und erklärt die wichtigsten Begriffe und Verfahren, mit einem Fokus auf für diese Arbeit relevante Verfahren und Maße.
 Das Kapitel schließt mit einer Betrachtung des gegenwärtigen Forschungsstands zu sozialen (Online-)Netzwerken, Medien- und Inhaltsanalyse sowie sozialer Netzwerkanalyse.

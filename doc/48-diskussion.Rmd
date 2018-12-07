@@ -1,0 +1,10 @@
+\cleardoublepage
+## Diskussion {#diskussion}
+
+### Topic-Model
+
+- Selbst-Referenzierung von Reddit, c.f. [@Singer2014]
+
+- Problematik mit Stoppwörtern bzw. deren Nutzen (we, I, you, me, they, them) (paper mit breastcancer.org)
+
+- wortwahl beim thema "Topic-Bezug" war vorsichtig; es handelt sich doch immer um nur um Modelle, menschliches Verständnis nötig um klar sagen zu können, um was es geht

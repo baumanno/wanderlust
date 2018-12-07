@@ -1,6 +1,6 @@
 \cleardoublepage
 
-# Einleitung
+# Einleitung {#einleitung}
 \epigraphhead[50]{\epigraph{\textit{The world is a thing of utter inordinate complexity and richness and strangeness that is absolutely awesome.}}{\textsc{Douglas Adams}}}
 \vspace{1.5cm}
 
@@ -47,9 +47,13 @@ Für alle von einem Nutzer erstellten Kommentare lässt sich daraus eine Themenh
 Weiterhin werden aus Reddit-Kommentaren Interaktionsgraphen abgeleitet, die einen Blick auf die sozialen Onlinekontakte eines Nutzers ermöglichen.
 Die Verknüpfung dieser beiden Betrachtungen findet schließlich Anwendung in einer Fallstudie dreier Nutzer, die über einen langen Zeitraum auf Reddit aktiv sind.
 
-Diesen einleitenden Worten folgt in Kapitel\ \@ref(grundlagen) eine Erläuterung der grundlegenden Begriffe und methodischen Werkzeuge. 
-Hier wird die Plattform Reddit vorgestellt, die Idee der Topic-Analyse sowie das verwendete Verfahren "Latent Dirichlet Allocation" (*LDA*) detailliert besprochen und eine Übersicht über die Methoden der sozialen Netzwerkanalyse geboten, die in dieser Arbeit Anwendung finden.
+Diesen einleitenden Worten folgt in Kapitel\ \@ref(grundlagen) eine Erläuterung der grundlegenden Konzepte und Verfahren. 
+Hier wird die Plattform Reddit vorgestellt, die Idee der Topic-Analyse sowie das verwendete Verfahren "Latent Dirichlet Allocation" (*LDA*) detailliert besprochen und eine Übersicht über die Methoden der sozialen Netzwerkanalyse, die in dieser Arbeit Anwendung finden, geboten.
 Das Kapitel schließt mit einer Einordnung der Arbeit in die bestehende Forschung zu sozialen Netzwerken und medialer Inhaltsanalyse.  
-In Kapitel\ \@ref(datenanalyse) wird die eigentliche Datenanalyse beschrieben. Einleitend wird über das methodische Vorgehen bei der Auswahl der Daten berichtet sowie die Konstruktion der Interaktionsgraphen erläutert.
-Der zweite Teil des Kapitels widmet sich dem Topic-Modell der Subreddits und den Ergebnissen der durchgeführten Fallstudie.
-Eine Diskussion der Ergebnisse sowie des analytischen Vorgehens findet in Kapitel\ \@ref(diskussion) statt, bevor Kapitel\ \@ref(zusammenfassung) mit einem Ausblick auf mögliche weitere Forschungsarbeit schließt.
+Kapitel\ \@ref(methodik) erläutert das methodische Vorgehen.
+Es beginnt mit einer kritischen Betrachtung des verwendeten Datensatzes und legt Kriterien für die Ziehung einer Stichprobe von Nutzern dar.
+Ebenfalls diesem Kapitel zu entnehmen ist Methodik der Aufbereitung der Daten für Topic- bzw. Netzwerkanalyse.  
+In Kapitel\ \@ref(datenanalyse) werden die Ergebnisse der Datenanalyse präsentiert.
+Zunächst wird das Topic-Modell kritisch vorgestellt und interpretiert.
+Anschließend folgen die individuellen Analysen der für die Fallstudie ausgewählten Nutzer.
+Eine Diskussion der Ergebnisse rundet diesen Teil ab, bevor Kapitel\ \@ref(zusammenfassung) mit einem Ausblick auf mögliche weitere Forschungsarbeit schließt.

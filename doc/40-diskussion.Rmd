@@ -1,9 +1,0 @@
-\cleardoublepage
-# Diskussion
-
-## Topic-Model
-
-- Selbst-Referenzierung von Reddit, c.f. [@Singer2014]
-
-- Problematik mit Stoppwörtern bzw. deren Nutzen (we, I, you, me, they, them) (paper mit breastcancer.org)
-

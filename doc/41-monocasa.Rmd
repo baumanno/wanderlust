@@ -1,11 +1,12 @@
-## Daten und Definitionen
+### monocasa
+Der User mit dem Nutzernamen "monocasa" ist im betrachteten Ausschnitt aus dem Datensatz in 119 Monaten enthalten und hat insgesamt 7996 Kommentare erstellt, was im Mittel `r fmt(round(7996 / 119, 2))` Kommentaren pro Monat entspricht.
 
-```{r cavedave-setup}
-user <- "cavedave"
+```{r monocasa-setup, cache=FALSE}
+user <- "monocasa"
 date_range_full_start <- "2007-01-01"
 date_range_full_end <- "2018-02-01"
-date_range_cut_start <- "2011-01-01"
-date_range_cut_end <- "2015-01-01"
+date_range_cut_start <- "2012-12-01"
+date_range_cut_end <- "2017-12-01"
 
 date_range_full <-
     seq.Date(as.Date(date_range_full_start),
@@ -44,49 +45,105 @@ topics_of_alters <-
   read_alters_topics(user, date = date_range) %>%
   select(-year, -month, topics = data)
 ```
-Wir betrachten im folgenden den User "`r user`"; er wurde zufällig aus dem Long
-Tail der Nutzerverteilung gezogen.
 
-Als Analysezeitraum wählen wir November 2007 bis Februar 2018. Ab November 2007
-reduzieren sich die fehlenden Beiträge in den Baumgartner-Datensätzen (Caveat Emptor, 2018).
+#### Topic-Verteilungen
 
-Für jeden Monat in diesem Zeitraum identifizieren wir Kommentare, die entweder an
-den User gerichtet sind, oder von ihm ausgehen, sowie die User, die an diesen Interaktionen
-beteiligt sind.
+Um einen Überblick zu erhalten, in welchen Topics der Nutzer aktiv ist, stellen wir die Themenhistorie über den vollen Untersuchungszeitraum dar.
+Alle Kommentare werden über das Subreddit, in dem sie erstellt wurden, einem Topic zugeordnet.
+In Abbildung \@ref(fig:monocasa-area-chart-comms-full) ist zu erkennen, dass auf Topic 239 ein Großteil aller Kommentare von monocasa entfallen, gefolgt von Topic 210.
+Wie bereits weiter oben festgestellt, handelt es sich bei Topic 239 um technisch orientierte Inhalte, bei 210 um Politik mit Schwerpunkt auf US-amerikanischen Themen.
 
-Für einen Post des Users stellen wir fest, in welchem Subreddit dieser verfasst wurde.
-Ein oder mehrere Subreddits fassen wir unter einem Topic zusammen, sodass man sagen kann,
-dass ein Post zu einem Topic gehört.
+Bei der Analyse des Topic-Verlaufs fallen mehrere Entwicklungen auf.
+Zum einen beginnt ab ca. Januar 2013 der Anteil an Topic 210 (Politik) zu wachsen, gleichzeitig nimmt der Anteil von 239 (Technik/IT) ab, im Oktober 2013 sinkt der Anteil sogar auf 0.
+Anfang 2015 erreicht dieses Topic jedoch wieder eien hohen Anteil, fällt danach aber zusehends ab.
 
-Ähnliches lässt sich über die User sagen, mit denen Ego interagiert: sie sind in
-einem Topic aktiv, wenn sie in dem betrachteten Monat dort die meisten ihrer Kommentare verfasst haben.
+Für die Alteri lässt sich ein ähnlicher Topic-Verlauf bestimmen, indem pro Monat für jeden von ihnen das Topic bestimmt wird, wo er die meisten Kommentare verfasst; so wird jeder dieser Nutzer auf ein einzelnes Topic festgelegt, das ihn charakterisiert.
+Damit lässt sich bestimmen, welchen Anteil ein Topic unter den Alteri ausmacht.
+Abbildung \@ref(fig:monocasa-area-chart-alters-full) lässt ebenfalls erkennen, dass ab etwa Mitte 2014 der Anteil des Politik-Topics 210 zu wachsen beginnt, und dass das Technik-Topic 239 gegen Ende 2013/Anfang 2014 absinkt.
+Zudem fällt auf, dass sich Ego und Alteri durchaus in ihren Interessen überschneiden; in `r pronounce(length(intersect(ego_proportions_full$topic, alters_proportions_full$topic)))` Topics erstellen sowohl Ego als auch Alteri Kommentare.
 
-## Verteilungen
+Da diese Phase scheinbar von einiger Dynamik geprägt ist, fokussieren wir die weitere Analyse auf den Zeitraum von Dezember 2012 bis Dezember 2017, also genau fünf Jahre; dieser Fokus wird durch den leicht schattierten Bereich in den beiden letzten Abbildungen hervorgehoben.
+Alle weiteren zeitlichen Verläufe beziehen sich auf diesen neuen Zeitraum der Untersuchung.
+
+(ref:monocasa-area-chart-comms-full) Topic-Verteilung von Egos Kommentaren. Dargestellt sind die relativen Anteile eines Topics an allen Kommentaren, die Ego in einem gegebenen Monat erstellt.
+```{r monocasa-area-chart-comms-full, fig.cap="(ref:monocasa-area-chart-comms-full)",cache=FALSE}
+area_plot_posts(ego_proportions_full, date_range_cut_start, date_range_cut_end)
+```
+(ref:monocasa-area-chart-alters-full) Topic-Verteilung der Alteri im lokalen Netzwerk. Dargestellt sind die relativen Anteile eines Topics an allen Kommentaren, die Ego in einem gegebenen Monat erstellt.
+```{r monocasa-area-chart-alters-full, fig.cap="(ref:monocasa-area-chart-alters-full)",cache=FALSE}
+area_plot_alters(alters_proportions_full, date_range_cut_start, date_range_cut_end)
+```
+
+
+\todo{ZoomPlots in den Analysezeitraum wurden gestrichen. Passt?}
+```{r monocasa-area-chart-comms-zoom, include=FALSE}
+area_chart(ego_proportions) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  labs(title = "Topic-Zugehörigkeit der Posts von Ego") +
+  theme(legend.position = "bottom")
+  
+```
+
+```{r monocasa-area-chart-alters-zoom,include=FALSE}
+area_chart(alters_proportions) +
+  scale_fill_manual(
+    "Topic",
+    breaks = topics_present,
+    values = cols,
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      nrow = 1
+    )
+  ) +
+  labs(title = "Topic-Zugehörigkeit der Alteri") +
+  theme(legend.position = "bottom")
+```
+
+#### Kommentarverteilungen
+Bislang wurden relative Anteile eines Topics an allen Kommentaren dargestellt.
+
+
+
 Aus dem Datensatz können wir entnehmen, wie viele (absolute) Posts ein User zu einem Topic erstellt.
 \todo{Passt es, hier keine Legende zu zeigen?}
-```{r cavedave-num-posts}
+```{r monocasa-num-posts, cache=FALSE}
 ego_proportions_full %>%
+  filter(date >= date_range_cut_start & date <= date_range_cut_end) %>% 
   group_by(date, topic) %>%
   mutate(sum = sum(num_posts)) %>%
+  filter(sum(sum) > 1) %>% 
   ggplot(mapping = aes(x = date, y = num_posts, colour = topic)) +
-  geom_point(alpha = .2) +
+  geom_point(alpha = .8) +
   geom_smooth(method = "loess") +
   labs(
     x = "Jahr",
     y = "# Posts"
   ) +
-  facet_wrap(~ topic,nrow=4) +
+  facet_wrap(~ topic) +
   theme(
     axis.text.x = element_text(angle = 90),
     legend.position = "none"
   ) +
+  scale_colour_brewer(type="qual",palette = "Set3") +
   guides(colour = guide_legend(title = "Topic",direction = "horizontal",
       title.position = "top",
       label.position = "bottom",
       nrow = 1))
 ```
 
-```{r cavedave-topic-distribution}
+```{r monocasa-topic-distribution}
 ego_proportions_full %>%
   ggplot(mapping = aes(
     x = factor(topic),
@@ -108,94 +165,15 @@ ego_proportions_full %>%
       nrow = 1))
 ```
 
-```{r cavedave-topic-dist-table}
-ego_proportions_full %>% 
-  group_by(topic) %>% 
-  summarise(
-    median = median(num_posts),
-    min = min(num_posts),
-    max = max(num_posts),
-    lower_q = quantile(num_posts, .25),
-    upper_q = quantile(num_posts, .75)
-  ) %>% 
-  knitr::kable(
-    align = c("c", "r", "r", "r", "r", "r"),
-  booktabs = TRUE,
-  format.args = list(big.mark = ".", decimal.mark = ","),
-  caption = "(ref:topic-assignments-summary-lab)"
-    )
-```
-
-
 Für die meisten Topics ist die Zahl der Kommentare eher gering, der Median liegt um 0. Einzig Topics
-210, 219 und 235 zeugen von höherer Aktivität des Users.
+210, 235 und 239 zeugen von höherer Aktivität des Users.
 
 Um die Verteilung der Kommentare bzw. User sinnvoller vergleichen zu können, 
 normalisieren wir die absoluten Zahlen indem wir ihren Anteil an der jeweiligen 
 Gesamtzahl berechnen. Die so erhaltenen relativen Verteilungen untersuchen wir 
 im folgenden auf Auffälligkeiten.
 
-```{r cavedave-area-chart-comms-full}
 
-area_chart(ego_proportions_full) +
-  scale_fill_manual(
-    "Topic",
-    breaks = topics_present,
-    values = cols,
-    guide = guide_legend(
-      direction = "horizontal",
-      title.position = "top",
-      label.position = "bottom",
-      nrow = 1
-    )
-  ) +
-  geom_vline(aes(xintercept = as.Date(date_range_cut_start)),
-             linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date(date_range_cut_end)),
-             linetype = "dotted") +
-  annotate(
-    "rect",
-    xmin = as.Date(date_range_cut_start),
-    xmax = as.Date(date_range_cut_end),
-    ymin = 0,
-    ymax = Inf,
-    fill = "lightgrey",
-    alpha = .5
-  ) +
-  labs(title = "Topic-Zugehörigkeit der Posts von Ego") +
-  theme(legend.position = "bottom")
-```
-
-```{r cavedave-area-chart-alters-full}
-area_chart(alters_proportions_full) +
-  scale_fill_manual(
-    "Topic",
-    breaks = topics_present,
-    values = cols,
-    guide = guide_legend(
-      direction = "horizontal",
-      title.position = "top",
-      label.position = "bottom",
-      nrow = 1
-    )
-  ) +
-  geom_vline(aes(xintercept = as.Date(date_range_cut_start)),
-             linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date(date_range_cut_start)),
-             linetype = "dotted") +
-  annotate(
-    "rect",
-    xmin = as.Date(date_range_cut_start),
-    xmax = as.Date(date_range_cut_end),
-    ymin = 0,
-    ymax = Inf,
-    fill = "lightgrey",
-    alpha = .5
-  ) +
-  labs(title = "Topic-Zugehörigkeit der Alteri") +
-  theme(legend.position = "bottom")
-
-```
 In dem mit gepunkteter Linie markierten Zeitraum fällt der Anteil an Topic 235 auf ein Minimum von 0; der User
 "verlässt" das Topic.
 
@@ -208,7 +186,7 @@ Int = p_a p_e
 $$
 Wir plotten $Int$ zuerst für den gesamten, und dann für den gewählten Analysezeitraum.
 \todo{Axis-Labels!}
-```{r cavedave-interestingness}
+```{r monocasa-interestingness}
 left_join(ego_proportions_full,
           alters_proportions_full,
           by = c("date", "topic")) %>%
@@ -223,11 +201,11 @@ left_join(ego_proportions_full,
   # geom_line() +
   theme(
     axis.text.x = element_text(angle = 90),
-    legend.position="none"
+    legend.position = "none"
   ) +
   scale_x_date(
     date_breaks = "2 years",
-    #date_minor_breaks = "6 month",
+    # date_minor_breaks = "1 month",
     date_labels = "%Y"
   ) +
   geom_vline(mapping = aes(xintercept = as.Date("2011-01-01")), linetype = "dashed", size = .3) +
@@ -235,11 +213,11 @@ left_join(ego_proportions_full,
   facet_wrap(~ topic)
 ```
 
-### Korrelation der Verteilungen
+#### Korrelation der Verteilungen
 
 Fasst man die relative Häufigkeit der Posts bzw. Alteri als Wahrscheinlichkeiten auf, lässt sich deren Korrelation untersuchen. Intuitiv vermuten wir, dass mit höherer Post-Wahrscheinlichkeit auch die Interaktionswahrscheinlichkeit in einem Topic steigt, bzw. vice versa: wenn mehr Interaktionen mit Alteri aus einem Topic zustande kommen, werden auch mehr Beiträge zu diesem Thema verfasst.
 
-```{r cavedave-prob-corr}
+```{r monocasa-prob-corr}
 left_join(ego_proportions_full,
           alters_proportions_full,
           by = c("date", "topic")) %>%
@@ -252,7 +230,7 @@ left_join(ego_proportions_full,
     x = "% Posts von Ego",
     y = "% Alteri"
   ) +
-  facet_wrap(~ topic) +
+  facet_wrap(~ topic)+
   theme(
     axis.text.x = element_text(angle = 90),
     legend.position="none"
@@ -266,50 +244,12 @@ left_join(ego_proportions_full,
 
 ------------
 
-In der Tat bestätigen die meisten Topics unsere Vermutung und folgen einer positiven linearen Korrelation. Bei Topic 219 fällt auf, dass der Zusammhang sublinear zu sein scheint. Beispielsweise entspricht die höchste Post-Wahrscheinlichkeit von ca 90% nur einer Alter-Wahrscheinlichkeit von 25%. Der Großteil der Posts wird also zu diesem Topic verfasst, obwohl nur ein Viertel der Interaktionspartner in diesem Monat auch zu diesem Thema Beiträge verfassen. 
+In der Tat bestätigen die meisten Topics unsere Vermutung und folgen einer positiven linearen Korrelation. Bei Topic 239 fällt auf, dass der Zusammhang sublinear zu sein scheint. Beispielsweise entspricht die höchste Post-Wahrscheinlichkeit von ca 90% nur einer Alter-Wahrscheinlichkeit von 25%. Der Großteil der Posts wird also zu diesem Topic verfasst, obwohl nur ein Viertel der Interaktionspartner in diesem Monat auch zu diesem Thema Beiträge verfassen. 
 
 Wir wählen daher für die weitere Analyse diesen Zeitraum, um die Dynamik des "Verlassens" zu ergründen.
 
-### Verteilung der Posts im Analysezeitraum
-```{r cavedave-area-chart-comms-zoom}
-area_chart(ego_proportions) +
-  scale_fill_manual(
-    "Topic",
-    breaks = topics_present,
-    values = cols,
-    guide = guide_legend(
-      direction = "horizontal",
-      title.position = "top",
-      label.position = "bottom",
-      nrow = 1
-    )
-  ) +
-  labs(title = "Topic-Zugehörigkeit der Posts von Ego") +
-  theme(legend.position = "bottom")
-  
-```
 
-### Verteilung der Alteri im Analysezeitraum
-
-```{r cavedave-area-chart-alters-zoom}
-area_chart(alters_proportions) +
-  scale_fill_manual(
-    "Topic",
-    breaks = topics_present,
-    values = cols,
-    guide = guide_legend(
-      direction = "horizontal",
-      title.position = "top",
-      label.position = "bottom",
-      nrow = 1
-    )
-  ) +
-  labs(title = "Topic-Zugehörigkeit der Alteri") +
-  theme(legend.position = "bottom")
-```
-
-
-```{r cavedave-total-posts}
+```{r monocasa-total-posts}
 ego_proportions %>%
   group_by(date) %>%
   mutate(sum = sum(num_posts)) %>%
@@ -324,9 +264,7 @@ ego_proportions %>%
     size = .3,
     linetype = "dashed"
   ) +
-  geom_vline(mapping = aes(xintercept = as.Date("2012-10-01")),
-             linetype = "dotted") +
-    geom_vline(mapping = aes(xintercept = as.Date("2011-11-01")),
+  geom_vline(mapping = aes(xintercept = as.Date("2013-10-01")),
              linetype = "dotted") +
   labs(
     x = "Jahr", 
@@ -336,15 +274,15 @@ ego_proportions %>%
   scale_x_date(date_breaks = "1 year", date_labels = "%Y", date_minor_breaks = "1 month")
   
 ```
-Die vertikale gepunktete Linie markiert den Zeitpunkt des Austritts im Oktober 2017; die rote gestrichelte Linie stellt die
+Die vertikale gepunktete Linie markiert den Zeitpunkt des Austritts im Oktober 2013; die rote gestrichelte Linie stellt die
 aggregierte Zahl der Posts für einen Monat dar. Auch diese Kurve fällt im Oktober stark ab, der User erstellt kaum Kommentare.
 
-## Interaktion von Verteilungen
+#### Interaktion von Verteilungen
 
 Um herauszufinden, wie Posting-Verhalten und Zusammensetzung des Egonetzwerks zusammenhängen,
 visualisieren wir die beiden Verteilungen.
 
-```{r cavedave-prob-corr-zoom}
+```{r monocasa-prob-corr-zoom}
 df <-
   left_join(ego_proportions,
             alters_proportions,
@@ -380,7 +318,7 @@ zu.
 
 -----
 
-```{r cavedave-interestingness-zoom}
+```{r monocasa-interestingness-zoom}
 df %>%
   group_by(topic) %>%
   mutate(pa_pe = prop_ego * prop_alters) %>%
@@ -388,8 +326,9 @@ df %>%
   ggplot(mapping = aes(date, pa_pe, colour = topic)) +
   geom_point(alpha = P_ALPHA) +
   geom_smooth() +
-  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2013-07-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2013-10-01")), linetype = "dotted") +
+  geom_vline(aes(xintercept = as.Date("2015-01-01")), linetype = "dotted") +
   labs(y = "Int") +
   scale_colour_manual("topic",
                       values = cols) +
@@ -399,9 +338,9 @@ df %>%
 
 Im Juli 2013 sinkt die Wahrscheinlichkeit eines Ego-Posts in Topic 239 auf `r round(subset(ego_proportions, date == "2013-07-01" & topic == 239, prop)$prop, 2)`. Im Oktober 2013 verlässt der User Topic 239 gänzlich, $p_e$ sinkt auf `r round(subset(ego_proportions, date == "2013-10-01" & topic == 239, prop)$prop, 2)`. Die Wahrscheinlichkeit steigt danach wieder, bis sie im Januar 2015 den zweithöchsten Wert in diesem Zeitraum erreicht von `r round(subset(ego_proportions, date == "2015-01-01" & topic == 239, prop)$prop, 2)`.
 
-## Analyse des Netzwerks
+#### Analyse des Netzwerks
 
-```{r cavedave-egonets}
+```{r monocasa-egonets}
 
 # identify the single top topic of ego for a month in the dataset
 ego_top_topics <-
@@ -426,12 +365,12 @@ graph_data <-
   select(date, graph)
 ```
 
-### Knoten und Kanten im Graphen
+#### Knoten und Kanten im Graphen
 
 Um eine Übersicht über die Struktur des sozialen Netzes des Nutzers zu erhalten, betrachten wir die Entwicklung 
 der Größe dieses Netzes.
 
-```{r cavedave-network-structure}
+```{r monocasa-network-structure}
 graph_data %>%
   ggplot(mapping = aes(x = date, y = count, colour = variable)) +
   geom_line(mapping = aes(y = vvcount(graph), colour = "vertices")) +
@@ -447,8 +386,6 @@ graph_data %>%
   theme(
     axis.text.x = element_text(angle = 90), legend.position = "bottom"
   ) + 
-  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
   labs(
     x = "Zeit",
     y = "Anzahl"
@@ -456,19 +393,20 @@ graph_data %>%
   scale_colour_discrete(name = "Variable", labels = c("edges" = "Kanten", "vertices" = "Knoten"))
 ```
 
-Im Oktober 2013 besteht das Ego-Netz des Nutzers aus `r # vcount(subset(graph_data, date == as.Date("2013-10-01"))$graph[[1]])` Knoten, es finden also Interaktionen mit 4 weiteren Nutzern statt; im Graphen gibt es `r # ecount(subset(graph_data, date == as.Date("2013-10-01"))$graph[[1]])` Kanten, also zu jedem Nutzer eine.
+Im Oktober 2013 besteht das Ego-Netz des Nutzers aus `r vcount(subset(graph_data, date == as.Date("2013-10-01"))$graph[[1]])` Knoten, es finden also Interaktionen mit 4 weiteren Nutzern statt; im Graphen gibt es `r ecount(subset(graph_data, date == as.Date("2013-10-01"))$graph[[1]])` Kanten, also zu jedem Nutzer eine.
 
 Das soziale Netz ist als Multigraph modelliert, ein Post entspricht einer Kante. Die Visualisierung zeigt, dass im Oktober 2013 auch die Anzahl an Posts des Users auf ein Minimum fällt. Um mögliche Ursachen hierfür zu erforschen, betrachten wir die Reziprozität der Interaktionen.
 
-### Reziprozität
+#### Reziprozität
 
 Wir bestimmen zuerst die Reziprozität im gesamten Graphen.
-\todo{passt es, hier den Bruch zu haben, und die Legenden unten?}
-```{r cavedave-katz-powell}
+
+```{r monocasa-katz-powell}
 
 graph_data %>%
   mutate(
     katz_powell = katz_powell_mutuality(graph),
+    ratio_reciprocity = map_dbl(graph, reciprocity, mode = "ratio"),
     centered_reciprocity = map_dbl(graph, degree_ratio)
   ) %>%
   ggplot(mapping = aes(x = date, y = value, colour = measure)) +
@@ -476,7 +414,7 @@ graph_data %>%
   geom_line(mapping = aes(y = centered_reciprocity, colour = "inout")) +
   geom_smooth(mapping = aes(y = katz_powell, colour = "kp")) +
   geom_smooth(mapping = aes(y = centered_reciprocity, colour = "inout")) +
-  scale_y_continuous(limits = c(0, NA) ) + # breaks = seq(-0.5, 1.5, by = 0.1), minor_breaks = seq(-0.5, 1.5, by = .05)) +
+  scale_y_continuous(limits = c(0, NA) ) +
   scale_x_date(
     date_breaks = "1 year",
     date_minor_breaks = "3 month",
@@ -486,9 +424,7 @@ graph_data %>%
     axis.text.x = element_text(angle = 90), legend.position = "bottom"
   ) +
   labs(x = "Zeit", y = "Wert") +
-  scale_color_discrete(name = "Maß", labels = c("kp" = "Katz-Powell-Index", "inout" = expression(frac("d"^"+", "d"^"-"))))+
-  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted")
+  scale_color_discrete(name = "Maß", labels = c("kp" = "Katz-Powell-Index", "inout" = expression(frac("d"^"+", "d"^"-"))))
 ```
 Es bietet sich ein ähnliches Bild wie zuvor: der Katz-Powell Index schwankt zwischen ca. 0.35 und 0.55, und fällt im Oktober 2013 stark ab; der Index nimmt sogar einen negativen Wert an, was bedeutet, dass zu wenig Beobachtungen (Knoten) vorliegen, um eine fundierte Aussage treffen zu können.
 Dass das Verhältnis eingehender zu ausgehender Kanten teilweise Werte $>= 1$ annimmt, zeigt, dass in diesen Monaten die Zahl der eingehenden Kanten die der ausgehenden übertrifft. Im Mittel bleibt das Verhältnis unter 1, es gibt also mehr ausgehende Kanten von Ego zu den Alteri.
@@ -502,7 +438,7 @@ Farben teilen! Kanten können durchaus auch zu anderen Usern bestehen, die einen
 
 Die Knoten, die (mindestens) eine Farbe mit dem zentralen Ego-Knoten gemeinsam haben, formen einen Teilgraph $G'$, den wir als "thematisch ähnlich" bezeichnen. Wir stellen den Grad der beiden Graphen $G$ und $G'$, sowie deren Größenunterschied $V(G) - V(G')$ im zeitlichen Verlauf dar.
 
-```{r cavedave-topical-subgraph}
+```{r monocasa-topical-subgraph}
 # TODO: Filter topical subgraphs, then compute weighted degree
 
 graph_topical_subgraph <-
@@ -527,9 +463,7 @@ graph_topical_subgraph %>%
   ) +
   theme(
     axis.text.x = element_text(angle = 90), legend.position = "bottom"
-  ) +
-  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted")
+  )
 ```
 
 Der Größenunterschied steigt im Zeitraum tendenziell an, wobei ein "auf und ab"-Muster erkennbar ist; zum Ende des 
@@ -552,7 +486,7 @@ Für diesen Teilgraphen berechnen wir erneut Reziprozitätsmaße.
 
 Im Folgenden betrachten wir einige Maße, die diese Graphen charakterisieren.
 
-```{r cavedave-single-topic-subgraph}
+```{r monocasa-single-topic-subgraph}
 
 graph_single_topic_subgraph <-
   ego_proportions %>%
@@ -565,7 +499,7 @@ graph_single_topic_subgraph <-
     )
 ```
 
-```{r cavedave-subgraph-per-topic}
+```{r monocasa-subgraph-per-topic}
 graph_single_topic_subgraph %>% 
   mutate(
     vs = vvcount(topic_graph) - 1,
@@ -580,21 +514,25 @@ graph_single_topic_subgraph %>%
     date_labels = "%Y"
   ) +
   theme(
-    axis.text.x = element_text(angle = 90), legend.position = "bottom"
+    axis.text.x = element_text(angle = 90)
   ) +
   labs(
     x = "Zeit",
     y = "Anzahl"
   ) +
   scale_color_discrete(name = "Variable", labels = c("vertices" = "Knoten", "edges" = "Kanten")) +
-  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
   facet_wrap(~topic)
 ```
 
-```{r cavedave-subgraph-one-topic}
+--------
+
+**TODO:** Topic finden und filtern
+
+--------
+
+```{r monocasa-dungraph-one-topic}
 graph_single_topic_subgraph %>% 
-  filter(topic == 210) %>% 
+  filter(topic == 235) %>% 
   mutate(
     vs = vvcount(topic_graph) - 1,
     es = vecount(topic_graph)
@@ -608,16 +546,14 @@ graph_single_topic_subgraph %>%
     date_labels = "%Y"
   ) +
   theme(
-    axis.text.x = element_text(angle = 90), legend.position = "bottom"
+    axis.text.x = element_text(angle = 90)
   ) +
   labs(
     x = "Zeit",
     y = "Anzahl"
   ) +
   scale_color_discrete(name = "Variable", labels = c("vertices" = "Knoten", "edges" = "Kanten")) +
-  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") #+
-  #facet_wrap(~topic)
+  facet_wrap(~topic)
 ```
 
 Auch in der Verteilung der Kanten und Knoten der Teilgraphen können wir kein unmittelbares Indiz für ein Verlassen des Topics 239 erkennen; in den Monaten unmittelbar vor dem Verlassen weist der Interaktionsgraph von Topic 239 für vergleichsweise wenige Knoten eine hohe Kantenzahl auf. Unter Umständen gibt eine Analyse der Beiträge auf inhaltlicher Ebene Aufschluss über die Qualität der Interaktionen.
@@ -625,7 +561,7 @@ Auch in der Verteilung der Kanten und Knoten der Teilgraphen können wir kein un
 Für jeden dieser Teilgraphen können wir wiederum die Reziprozität messen. Wie bereits zuvor wählen wir als Maß den
 Katz-Powell Index.
 
-```{r cavedave-subgraph-reciprocity}
+```{r monocasa-subgraph-reciprocity}
 kpdata <- graph_single_topic_subgraph %>%
   mutate(kp = katz_powell_mutuality(topic_graph))
 
@@ -637,7 +573,7 @@ ggplot(data = na.omit(kpdata), mapping = aes(x = date, y = kp, colour = topic)) 
     date_minor_breaks = "3 month",
     date_labels = "%Y"
   ) +
-  theme(axis.text.x = element_text(angle = 90), legend.position = "bottom") +
+  theme(axis.text.x = element_text(angle = 90)) +
   labs(
     x = "Zeit",
     y = "Katz-Powell-Index"
@@ -648,7 +584,7 @@ ggplot(data = na.omit(kpdata), mapping = aes(x = date, y = kp, colour = topic)) 
 Bis auf 235 weisen alle Topics im Oktober 2013 ein Loch auf, was auf einen leeren Graphen zurückzuführen ist. Im Fall von Topic 
 235 enthält der Graph zwar Kanten, jedoch zu wenig, um ein sinnvolles Indexmaß berechnen zu können.
 
-```{r cavedave-weighted-degree}
+```{r monocasa-weighted-degree}
 graph_single_topic_subgraph %>%
   mutate(
     topic_graph_degree_ratio = map_dbl(topic_graph, degree_ratio_wrapper),
@@ -659,13 +595,11 @@ graph_single_topic_subgraph %>%
          -graph) %>% 
   ggplot(mapping = aes(x = date, y = ego_weighted_degree, colour = topic)) +
   geom_line() +
-  geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
   theme(axis.text.x = element_text(angle = 90), legend.position = "bottom") +
   facet_wrap(~topic)
 ```
 
-```{r cavedave-degree-distribution}
+```{r monocasa-degree-distribution}
 graph_single_topic_subgraph %>%
   mutate(
     in_degree = vdegree(topic_graph, v = user, mode = c("in")),
@@ -674,8 +608,6 @@ graph_single_topic_subgraph %>%
   ggplot(mapping = aes(x = date, y = degree, colour = degree)) +
   geom_line(mapping = aes(y = in_degree, colour = "in")) +
   geom_line(mapping = aes(y = out_degree, colour = "out")) +
-    geom_vline(aes(xintercept = as.Date("2011-11-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2012-10-01")), linetype = "dotted") +
   labs(x = "Zeit", y = "Wert") +
   scale_colour_discrete(name = "Knoten-Grad", labels = c("in" = "Ein", "out" = "Aus")) +
   theme(axis.text.x = element_text(angle = 90), legend.position = "bottom") +

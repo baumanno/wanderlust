@@ -1,15 +1,12 @@
 \cleardoublepage
 
-# Datenanalyse {#datenanalyse}
-Nachdem in den vorangegangen Kapitel die für diese Arbeit relevanten Grundlagen erläutert wurden und eine Einordnung in den bestehenden Forschungsstand erfolgte, widmet sich dieses Kapitel der unternommenen Datenanalyse.
-Der erste Teil dieses Kapitels liefert einen Überblick über die Forschungsmethodik, im zweiten Teil folgen die Auswertung des Topic-Modells und der sozialen Netzwerkanalyse.
-
-## Methodik {#methodik}
-Im Folgenden soll zunächst der verwendete Datensatz kritisch präsentiert werden.
+# Methodik {#methodik}
+Nachdem in den vorangegangen Kapitel die für diese Arbeit relevanten Grundlagen erläutert wurden und eine Einordnung in den bestehenden Forschungsstand erfolgte, bietet dieses Kapitel einen Überblick über die Forschungsmethodik.  
+Zunächst wird der verwendete Datensatz kritisch präsentiert.
 Anschließend folgt ein Überblick über die Erstellung der Topic-Modelle sowie die Vorbereitung der Netzwerkanalyse.
 Die dazu verwendete Software wird am Ende des Kapitels aufgeführt.
 
-### Datensatz
+## Datensatz
 Die Grundlage der Analyse bildet ein frei zugänglicher Datensatz mit Reddit-Kommentaren.
 Jason Baumgartner, der unter dem Pseudonym *stuck_in_the_matrix*^[https://www.reddit.com/user/stuck_in_the_matrix] selbst auf Reddit aktiv ist, unterhält monatliche Schnappschuss-Datensätze mit allen Beiträgen und Nutzerkommentaren.
 Er verwendet die Reddit-API, um diese Inhalte systematisch zu archivieren und bietet sie zum Download an [@Baumgartner].
@@ -61,7 +58,7 @@ Ab April 2007 beginnt dieser Anteil zu sinken, fällt ab etwa August 2007 stark 
 Um den Einfluss fehlender Kommentare so gering wie möglich zu halten, setzt die Auswertung der Daten im November 2007 an und erstreckt sich bis Februar 2018.  
 Jason Baumgartner hat als Folge der Veröffentlichung von Gaffney und Matias angekündigt, fehlende Kommentare und Beiträge nachträglich zu erfassen [@Baumgartner2018].
 
-### Stichprobe von Nutzern {#stichprobe}
+## Stichprobe von Nutzern {#stichprobe}
 
 Für die angesetzte Fallstudie wird für den Beobachtungszeitraum eine zufällige Auswahl an drei Nutzern getroffen.
 Im Folgenden werden die Kriterien für die Ziehung dieser Stichprobe erläutert, die aus der Verteilung der Aktivität der Nutzer abgeleitet werden.
@@ -188,7 +185,7 @@ Die kleinste Aktivitätsspanne in dieser neuen Verteilung liegt bei `r min_age_i
 Dies entspricht einer Überschneidung mit dem gesamten Untersuchungszeitraum zu ca. `r round(min_age_in_sample / length(date_range) * 100)`%; die Kennzahlen dieser Verteilung sind Tabelle\ \@ref(tab:activity-summary-cut) im Anhang zu entnehmen.  
 Da eine Analyse aller in dieser Stichprobe enthaltenen Nutzer aus Zeitgründen nicht möglich war, wurden drei zufällig ausgewählt und in einer Fallstudie näher betrachtet.
 
-### Topic-Modelle
+## Topic-Modelle
 Um zu einer Zuordnung von Subreddits zu Themenkomplexen zu gelangen, wird mittels Latent Dirichlet Allocation ein Topic-Modell erstellt und ausgewertet.
 Dadurch können Communities, die ähnliches Vokabular benutzen, unter einem Topic zusammengefasst werden.
 
@@ -325,7 +322,7 @@ write.csv(x = top_words_pretty, file = "../data/lda/largest_topics_top_words.csv
 
 ```
 
-### Interaktionsgraphen aus Kommentaren {#interaktionsgraphen}
+## Interaktionsgraphen aus Kommentaren {#interaktionsgraphen}
 
 Die Kommentarverläufe von Reddit lassen sich als Interaktionsgraphen modellieren.
 Jeder Knoten in einem solchen Graph stellt einen Akteur in einem sozialen Netzwerk dar.
@@ -342,7 +339,7 @@ Dabei ist zu beachten, dass abweichend von gängigen Definitionen des Begriffs (
 Für die drei in Abschnitt \@ref(stichprobe) ausgewählten Nutzer werden monatliche Interaktionsgraphen erstellt.
 Da diese einen zeitlich abgegrenzten Ausschnitt aus dem gesamten sozialen Netzwerk eines Nutzers darstellen, werden sie im Folgenden auch als Snapshot-Graphen bezeichnet.
 
-### Verwendete Software {#software}
+## Verwendete Software {#software}
 
 Um die Inhalte der Subreddits über die Reddit-API abzurufen, wurde die Python-Bibliothek *PRAW*\ [@PRAW] verwendet, ein API-Client speziell für Reddit.  
 Die Vorbereitung der Textkorpora für die Topic-Analyse wurde mit dem Text-Mining-Package *tm*\ [@R-tm] in R realisiert.  

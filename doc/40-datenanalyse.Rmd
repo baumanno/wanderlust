@@ -1,31 +1,31 @@
 \clearpage
 
-## Ergebnisse {#ergebnisse}
+# Datenanalyse {#datenanalyse}
 
 Nachdem in dem vorangehenden Teil des Kapitels die Forschungsmethodik dargelegt wurde, widmet sich dieser Teil einer Darstellung der Ergebnisse.
-Im ersten Abschnitt wird das erstellte Topic-Modell analysiert, der zweite Teil erklärt die Ergebnisse der Fallstudie.
+Im ersten Abschnitt wird das erstellte Topic-Modell analysiert, der zweite Teil präsentiert die Ergebnisse der Fallstudie.
 
-### Topic-Analyse
+## Topic-Analyse
 
 Aus den populärsten Beitragstiteln von Subreddits wurde mittels Latent Dirichlet Allocation ein Topic-Modell  mit 256 Topics erstellt.
 In Kapitel\ \@ref(topicverteilung) wurde bereits auf die Verteilung der Zuordnung von Subreddits zu Topics eingegangen; dieser Abschnitt betrachtet die gefundenen Topics genauer.
 
 Das LDA-Modell liefert nicht nur für jedes Dokument eine Verteilung von Topics, sondern auch zu jedem Topic eine Wahrscheinlichkeitsverteilung von Wörtern, die Topic-Wort-Verteilung.
 Sortiert man diese Häufigkeiten absteigend, erhält man die für dieses Topic charakteristischen Begriffe.  
-Bei einer ersten Analyse dieser Wort-Zuordnungen fiel auf, dass die "größten" Topics^["Größe" ist hier bezogen auf die Zahl der einem Topic zugeordneten Subreddits, vgl. Kaptiel\ \@(topicverteilung)] in den vordersten Rängen nahezu ausschließlich Stoppwörter enthielten.
+Bei einer ersten Analyse dieser Wort-Zuordnungen fiel auf, dass die "größten" Topics^["Größe" ist hier bezogen auf die Zahl der einem Topic zugeordneten Subreddits, vgl. Kapitel\ \@(topicverteilung)] in den vordersten Rängen nahezu ausschließlich Stoppwörter enthielten.
 Als *Stoppwort* werden Wörter bezeichnet, die in einem Dokument besonders häufig auftreten und hauptsächlich grammatikalische Funktion besitzen, allerdings wenig Information über den Inhalt eines Dokuments tragen.
 Dazu zählen etwa bestimmte und unbestimmte Artikel, Konjunktionen und Präpositionen.  
 Tabelle \@ref(tab:topics-with-stopwords) enthält eine Aufstellung der häufigsten Wörter für die vier größten Subreddits.
 
-(ref:topics-with-stopwords) Häufigste Wörter der vier größten LDA-Topics. Die Spalten enthalten Topic-ID, Anzahl zugeordneter Subreddits und die fünf häufigsten Wörter.
+(ref:topics-with-stopwords) Häufigste Wörter der vier größten LDA-Topics. Die Spalten enthalten Topic-ID, Anzahl zugeordneter Subreddits und die 15 häufigsten Wörter.
 ```{r topics-with-stopwords}
 tribble(
   ~Topic, ~n, ~Wörter,
   #------------------#
-  235,	45577, "the, a, to, i, is",
-  122,	34240,	"to, a, for, the, and",
-  69,	18504,	"my, a, i, the, this",
-  194,	13146, "the, to, for, of, on"
+  235,	45577, "the, a, to, i, is, you, this, of, and, in, it, that, on, for, when",
+  122,	34240,	"to, a, for, the, and, i, you, is, of, in, how, on, what, with, this",
+  69,	18504,	"my, a, i, the, this, of, and, to, in, for, on, it, from, is, with",
+  194,	13146, "the, to, for, of, on, and, new, is, in, a, now, we, at, with, this"
 
 ) %>% 
   knitr::kable(
@@ -39,7 +39,7 @@ tribble(
 
 Diese Verteilung ist wenig informativ in Bezug auf den Inhalt der Topics.
 Allerdings lässt sich hier erkennen, dass eine große Zahl von Subreddits durch Inhalte geprägt ist, die sich nicht durch Schlagworte voneinander abgrenzen lassen.
-Es sei darauf hingewiesen, dass sich auch in klarer definierten Topics Stoppwörter in den vorderen Rängen finden, allerdings in Nachbarschaft durchaus informativer Begriffe; die häufigsten fünf Wörter für Topic 131 (1.166 Subreddits) etwa sind "food, and, with, chicken, recipe", was auf einen Bezug zum Thema "Essen" bzw. "Kochen" zulässt.
+Es sei darauf hingewiesen, dass sich auch in klarer definierten Topics Stoppwörter in den vorderen Rängen finden, allerdings in Nachbarschaft durchaus informativer Begriffe; die häufigsten fünf Wörter für Topic 131 (1.166 Subreddits) etwa sind "food, and, with, chicken, recipe", was auf einen Bezug zum Thema "Essen" bzw. "Kochen" schließen lässt.
 
 In der Nachbereitung des Topic-Modells wurde aus der Wort-Topic-Verteilung eine Liste an Stoppwörtern der englischen Sprache entfernt; diese Liste entstammt dem R-Package *tm*\ [@R-tm].
 Damit gelang es, auch diese initial wenig aussagekräftigen Topics in Ansätzen zu charakterisieren.
@@ -66,23 +66,23 @@ tribble(
 
 Bei der Analyse der größten Topics fällt auf, dass sich auch nach Entfernung der Stoppwörter nur schwer über einzelne Wörter auf den Inhalt schließen lässt.
 Betrachtet man jedoch die Wörter im Kontext, in dem sie stehen, zeichnen sich erste Tendenzen ab.
-In Topic 235 etwa stehen Begriffe wie "subreddit" und "sub" in Nachabrschaft von "like", "go" und "see"; vermutlich ist dieses Topic stark von der Autoreferentialität von Reddit geprägt, ein Umstand, auf den in der Diskussion der Ergebnisse in Kapitel\ \@ref(diskussion) noch näher eingegangen wird.  
+In Topic 235 etwa stehen Begriffe wie "subreddit" und "sub" in Nachbarschaft von "like", "go" und "see"; vermutlich ist dieses Topic stark von der Autoreferentialität von Reddit geprägt, ein Umstand, auf den in der Diskussion der Ergebnisse in Kapitel\ \@ref(diskussion) noch näher eingegangen wird.  
 Ähnlich verhält es sich mit den übrigen Topics, die hier angesprochen wurden: Topic 122 scheint sich mit Gesuchen nach Hilfe bzw. Ratschlägen zu befassen ("can", "anyone", "need", "know", "question"), Topic 69 mit Berichten über positive Ereignisse bzw. Errungenschaften ("first", "new", "today", "got", "made", "love", "finally"), und Topic 194 schließlich scheint sich mit offiziellen Bekanntmachungen zu beschäftigen ("new", "now", "update", "official", "news", "release", "team").
 
 Trotz dieser Erkenntnisse bleiben diese Topics einigermaßen schwierig einzuordnen, zumal sich erst in der nachträglichen Bearbeitung "echte" Topics herauskristallisierten.
 Im weiteren Verlauf der Analyse werden daher diese vier Topics -- 235, 122, 69, 194 -- mit Vorsicht behandelt und hinter andere gestellt, die sich klarer abzeichnen; wo erforderlich wird auf die Ausführungen dieses Abschnitts zurückgegriffen.
 
 Abschließend sei auf einige interessante Topics hingewiesen, die sich aus Tabelle \@ref(tab:app-top-words-tab) im Anhang ablesen lassen.
-Topic 210 lässt wenig Zweifel an politischen Ausrichtung des Inhalts, mit Schwerpunkt auf US-amerkanischen Themen ("trump", "president", "donald", "bill", "american").  
-Eine allgemein wissenschftliche Ausrichtung lässt sich bei Topic 219 vermuten, mit Begriffen wie "science", "research", "theory" und "study".  
+Topic 210 lässt wenig Zweifel an politischen Ausrichtung des Inhalts, mit Schwerpunkt auf US-amerikanischen Themen ("trump", "president", "donald", "bill", "american").  
+Eine allgemein wissenschaftliche Ausrichtung lässt sich bei Topic 219 vermuten, mit Begriffen wie "science", "research", "theory" und "study".  
 Wörter wie "google", "windows", "app", "code", "tutorial" und "programming" kennzeichnen Topic 239; vermutlich handelt es sich um IT-Themen, mit einem erkennbaren Schwerpunkt auf Softwareentwicklung ("code", "source", "open").  
 Auffällig sind schließlich auch die Topics 46, 72 und 217, die ausschließlich spanische, deutsche resp. französische Wörter enthalten -- im Falle des Französischen gar Interpunktion in Form schließender Guillemets (\guillemotleft).
 Obgleich es sich um Stoppwörter handelt, lassen sich hinter diesen Topics eigene Sprach-Communities vermuten.
 
-Ohne diese Analyse zu tief geraten zu lassen, lässt sich festhalten, dass die Topics des erstellten LDA-Modells hinreichend gut abgeschlossene Themenkomplexe identifiziert haben, die man auch in einem OSN wie Reddit vermuten würde: Hilfe/Selbsthilfe, Selbstdarstellung, Politik, Wissenschaft und Technik, sowie inidividuelle Communities, die in ihrer Landessprache kommunizieren.
-Dies alles ist umso bemerkenswerter, als dass es sich hier "nur" um ein mit statistischen Methoden erstelltes Modell menschlicher Spracher handelt, das überdies keine Kenntnis über die Themenverteilung besitzt.
+Ohne diese Analyse zu tief geraten zu lassen, lässt sich festhalten, dass die Topics des erstellten LDA-Modells hinreichend gut abgeschlossene Themenkomplexe identifiziert haben, die man auch in einem OSN wie Reddit vermuten würde: Hilfe/Selbsthilfe, Selbstdarstellung, Politik, Wissenschaft und Technik, sowie individuelle Communities, die in ihrer Landessprache kommunizieren.
+Dies alles ist umso bemerkenswerter, als dass es sich hier "nur" um ein mit statistischen Methoden erstelltes Modell menschlicher Sprache handelt, das überdies keine Kenntnis über die Themenverteilung besitzt.
 
-### Fallstudie
+## Fallstudie
 
-Die nächsten drei Unterkapitel befassen sich jeweils mit einem individuellen Nutzer, der aus dem Long Tail der Aktivitätsverteilung für Nutzer gezogen wurde.
-Für jeden wurde die Themenhistorie über den gesamten Untersuchungszeitraum von November 2007 bis Februar 2018 erstellt, ebenso wie die zugehörigen Interaktionsgraphen, in denen die Kommunikation mit anderen Nutzern abgebildet ist.
+Die folgenden drei Abschnitte befassen sich jeweils mit einem individuellen Nutzer, der aus dem Long Tail der Aktivitätsverteilung für Nutzer gezogen wurde.
+Für alle drei wurde die Themenhistorie über den gesamten Untersuchungszeitraum von November 2007 bis Februar 2018 erstellt, ebenso wie die zugehörigen Interaktionsgraphen, in denen die Kommunikation mit anderen Nutzern abgebildet ist.

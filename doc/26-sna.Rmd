@@ -57,7 +57,7 @@ Bei wechselseitigen Interaktionen liegt hingegen ein Rede-Gegenrede-Akt vor, die
 Die Betrachtung dieser Reziprozität von Beziehungen kann Aufschluss geben über die Art von Diskursen im lokalen Netzwerk eines Nutzers.
 Um die Tendenz wechselseitiger Kanten zu bestimmen, nutzt diese Arbeit ein 1955 von Katz und Powell vorgeschlagenes Maß, einen "index of tendency toward reciprocation"\ [@Katz1955].
 Dieser Index $\rho_{KP}$ lässt sich entweder für ein festes oder ein freies Design bilden ("fixed choice" v. "free choice"), abhängig davon, ob alle Knoten nur eine bestimmte Zahl an Beziehungen ausbilden dürfen, oder ob deren Zahl unbeschränkt ist.
-Da Nutzer untereinander beliebig viele Kommentare austauschen können, nutzt diese Arbeit den Index der freien Wahl; für eine Beschreibung der festen Wahl sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
+Da Reddit-Nutzer in der Wahl ihrer Kommunikationspartner keinen Einschränkungen unterliegen, nutzt diese Arbeit den Index für ein freies Design; für eine Beschreibung des festen Falls sei auf die Literatur verwiesen ([@Katz1955], [@Wasserman1994]).
 
 #### Katz-Powell-Index
 In Ermangelung einer angemessen prägnanten Übersetzung wird statt der Bezeichnung im ursprünglichen Aufsatz hier die Umschreibung "Katz-Powell-Index" oder, wo angemessen, schlicht $\rho_{KP}$ verwendet.  
@@ -105,11 +105,6 @@ Dadurch lässt sich beispielsweise untersuchen, ob ein Ego in einem Netz, das me
 
 Abschließend sei darauf hingewiesen, dass diese Arbeit eine Longitudinalstudie der in diesem Kapitel beschriebenen Maße darstellt.
 Indem die Veränderung bspw. des Knotengrads über die Zeit betrachtet wird, lässt sich feststellen, ob ein Nutzer eher in seinem Kommunikationsverhalten aktiver wird (Grad nimmt zu), oder ob er dieses eher einschränkt.
-
-
-#### Homophilie
-
-\todo{Braucht man das? Derzeit nicht}
 
 <!--
 ----------------------

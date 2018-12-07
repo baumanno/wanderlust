@@ -1,5 +1,5 @@
 ### monocasa
-Der User mit dem Nutzernamen "monocasa" ist im betrachteten Ausschnitt aus dem Datensatz in 119 Monaten enthalten und hat insgesamt 7996 Kommentare erstellt, was im Mittel `r fmt(round(7996 / 119, 2))` Kommentaren pro Monat entspricht.
+Der Nutzer mit dem Namen "monocasa" ist im betrachteten Ausschnitt aus dem Datensatz in 119 Monaten enthalten und hat insgesamt 7996 Kommentare erstellt, was im Mittel `r fmt(round(7996 / 119, 2))` Kommentaren pro Monat entspricht.
 
 ```{r monocasa-setup, cache=FALSE}
 user <- "monocasa"
@@ -59,14 +59,14 @@ Alle Kommentare werden über das Subreddit, in dem sie erstellt wurden, einem To
 In Abbildung \@ref(fig:monocasa-topic-distribution) ist zu erkennen, dass der Nutzer hauptsächlich in drei Topics aktiv ist: 210, 239 und 235.
 Auch der zeitliche Verlauf der Topics in Abbildung \@ref(fig:monocasa-area-chart-comms-full) lässt dies erkennen.
 Wie bereits weiter oben festgestellt, handelt es sich bei Topic 239 um technisch orientierte Inhalte, bei 210 um Politik mit Schwerpunkt auf US-amerikanischen Themen.
-Die weitere Analyse wird sich vor allem auf diese großen Topics stützen, da sie zum einen trennscharf abgegegrenzt werden können, und zudem die meiste Aktivität des Nutzers auf sich vereinen.
+Die weitere Analyse wird sich vor allem auf diese großen Topics stützen, da sie zum einen trennscharf abgegrenzt werden können, und zudem die meiste Aktivität des Nutzers auf sich vereinen.
 
 (ref:monocasa-topic-distribution) Verteilung von Kommentaren über Topics.
 ```{r monocasa-topic-distribution, fig.cap="monocasa-topic-distribution",cache=FALSE}
 comment_dist_boxplot(ego_proportions_full)
 ```
 
-Bei der Analyse des Topic-Verlaufs fällt auf, dass der Anteil von Topic 239 zwichen 2013 und 2014 zweimal stark abfällt: einmal im Juli 2013 und kurz darauf im Oktober 2013.
+Bei der Analyse des Topic-Verlaufs fällt auf, dass der Anteil von Topic 239 zwischen 2013 und 2014 zweimal stark abfällt: einmal im Juli 2013 und kurz darauf im Oktober 2013.
 Der Abfall auf einen Anteil von 0 eines Topics wird im weiteren Verlauf gleichgesetzt mit einem Verlassen dieser thematischen Community durch den Nutzer.
 Im Folgenden wird der Frage nachgegangen, was für dieses Verlassen ursächlich sein könnte.
 Dazu werden verschiedene Eigenschaften der Topicverläufe sowie der lokalen Egonetzwerke des Nutzers herangezogen.
@@ -119,7 +119,7 @@ left_join(ego_proportions_full, alters_proportions_full, by = c("date", "topic")
 ```
 
 Wie vermutet lassen sich vor allem bei den großen Topics, in denen der Nutzer vermehrt Aktivität verzeichnet, lineare Zusammenhänge erkennen.
-Auffällig dabei ist, dass die beiden Topics 210 und 239 sublinear wachsen, ihre Regressionsgerade also unterhalb der Diagonal verläuft.
+Auffällig dabei ist, dass die beiden Topics 210 und 239 sub-linear wachsen, ihre Regressionsgerade also unterhalb der Diagonal verläuft.
 Der Nutzer ist also verstärkt in diesen Topics aktiv, obwohl sein Umfeld nicht "mitzieht".
 
 #### Anziehungskraft von Topics
@@ -127,14 +127,14 @@ Der Nutzer ist also verstärkt in diesen Topics aktiv, obwohl sein Umfeld nicht 
 Was macht ein Topic attraktiv für einen Nutzer?
 Zum Einen sollte es ihn selbst interessieren, zum anderen sollte aber auch sein Umfeld dieses Thema kennen und sich ihm widmen.
 Fasst man die erhobenen Topic-Verteilungen von Ego und Alteri als Wahrscheinlichkeiten auf, dass Ego einen Kommentar in einem Topic abgibt resp. dass einer der Alteri in diesem Topic aktiv ist, kann man auch Attraktivität als Wahrscheinlichkeit definieren, dass ein Nutzer in einem Topic verbleibt.
-Diese ist umso höher, je höher die beiden anderen Wahrscheinlichkeiten sind, wshalb im Folgenden Attraktivität als gemeinsame Wahrscheinlichkeit der Ereignisse $E = \{\text{Ego erstellt Kommentar in Topic}\}$ und $A = \{\text{Alter ist in Topic aktiv}\}$ aufgefasst wird:
+Diese ist umso höher, je höher die beiden anderen Wahrscheinlichkeiten sind, weshalb im Folgenden Attraktivität als gemeinsame Wahrscheinlichkeit der Ereignisse $E = \{\text{Ego erstellt Kommentar in Topic}\}$ und $A = \{\text{Alter ist in Topic aktiv}\}$ aufgefasst wird:
 
 \begin{equation}
 P(E \cap A) = P(E)P(A)
 (\#eq:attractive)
 \end{equation}
 
-(ref:monocasa-interestingness) Attraktitivtät angetragen über den zeitlichen Verlauf. Die gepunktete Linie kennzeichnet den Zeitpunkt des Verlassens von Topic 239. In dieser Darstellung enthalten sind alle Topics, deren Attraktivität in Summer echt größer 0 ist.
+(ref:monocasa-interestingness) Attraktivität angetragen über den zeitlichen Verlauf. Die gepunktete Linie kennzeichnet den Zeitpunkt des Verlassens von Topic 239. In dieser Darstellung enthalten sind alle Topics, deren Attraktivität in Summer echt größer 0 ist.
 ```{r monocasa-interestingness, fig.cpa="(ref:monocasa-interestingness)"}
 attractivity(ego_proportions_full, alters_proportions_full, date_range_cut_end, date_range_cut_start) +
   geom_vline(aes(xintercept = as.Date("2013-10-01")), linetype = "dotted")
@@ -257,7 +257,7 @@ Der Index $\rho_{KP}$ bewegt sich zwischen 0 und 1, bzw. nimmt negative Werte an
 Wie Abbildung \@ref(fig:monocasa-katz-powell) jedoch zeigt, steigt der Indexwert zu Beginn langsam an und erreicht dann im ersten Drittel sein vorläufiges Maximum.
 Der allgemein eher hohe Wert zwischen 0.4 und 0.5 deutet darauf hin, dass in diesem Graphen Kanten erwidert werden.
 Zu beachten ist jedoch das Loch im Oktober 2013; dies ist dadurch zu erklären, dass der Graph zu diesem Zeitpunkt neben Ego keine weiteren Knoten enthält, der Nutzer also keine Interaktionen pflegt.
-Solche Löcher werden in der urpsrünglichen Definition von Katz und Powell [@Katz1955] nicht erwähnt und stellen ein Detail der Implementierung dar, um auch Spezialfälle sinnvoll im Diagramm festzuhalten.
+Solche Löcher werden in der ursprünglichen Definition von Katz und Powell [@Katz1955] nicht erwähnt und stellen ein Detail der Implementierung dar, um auch Spezialfälle sinnvoll im Diagramm festzuhalten.
 
 #### Thematische Teilgraphen
 
@@ -268,13 +268,13 @@ Sei nun $G'$ der Teilgraph, der entsteht, wenn man alle Kanten zu Alteri entfern
 Umgekehrt kann man fordern, dass Ego nur Kanten zu Alteri ausbildet, mit denen er ein Thema gemeinsam hat.
 Den resultierenden Teilgraph kennzeichnet die thematische Affinität von Ego und Alteri.
 
-In Abbildung \@ref(fig:monocasa-topical-subgraph) ist für jeden der beiden Graphen $G$ und $G'$ die Zahl der Knoten $|G|$ und $|G'|$ sowie deren Differenv $|G|- |G'|$ im zeitlichen Verlauf angetragen; $|G|$ wird auch als *Ordnung* des Graphen bezeichnet.
+In Abbildung \@ref(fig:monocasa-topical-subgraph) ist für jeden der beiden Graphen $G$ und $G'$ die Zahl der Knoten $|G|$ und $|G'|$ sowie deren Differenz $|G|- |G'|$ im zeitlichen Verlauf angetragen; $|G|$ wird auch als *Ordnung* des Graphen bezeichnet.
 Die Differenz der beiden Ordnungen bezeichnet im Wesentlichen die menge der Knoten, die kein thematisches Interesse mit Ego teilen.
 Diese Größe wird 0, wenn alle Knoten des gesamten Graphen auch im Teilgraphen enthalten sind, die "thematische Überdeckung" von Ego und Alteri also maximal ist.
 Die Abbildung zeigt, dass die Differenz nahe 0 einsetzt, im Verlauf der Zeit jedoch zunimmt, wenn auch langsamer als die beiden Ordnungen.
 Daraus lässt sich schließen, dass der Nutzer wohl zugleich mit einer Ausweitung seiner Interaktionen diese auch diversifiziert.
 
-(ref:monocasa-topical-subgraph) Ordnung des gesamten Graphen $G$ und des thematischen Teilgraphen $G'$,sowie deren Differenz $|G| - |G|'$. Die angetragenen Regressionslinien verdeutlichen das unterschiedliche Wachstum der Größen.
+(ref:monocasa-topical-subgraph) Ordnung des gesamten Graphen $G$ und des thematischen Teilgraphen $G'$,sowie deren Differenz $|G| - |G|'$. Die angetragenen Regressionsgeraden verdeutlichen das unterschiedliche Wachstum der Größen.
 ```{r monocasa-topical-subgraph, fig.cap="(ref:monocasa-topical-subgraph)"}
 # TODO: Filter topical subgraphs, then compute weighted degree
 
@@ -312,15 +312,15 @@ Die Konstruktion des Teilgraphen erfolgt ähnlich wie im vorherigen Abschnitt, a
 Nach dieser Konstruktion haben im thematischen Teilgraph sowohl Ego als auch Alteri dasselbe Topic zugewiesen; stellt man sich die Topic-Affinität als Farbe vor, hat der Graph im vorhergehenden Abschnitt fünf Farben, hier ist er jedoch einfarbig.
 Zwar wechselt das Ego-Topic mit hoher Wahrscheinlichkeit von Monat zu Monat; dies stellt jedoch keine Einschränkung dar.
 Dadurch kann die Frage beantwortet werden, ob Nutzer dazu neigen, zu Gleichgesinnten eher symmetrische Beziehungen aufzubauen.
-Es sei darauf hingewiesen, dass dieser Ansatz nicht nur Aussagen über Ego zulässt, sondern auch über die Alteri, da der Indsx $\rho_{KP}$ stets das ganze Netzwerk in Betracht zieht.
+Es sei darauf hingewiesen, dass dieser Ansatz nicht nur Aussagen über Ego zulässt, sondern auch über die Alteri, da der Index $\rho_{KP}$ stets das ganze Netzwerk in Betracht zieht.
 
 Die Vermutung liegt nahe, dass Kanten zu Gleichgesinnten eher wechselseitig ausgeprägt sind als Kanten zu Nutzern, mit denen man keine Interessen teilt.
-Um dies zu prüfen, werden für den gesamten Graph $G$ und den "monothematischen" Teilgraph $G'$ die Indexe berechnet, sowie die Differenz beiden Maße, $\rho_{kp}(G')-\rho_{KP}(G)$.
+Um dies zu prüfen, werden für den gesamten Graph $G$ und den "mono-thematischen" Teilgraph $G'$ die Indexe berechnet, sowie die Differenz beiden Maße, $\rho_{kp}(G')-\rho_{KP}(G)$.
 Diese wird umgekehrt zu der im vorherigen Abschnitt gebildet, da vermutet wird, dass der thematische Teilgraph höhere Indexwerte aufweist als der Gesamtgraph, und die Differenz damit positiv bleibt, was bei der Interpretation hilft.
 Abbildung \@ref(fig:monocasa-topical-subgraph-reciprocity) bestätigt die Vermutung in Teilen.
 Der Index nimmt für den Teilgraphen tatsächlich häufig höhere Werte an, dieser tendiert also eher zu wechselseitigen Kanten; allerdings kehrt sich der Index auch ins Negative und oszilliert um die 0.
 
-(ref:monocasa-topical-subgraph-reciprocity) Index von Katz und Powell für den "monothematischen" Teilgraphen der entsteht, wenn man Ego und Alteri auf ihr aktivstes Topic reduziert und nur Kanten zwischen Nutzern mit gleichen Topics zulässt. Ebenfalls dargestellt ist die Differenz der beiden Größen, die 0 wird, wenn beide Graphen gleich reziprok sind, gegen -1 geht wenn der Gesamtgraph eher wechselseitig und gegen +1 wenn der Teilgraph eher symmetrisch angelegt ist.
+(ref:monocasa-topical-subgraph-reciprocity) Index von Katz und Powell für den monothematischen Teilgraphen der entsteht, wenn man Ego und Alteri auf ihr aktivstes Topic reduziert und nur Kanten zwischen Nutzern mit gleichen Topics zulässt. Ebenfalls dargestellt ist die Differenz der beiden Größen, die 0 wird, wenn beide Graphen gleich reziprok sind, gegen -1 geht wenn der Gesamtgraph eher wechselseitig und gegen +1 wenn der Teilgraph eher symmetrisch angelegt ist.
 ```{r monocasa-topical-subgraph-reciprocity, fig.cap="(ref:monocasa-topical-subgraph-reciprocity)"}
 
 graph_topical_subgraph <-

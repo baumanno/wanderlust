@@ -123,5 +123,33 @@ attractivity <- function(ego_proportions_full, alters_proportions_full, date_ran
     ) +
     facet_wrap(~ topic)
 } 
+
+total_posts <- function(ego_proportions, date_range_cut_end, date_range_cut_start) {
+  ego_proportions %>%
+    #filter(date <= date_range_cut_end & date >= date_range_cut_start) %>% 
+    group_by(date) %>%
+    mutate(sum = sum(num_posts)) %>%
+    group_by(topic) %>%
+    filter(sum(num_posts) > 1) %>%
+    ggplot(mapping = aes(x = date, y = num_posts, colour = topic)) +
+    geom_line(size = .5) +
+    # geom_point(alpha = .5) +
+    geom_line(
+      mapping = aes(y = sum),
+      colour = "red",
+      size = .3,
+      linetype = "dashed"
+    ) +
+    labs(
+      x = "", 
+      y = "Posts",
+      legend = "Topic"
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 90),
+      legend.position = "bottom"
+    ) +
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y", date_minor_breaks = "1 month")
+}
 ```
 

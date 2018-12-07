@@ -5,8 +5,8 @@ Der User mit dem Nutzernamen "monocasa" ist im betrachteten Ausschnitt aus dem D
 user <- "monocasa"
 date_range_full_start <- "2007-01-01"
 date_range_full_end <- "2018-02-01"
-date_range_cut_start <- "2012-12-01"
-date_range_cut_end <- "2017-12-01"
+date_range_cut_start <- "2011-10-01"
+date_range_cut_end <- "2015-10-01"
 
 date_range_full <-
     seq.Date(as.Date(date_range_full_start),
@@ -48,32 +48,37 @@ topics_of_alters <-
 
 #### Topic-Verteilungen
 
-Um einen Überblick zu erhalten, in welchen Topics der Nutzer aktiv ist, stellen wir die Themenhistorie über den vollen Untersuchungszeitraum dar.
+Um einen Überblick zu erhalten, in welchen Topics der Nutzer aktiv ist, bietet es sich an, die Verteilung der Kommentare zu visualisieren.
 Alle Kommentare werden über das Subreddit, in dem sie erstellt wurden, einem Topic zugeordnet.
-In Abbildung \@ref(fig:monocasa-area-chart-comms-full) ist zu erkennen, dass auf Topic 239 ein Großteil aller Kommentare von monocasa entfallen, gefolgt von Topic 210.
+In Abbildung \@ref(fig:monocasa-topic-distribution) ist zu erkennen, dass der Nutzer hauptsächlich in drei Topics aktiv ist: 210, 239 und 235.
+Auch der zeitliche Verlauf der Topics in Abbildung \@ref(fig:monocasa-area-chart-comms-full) lässt dies erkennen.
 Wie bereits weiter oben festgestellt, handelt es sich bei Topic 239 um technisch orientierte Inhalte, bei 210 um Politik mit Schwerpunkt auf US-amerikanischen Themen.
+Die weitere Analyse wird sich vor allem auf diese großen Topics stützen, da sie zum einen trennscharf abgegegrenzt werden können, und zudem die meiste Aktivität des Nutzers auf sich vereinen.
 
-Bei der Analyse des Topic-Verlaufs fallen mehrere Entwicklungen auf.
-Zum einen beginnt ab ca. Januar 2013 der Anteil an Topic 210 (Politik) zu wachsen, gleichzeitig nimmt der Anteil von 239 (Technik/IT) ab, im Oktober 2013 sinkt der Anteil sogar auf 0.
-Anfang 2015 erreicht dieses Topic jedoch wieder eien hohen Anteil, fällt danach aber zusehends ab.
+(ref:monocasa-topic-distribution) Verteilung von Kommentaren über Topics.
+```{r monocasa-topic-distribution, fig.cap="monocasa-topic-distribution",cache=FALSE}
+comment_dist_boxplot(ego_proportions_full)
+```
 
-Für die Alteri lässt sich ein ähnlicher Topic-Verlauf bestimmen, indem pro Monat für jeden von ihnen das Topic bestimmt wird, wo er die meisten Kommentare verfasst; so wird jeder dieser Nutzer auf ein einzelnes Topic festgelegt, das ihn charakterisiert.
+Bei der Analyse des Topic-Verlaufs fällt auf, dass der Anteil von Topic 239 zwichen 2013 und 2014 zweimal stark abfällt: einmal im Juli 2013 und kurz darauf im Oktober 2013.
+Der Abfall auf einen Anteil von 0 eines Topics wird im weiteren Verlauf gleichgesetzt mit einem Verlassen dieser thematischen Community durch den Nutzer.
+Im Folgenden wird der Frage nachgegangen, was für dieses Verlassen ursächlich sein könnte.
+Dazu werden verschiedene Eigenschaften der Topicverläufe sowie der lokalen Egonetzwerke des Nutzers herangezogen.
+Der Untersuchungszeitraum wird auf die Zeit zwei Jahre vor und zwei Jahre nach dem Verlassen im Oktober 2013 festgelegt; dies ist durch die beiden gepunkteten Linien sowie die grau hinterlegte Fläche in Abb.\ \@ref(fig:monocasa-topic-distribution) angedeutet.
+
+Auch für die Alteri lässt sich ein ähnlicher Topic-Verlauf bestimmen, indem pro Monat für jeden von ihnen das Topic bestimmt wird, wo er die meisten Kommentare verfasst; so wird jeder dieser Nutzer auf ein einzelnes Topic festgelegt, das ihn charakterisiert.
 Damit lässt sich bestimmen, welchen Anteil ein Topic unter den Alteri ausmacht.
-Abbildung \@ref(fig:monocasa-area-chart-alters-full) lässt ebenfalls erkennen, dass ab etwa Mitte 2014 der Anteil des Politik-Topics 210 zu wachsen beginnt, und dass das Technik-Topic 239 gegen Ende 2013/Anfang 2014 absinkt.
+Auch Abbildung \@ref(fig:monocasa-area-chart-alters-full) lässt erkennen, dass in dem gewählten Zeitraum der Anteil der Alteri, die sich ebenfalls an diesem Topic beteiligen, auf 0 abfällt.
 Zudem fällt auf, dass sich Ego und Alteri durchaus in ihren Interessen überschneiden; in `r pronounce(length(intersect(ego_proportions_full$topic, alters_proportions_full$topic)))` Topics erstellen sowohl Ego als auch Alteri Kommentare.
 
-Da diese Phase scheinbar von einiger Dynamik geprägt ist, fokussieren wir die weitere Analyse auf den Zeitraum von Dezember 2012 bis Dezember 2017, also genau fünf Jahre; dieser Fokus wird durch den leicht schattierten Bereich in den beiden letzten Abbildungen hervorgehoben.
-Alle weiteren zeitlichen Verläufe beziehen sich auf diesen neuen Zeitraum der Untersuchung.
-
 (ref:monocasa-area-chart-comms-full) Topic-Verteilung von Egos Kommentaren. Dargestellt sind die relativen Anteile eines Topics an allen Kommentaren, die Ego in einem gegebenen Monat erstellt.
-```{r monocasa-area-chart-comms-full, fig.cap="(ref:monocasa-area-chart-comms-full)",cache=FALSE}
+```{r monocasa-area-chart-comms-full, fig.cap="(ref:monocasa-area-chart-comms-full)"}
 area_plot_posts(ego_proportions_full, date_range_cut_start, date_range_cut_end)
 ```
 (ref:monocasa-area-chart-alters-full) Topic-Verteilung der Alteri im lokalen Netzwerk. Dargestellt sind die relativen Anteile eines Topics an allen Kommentaren, die Ego in einem gegebenen Monat erstellt.
-```{r monocasa-area-chart-alters-full, fig.cap="(ref:monocasa-area-chart-alters-full)",cache=FALSE}
+```{r monocasa-area-chart-alters-full, fig.cap="(ref:monocasa-area-chart-alters-full)"}
 area_plot_alters(alters_proportions_full, date_range_cut_start, date_range_cut_end)
 ```
-
 
 \todo{ZoomPlots in den Analysezeitraum wurden gestrichen. Passt?}
 ```{r monocasa-area-chart-comms-zoom, include=FALSE}
@@ -111,145 +116,74 @@ area_chart(alters_proportions) +
   theme(legend.position = "bottom")
 ```
 
-#### Kommentarverteilungen
-Bislang wurden relative Anteile eines Topics an allen Kommentaren dargestellt.
-
-
-
-Aus dem Datensatz können wir entnehmen, wie viele (absolute) Posts ein User zu einem Topic erstellt.
 \todo{Passt es, hier keine Legende zu zeigen?}
-```{r monocasa-num-posts, cache=FALSE}
-ego_proportions_full %>%
+(ref:monocasa-num-posts) Kommentare pro Monat pro Topic. Die gepunktete Linie zeigt das Datum des "Verlassens" von Topic 239.
+```{r monocasa-num-posts, fig.cap="(ref:monocasa-num-posts)", include=FALSE}
+num_posts_facet(ego_proportions) + geom_vline(aes(xintercept = as.Date("2013-10-01")),
+             linetype = "dotted")
+```
+
+#### Zusammenhang zwischen Ego und Alteri
+
+Zunächst soll betrachtet werden, wie das Kommentar-Verhalten von Ego mit der Zusammensetzung seiner Alteri zusammenhängt.
+Die Vermutung dabei ist, dass ein höherer Anteil Alteri eines Topics dazu führt, dass auch Ego vermehrt in diesem Topic aktiv ist, bzw. Ego, basierend auf seinen Interessen, sein Umfeld auswählt.
+
+(ref:monocasa-prob-corr) Die beiden Anteile an Topic-Zugehörigkeit, gegeneinander aufgetragen. Entlang der x-Achse ist der relative Anteil an Kommentaren angetragen, die Ego in einem Topic verfasst hat; entlang der y-Achse ist der relative Anteil Alteri angetragen, der einem Topic zugeordnet wurde. Die blaue Linie fittet ein lineares Modell auf den Daten.
+```{r monocasa-prob-corr, fig.cap = "(ref:monocasa-prob-corr)"}
+left_join(ego_proportions_full, alters_proportions_full, by = c("date", "topic")) %>%
+  rename(prop_ego = prop.x, prop_alters = prop.y) %>%
   filter(date >= date_range_cut_start & date <= date_range_cut_end) %>% 
-  group_by(date, topic) %>%
-  mutate(sum = sum(num_posts)) %>%
-  filter(sum(sum) > 1) %>% 
-  ggplot(mapping = aes(x = date, y = num_posts, colour = topic)) +
-  geom_point(alpha = .8) +
-  geom_smooth(method = "loess") +
+  ggplot(mapping = aes(x = prop_ego, y = prop_alters, colour = topic)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", size = .8) +
+  geom_abline(size = .1) +
   labs(
-    x = "Jahr",
-    y = "# Posts"
+    x = "Anteil Kommentare",
+    y = "Anteil Alteri"
   ) +
+  scale_colour_manual("topic",
+                      values = cols) +
   facet_wrap(~ topic) +
   theme(
-    axis.text.x = element_text(angle = 90),
+    axis.text.x = element_text(angle = 0),
     legend.position = "none"
-  ) +
-  scale_colour_brewer(type="qual",palette = "Set3") +
-  guides(colour = guide_legend(title = "Topic",direction = "horizontal",
-      title.position = "top",
-      label.position = "bottom",
-      nrow = 1))
-```
-
-```{r monocasa-topic-distribution}
-ego_proportions_full %>%
-  ggplot(mapping = aes(
-    x = factor(topic),
-    y = num_posts,
-    colour = topic
-  )) +
-  geom_boxplot() + 
-  labs(
-    x = "Topic",
-    y = "# Posts"
-  ) +
-  theme(
-    axis.text.x = element_text(angle = 90),
-    legend.position = "none"
-  ) +
-  guides(colour = guide_legend(title = "Topic",direction = "horizontal",
-      title.position = "top",
-      label.position = "bottom",
-      nrow = 1))
-```
-
-Für die meisten Topics ist die Zahl der Kommentare eher gering, der Median liegt um 0. Einzig Topics
-210, 235 und 239 zeugen von höherer Aktivität des Users.
-
-Um die Verteilung der Kommentare bzw. User sinnvoller vergleichen zu können, 
-normalisieren wir die absoluten Zahlen indem wir ihren Anteil an der jeweiligen 
-Gesamtzahl berechnen. Die so erhaltenen relativen Verteilungen untersuchen wir 
-im folgenden auf Auffälligkeiten.
-
-
-In dem mit gepunkteter Linie markierten Zeitraum fällt der Anteil an Topic 235 auf ein Minimum von 0; der User
-"verlässt" das Topic.
-
-Wenn wir versuchen, die Anziehungskraft oder "Interessantheit" eines Topics messbar zu machen, bieten sich ebenfalls die
-beiden erhobenen Größen an. Wir können die Verteilungen auch als Wahrscheinlichkeiten auffassen, dass ein Post von Ego einem Topic zugerechnet wird ($p_{e}$), bzw. dass einer der Peers sich für dieses Topic interessiert ($p_{a}$).
-Die Wahrscheinlichkeit, dass sich ein User einem Topic zuwendet, also die Anziehungskraft oder Interessantheit des Topics, definieren wir als das Produkt dieser beiden Größen:
-
-$$
-Int = p_a p_e
-$$
-Wir plotten $Int$ zuerst für den gesamten, und dann für den gewählten Analysezeitraum.
-\todo{Axis-Labels!}
-```{r monocasa-interestingness}
-left_join(ego_proportions_full,
-          alters_proportions_full,
-          by = c("date", "topic")) %>%
-  rename(prop_ego = prop.x, prop_alters = prop.y) %>%
-  mutate(pa_pe = prop_alters * prop_ego) %>%
-  select(date, topic, pa_pe) %>%
-  group_by(topic) %>%
-  filter(sum(pa_pe) > 0) %>%
-  ggplot(mapping = aes(x = date, y = pa_pe, colour = topic)) +
-  geom_point(alpha = .1) +
-  geom_smooth(method = "loess") +
-  # geom_line() +
-  theme(
-    axis.text.x = element_text(angle = 90),
-    legend.position = "none"
-  ) +
-  scale_x_date(
-    date_breaks = "2 years",
-    # date_minor_breaks = "1 month",
-    date_labels = "%Y"
-  ) +
-  geom_vline(mapping = aes(xintercept = as.Date("2011-01-01")), linetype = "dashed", size = .3) +
-  geom_vline(mapping = aes(xintercept = as.Date("2015-01-01")), linetype = "dashed", size = .3) +
-  facet_wrap(~ topic)
-```
-
-#### Korrelation der Verteilungen
-
-Fasst man die relative Häufigkeit der Posts bzw. Alteri als Wahrscheinlichkeiten auf, lässt sich deren Korrelation untersuchen. Intuitiv vermuten wir, dass mit höherer Post-Wahrscheinlichkeit auch die Interaktionswahrscheinlichkeit in einem Topic steigt, bzw. vice versa: wenn mehr Interaktionen mit Alteri aus einem Topic zustande kommen, werden auch mehr Beiträge zu diesem Thema verfasst.
-
-```{r monocasa-prob-corr}
-left_join(ego_proportions_full,
-          alters_proportions_full,
-          by = c("date", "topic")) %>%
-  rename(prop_ego = prop.x, prop_alters = prop.y) %>%
-  ggplot(mapping = aes(x = prop_ego * 100, y = prop_alters * 100, colour = topic)) +
-  geom_point(alpha = P_ALPHA) +
-  geom_smooth(method = "lm") +
-  geom_abline() +
-  labs(
-    x = "% Posts von Ego",
-    y = "% Alteri"
-  ) +
-  facet_wrap(~ topic)+
-  theme(
-    axis.text.x = element_text(angle = 90),
-    legend.position="none"
   )
 ```
 
+Wie vermutet lassen sich vor allem bei den großen Topics, in denen der Nutzer vermehrt Aktivität verzeichnet, lineare Zusammenhänge erkennen.
+Auffällig dabei ist, dass die beiden Topics 210 und 239 sublinear wachsen, ihre Regressionsgerade also unterhalb der Diagonal verläuft.
+Der Nutzer ist also verstärkt in diesen Topics aktiv, obwohl sein Umfeld nicht "mitzieht".
 
-------------
+#### Anziehungskraft von Topics
 
-**TODO**: Korrelations-Matrix
+Was macht ein Topic attraktiv für einen Nutzer?
+Zum Einen sollte es ihn selbst interessieren, zum anderen sollte aber auch sein Umfeld dieses Thema kennen und sich ihm widmen.
+Fasst man die erhobenen Topic-Verteilungen von Ego und Alteri als Wahrscheinlichkeiten auf, dass Ego einen Kommentar in einem Topic abgibt resp. dass einer der Alteri in diesem Topic aktiv ist, kann man auch Attraktivität als Wahrscheinlichkeit definieren, dass ein Nutzer in einem Topic verbleibt.
+Diese ist umso höher, je höher die beiden anderen Wahrscheinlichkeiten sind, wshalb im Folgenden Attraktivität als gemeinsame Wahrscheinlichkeit der Ereignisse $E = \{\text{Ego erstellt Kommentar in Topic}\}$ und $A = \{\text{Alter ist in Topic aktiv}\}$ aufgefasst wird:
 
-------------
+\begin{equation}
+P(E \cap A) = P(E)P(A)
+(\#eq:attractive)
+\end{equation}
 
-In der Tat bestätigen die meisten Topics unsere Vermutung und folgen einer positiven linearen Korrelation. Bei Topic 239 fällt auf, dass der Zusammhang sublinear zu sein scheint. Beispielsweise entspricht die höchste Post-Wahrscheinlichkeit von ca 90% nur einer Alter-Wahrscheinlichkeit von 25%. Der Großteil der Posts wird also zu diesem Topic verfasst, obwohl nur ein Viertel der Interaktionspartner in diesem Monat auch zu diesem Thema Beiträge verfassen. 
+(ref:monocasa-interestingness) Attraktitivtät angetragen über den zeitlichen Verlauf. Die gepunktete Linie kennzeichnet den Zeitpunkt des Verlassens von Topic 239. In dieser Darstellung enthalten sind alle TOpics, deren Attraktivität in Summer echt größer 0 ist.
+```{r monocasa-interestingness, fig.cpa="(ref:monocasa-interestingness)"}
+attractivity(ego_proportions_full, alters_proportions_full, date_range_cut_end, date_range_cut_start)+
+  geom_vline(aes(xintercept = as.Date("2013-10-01")),
+             linetype = "dotted")
+```
 
-Wir wählen daher für die weitere Analyse diesen Zeitraum, um die Dynamik des "Verlassens" zu ergründen.
+$P(E \cap A)$ wird nachfolgend auch als *Attraktivität* wiedergegeben.
+Abbildung \@ref(fig:monocasa-interestingness) zeigt die zeitliche Entwicklung dieser Messgröße.
+Es sind einige Spitzen zu erkennen, die auf sehr hohe, aber zeitlich begrenzte Attraktivität hindeuten.
+Der Zeitpunkt des Austritts aus 239 liegt inmitten einer Phase niedriger Attraktivität dieses Topics.
 
+Um die spitzen Ausschläge besser verstehen zu können, bietet es sich an, die Gesamtzahl aller Kommentare zu betrachten.
+Ist der Nutzer allgemein zu einem beliebigen Zeitpunkt eher weniger aktiv und erstellt einen einzelnen Kommentar, wird dieser einen solchen Ausschlag herbeiführen.
+Abbildung\ \@ref(fig:monocasa-total-posts)
 
-```{r monocasa-total-posts}
+(ref:monocasa-total-posts)
+```{r monocasa-total-posts, fig.cap="(ref:monocasa-total-posts)"}
 ego_proportions %>%
   group_by(date) %>%
   mutate(sum = sum(num_posts)) %>%
@@ -257,56 +191,29 @@ ego_proportions %>%
   filter(sum(num_posts) > 1) %>%
   ggplot(mapping = aes(x = date, y = num_posts, colour = topic)) +
   # geom_point(alpha = .5) +
-  geom_line(size = .2) +
   geom_line(
     mapping = aes(y = sum),
     colour = "red",
     size = .3,
     linetype = "dashed"
   ) +
-  geom_vline(mapping = aes(xintercept = as.Date("2013-10-01")),
-             linetype = "dotted") +
+  
   labs(
     x = "Jahr", 
     y = "# Posts", 
     legend = "Foo"
   ) +
-  scale_x_date(date_breaks = "1 year", date_labels = "%Y", date_minor_breaks = "1 month")
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", date_minor_breaks = "1 month") +
+  geom_vline(mapping = aes(xintercept = as.Date("2013-10-01")),
+             linetype = "dotted") +
   
 ```
+
+---------
+
 Die vertikale gepunktete Linie markiert den Zeitpunkt des Austritts im Oktober 2013; die rote gestrichelte Linie stellt die
 aggregierte Zahl der Posts für einen Monat dar. Auch diese Kurve fällt im Oktober stark ab, der User erstellt kaum Kommentare.
 
-#### Interaktion von Verteilungen
-
-Um herauszufinden, wie Posting-Verhalten und Zusammensetzung des Egonetzwerks zusammenhängen,
-visualisieren wir die beiden Verteilungen.
-
-```{r monocasa-prob-corr-zoom}
-df <-
-  left_join(ego_proportions,
-            alters_proportions,
-            by = c("date", "topic")) %>%
-  rename(prop_ego = prop.x, prop_alters = prop.y)
-
-df %>%
-  ggplot(mapping = aes(x = prop_ego, y = prop_alters, colour = topic)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  geom_abline(size = .1) +
-  scale_colour_manual("topic",
-                      values = cols) +
-  facet_wrap(~ topic)+
-  theme(
-    axis.text.x = element_text(angle = 90),
-    legend.position="none"
-  )
-```
-
-Es scheint eine Tendenz zu einem positiven linearen Zusammenhang dieser beiden Verteilungen zu geben. 
-
-Dennoch scheint es Topics zu geben, in denen Ego Kommentare verfasst obwohl vergleichsweise wenig Alteri in diesem Topic posten. Siehe Topic 239: 40-50% Posts bei weniger als 30% Alteri. Aber auch der gegenteilige Fall ist erkennbar:
-mehr Alteri als Posts, etwa bei Topic 69 oder 235.
 
 -----
 
@@ -315,26 +222,6 @@ mehr Alteri als Posts, etwa bei Topic 69 oder 235.
 Dies wirft die Frage auf, auf welchen Zeitraum diese "markanten" Verhältnisse entfallen. Hierzu unterteilen wir den
 Analysezeitraum nochmals in drei Abschnitte ("früh", "mittel", "spät") und ordnen jeden Datenpunkt einem dieser Abschnitte
 zu. 
-
------
-
-```{r monocasa-interestingness-zoom}
-df %>%
-  group_by(topic) %>%
-  mutate(pa_pe = prop_ego * prop_alters) %>%
-  filter(sum(pa_pe) > 0) %>%
-  ggplot(mapping = aes(date, pa_pe, colour = topic)) +
-  geom_point(alpha = P_ALPHA) +
-  geom_smooth() +
-  geom_vline(aes(xintercept = as.Date("2013-07-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2013-10-01")), linetype = "dotted") +
-  geom_vline(aes(xintercept = as.Date("2015-01-01")), linetype = "dotted") +
-  labs(y = "Int") +
-  scale_colour_manual("topic",
-                      values = cols) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "none") +
-  facet_wrap(~ topic)
-```
 
 Im Juli 2013 sinkt die Wahrscheinlichkeit eines Ego-Posts in Topic 239 auf `r round(subset(ego_proportions, date == "2013-07-01" & topic == 239, prop)$prop, 2)`. Im Oktober 2013 verlässt der User Topic 239 gänzlich, $p_e$ sinkt auf `r round(subset(ego_proportions, date == "2013-10-01" & topic == 239, prop)$prop, 2)`. Die Wahrscheinlichkeit steigt danach wieder, bis sie im Januar 2015 den zweithöchsten Wert in diesem Zeitraum erreicht von `r round(subset(ego_proportions, date == "2015-01-01" & topic == 239, prop)$prop, 2)`.
 
@@ -580,6 +467,13 @@ ggplot(data = na.omit(kpdata), mapping = aes(x = date, y = kp, colour = topic)) 
   ) +
   scale_colour_discrete(name = "Topic") +
   facet_wrap( ~ topic)
+
+
+ggplot(data = na.omit(kpdata), mapping = aes(x = kp, y = prop_alters*prop_ego, colour = topic)) +
+  geom_smooth() +
+  geom_point(size = .4) +
+  facet_wrap(~topic)
+
 ```
 Bis auf 235 weisen alle Topics im Oktober 2013 ein Loch auf, was auf einen leeren Graphen zurückzuführen ist. Im Fall von Topic 
 235 enthält der Graph zwar Kanten, jedoch zu wenig, um ein sinnvolles Indexmaß berechnen zu können.

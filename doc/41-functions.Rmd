@@ -58,5 +58,70 @@ area_chart(alters_proportions_full) +
   ) +
   theme(legend.position = "bottom")
 }
+
+comment_dist_boxplot <- function(data) {
+  data %>%
+    ggplot(mapping = aes(
+      x = factor(topic),
+      y = num_posts,
+      colour = topic
+    )) +
+    geom_boxplot() + 
+    labs(
+      x = "Topic",
+      y = "Posts"
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 0),
+      legend.position = "none"
+    ) +
+    scale_colour_manual(palette = colorRampPalette(brewer.pal(9, "Paired"))) # +
+    # guides(colour = guide_legend(title = "Topic",direction = "horizontal",
+    #     title.position = "top",
+    #     label.position = "bottom",
+    #     nrow = 1))
+}
+
+num_posts_facet <- function(data) {
+  data %>%
+    group_by(date, topic) %>%
+    mutate(sum = sum(num_posts)) %>%
+    ggplot(mapping = aes(x = date, y = num_posts, colour = topic)) +
+    geom_point(alpha = .8) +
+    geom_smooth(method = "loess") +
+    labs(
+      x = "",
+      y = "Posts"
+    ) +
+    facet_wrap(~ topic) +
+    theme(
+      axis.text.x = element_text(angle = 0),
+      legend.position = "none"
+    ) +
+    scale_colour_manual(palette = colorRampPalette(brewer.pal(9, "Paired")))
+}
+
+attractivity <- function(ego_proportions_full, alters_proportions_full, date_range_cut_end, date_range_cut_start) {
+  left_join(ego_proportions_full, alters_proportions_full, by = c("date", "topic")) %>%
+    rename(prop_ego = prop.x, prop_alters = prop.y) %>%
+    filter(date <= date_range_cut_end & date >= date_range_cut_start) %>% 
+    mutate(pa_pe = prop_alters * prop_ego) %>%
+    group_by(topic) %>%
+    filter(sum(pa_pe) > 0) %>% 
+    ggplot(mapping = aes(x = date, y = pa_pe, colour = topic)) +
+    #geom_point(alpha = .5) +
+    geom_line() +
+    geom_smooth(size = .25, method = "loess") +
+    theme(
+      axis.text.x = element_text(angle = 90),
+      legend.position = "none"
+    ) +
+    scale_x_date(
+      date_breaks = "1 years",
+      # date_minor_breaks = "1 month",
+      date_labels = "%Y"
+    ) +
+    facet_wrap(~ topic)
+} 
 ```
 

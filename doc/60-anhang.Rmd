@@ -68,8 +68,11 @@ knitr::kable(
   latex_options = "hold_position"
   )
 ```
+
 \clearpage
-# Häufigste Wörter je Subreddit
+
+# Wort-Topic-Verteilungen
+
 (ref:app-top-words-lab) Charakteristische Wörter der größten Topics. Aufgeführt sind jeweils die Topic-ID, die Anzahl an zugeordneten Subreddits ($n$, mit der Einschränkung $n \ge 500$) sowie die 25 häufigsten Wörter in dem jeweiligen Topic. Englische Stoppwörter wurden in der Nachbereitung entfernt.
 ```{r app-top-words-tab, cache=FALSE}
 

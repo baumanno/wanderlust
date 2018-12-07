@@ -175,4 +175,13 @@ vdegree <- function(graph, v, mode) {
   )
 }
 
+pronounce <- function(number) {
+  words <- c("eins", "zwei", "drei","vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf")
+  
+  if(number <= 12) {
+    return(words[number])
+  }
+  
+  number
+}
 ```

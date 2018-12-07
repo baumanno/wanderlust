@@ -84,7 +84,8 @@ Anhand der Formulierung in \@ref(eq:rhomut) lassen sich verschiedene Werte für 
 
 Der Index wird immer für ein Netzwerk als ganzes berechnet.
 Sei dazu $g$ die Anzahl der Akteure in diesem Netz.
-Jeder Akteur kann $(g - 1)$ Kanten zu anderen ausbilden.
+Jeder Akteur kann maximal $(g - 1)$ Kanten zu anderen ausbilden.
+Zu beachten ist dabei, dass Multikanten zu einer einzigen Kante zusammengefasst werden.
 Sei $x_i$ der Ausgangsgrad eines Knotens $i$, dann ist die Wahrscheinlichkeit, dass zwei Knoten $i, j$ eine gemeinsame Kante ausbilden $\frac{x_i x_j}{(g-1)^2}$.
 Bezeichne $L$ die Summe aller Ausgangsgrade $L = \sum{x_i}$ und $L_2$ die Summe deren Quadrate $L = \sum{x_i^2}$, und sei $M$ die Gesamtzahl aller beobachteten wechselseitigen Kanten.
 Dann lässt sich die Größe $\rho_{KP}$ abschätzen^[Eine Herleitung dieser Abschätzung ist nicht trivial und wird hier nicht wiedergegeben, sondern ist [@Katz1955] zu entnehmen.] als

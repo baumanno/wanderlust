@@ -24,7 +24,7 @@ fill_colours <- function(topics) {
   n_topics <- length(topics)
   
   # Brewer-palette suitable for qualitative data
-  pal <- brewer.pal(8, "Dark2")
+  pal <- brewer.pal(9, "Set3")
   
   # inflate palette by interpolating to `num_topics` colors
   cols <- colorRampPalette(pal)(n_topics)

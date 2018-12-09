@@ -5,29 +5,29 @@
 In dieser Arbeit wurde der Frage nachgegangen, ob das virtuelle soziale Umfeld eines Nutzers Einfluss hat auf seine Interessen sowie sein Interaktionsverhalten.
 Statistische Topic-Modelle und soziale Netzwerkanalyse wurden dazu genutzt, zwei komplexe Sachverhalte systematisch zu strukturieren und zu vereinfachen, um sie untersuchen und zu einem Gesamtbild zusammen setzen zu können.
 
-Debi wurde ein umfangreicher Datensatz an Reddit-Kommentaren genutzt, um die Interaktionen von Nutzern dieses Online Social Network 
+Mittels Latent Dirichlet Allocation wurde zuerst ein Topic-Modell für Subreddits erstellt, um diese zu größeren thematischen Communities zusammen fassen zu können.
+Dazu wurde auf den Inhalten des "Top"-Listings der beliebtesten Beiträge der Subreddits ein LDA-Modell mit 256 Topics berechnet.
+Dieses Modell zeigt durchaus trennscharfe Communities, wie man sie auf Plattformen wie Reddit erwarten würde.
+So konnten etwa Themenkomplexe wie (US-)Politik, Wissenschaft, Technologie und IT identifiziert werden, aber auch Communities, die in ihrer Muttersprache kommunizieren, etwa Deutsch, Französisch oder Spanisch.
+Eine Betrachtung der Topic-Historien zweier Nutzer zeigte, dass deren Interessen keineswegs auf ein Topic fixiert sondern vielmehr über ein Spektrum verschiedener Themen verteilt ist.
+Dadurch lassen sich auch Phasen des Übergangs zwischen Topic-Communities erkennen.
 
-Dabei wurde festgestellt, dass eine direkte Abhängigkeit besteht zwischen den thematischen Communities, in denen ein Nutzer Inhalte verfasst, und den Communities, in denen seine virtuellen sozialen Kontakte hauptsächlich aktiv sind.
-In welche Richtung diese Abhängigkeit gilt, ob also das Umfeld den Nutzer beeinflusst oder *vice versa* konnte dabei nicht geklärt werden.
-*Peer pressure* ist jedoch ein anerkanntes Forschungsthema, auch in Online Social Networks.
-Doch auch der Einfluss des Einzelnen auf die Gruppe, das *Influencing*, kann als Seite der selben Münze gesehen werden.
-Im Kern geht es immer darum, 
+Mögliche Gründe für diese Wanderungen zwischen Communities wurden in der Struktur des sozialen Netzwerks vermutet, das Nutzer durch Interaktion mit einander aufspannen.
+Um dies näher betrachten zu können, wurde ein umfangreicher Datensatz an Reddit-Kommentaren ausgewertet.
+Für jeden Nutzer wurde ein lokales, ego-zentrisches Netzwerk erstellt, in dem die Interaktionen mit anderen abgebildet sind.
+Durch Analyse der Struktur und Größe dieser Netwzerke konnte festgestellt werden, dass Phasen des Umbruchs oft einhergehen mit markanten strukturellen Eigenschaften der Interaktionsgraphen.
+Beispielsweise kommt es vor, dass ein Nutzer vor dem Verlassen einer Community wenig wechselseitige Interaktionen mit anderen Mitgliedern derselben Community pflegt.
+Ebenfalls wurde beobachtet, dass ein Nutzer nicht nur eine Community, sondern die Plattform als ganzes verlassen hat und überhaupt keine Kommentare mehr auf Reddit verfasst hat.
+Diese Zäsur war jedoch zeitlich stark begrenzt, was extrinsische Gründe nahe legt.
 
-Gemeinsam ist diesen qualitativen Werkzeugen, dass es Menschen selbst sind, die Auskunft über ihre sozialen Handlungen und Beziehungen geben.
-Problematisch kann dabei die Subjektivität der Ergebnisse sein.
-Beispielsweise kann es vorkommen, dass beim Ausfüllen von Fragebögen eher Antworten gegeben werden, die in Richtung der (vermuteten) Mehrheit tendieren, oder dass Interviewer (bewusst oder unbewusst) Einfluss auf die Antworten ihrer Gesprächspartner nehmen.
+Denn obgleich die hier angestellten Analysen interessante Zusammenhänge offenbart haben, darf nicht außer Acht gelassen werden, dass man am Ende doch menschliches Verhalten beobachtet, das bekanntermaßen von vielen Faktoren beeinflusst wird.
+Um Entwicklungen wie das Verlassen von oder Eintreten in Communities sinnvoll erklären zu können, genügt daher ein überwiegend quantitatives Vorgehen wie es für diese Arbeit gewählt wurde unter Umständen nicht, sondern sollte mit Methoden qualitativer Sozialforschung ergänzt werden.
+Denn vieles, was quantitativ messbar ist, bleibt ohne qualitative Ergänzung sozusagen nur "die halbe Wahrheit".
 
-Quantitative Methoden hingegen sehen sich dieser Subjektivität nicht ausgesetzt, beobachten sie doch nur das, was objektiv messbar ist.
-Dabei stellen sie keineswegs die Panazee soziologischer Forschung dar.
-Im Gegenteil ist vieles von dem, was quantitativ messbar ist, ohne qualitative Ergänzung sozusagen nur "die halbe Wahrheit".
+Im Fall des Nutzers, der Reddit zu einem Zeitpunkt komplett verlassen hatte, könnten sich durch direkte Befragung des Nutzers neue Sichtweisen ergeben.
+Möglicherweise war ein Urlaub oder Umzug der Grund für seine Abwesenheit; oder aber es kam zu einer Auseinandersetzung mit anderen Nutzern, die ihn abgeschreckt hat, in welchem Fall eine Analyse der eigentlichen Kommentarinhalte aufschlussreich sein kann.
 
-## Future Work
-- ldatuning: griffiths metrik
-Aufgrund der hohen Zahl an Dokumenten und damit der vergleichsweise langen ist eine Evaluierung verschiedener *k*-Parameter nicht möglich, da jede 
-Da sich eine Evaluation verschiedener *k*-Parameter wegen der hohen Zahl an Dokumenten als schwierig herausstellte, wurde die Zahl der zu bestimmenden Topics auf 256 festgelegt.
-Unklar ist, ob diese Zahl in der Nähe eines Optimums liegt; dies festzustellen wird jedoch nicht Gegenstand dieser Arbeit sein.
+Um auf die einleitenden Worte Douglas Adams' zurück zu kommen, wurde in dieser Arbeit der Versuch unternommen, die komplexen Zusammenhänge menschlichen Sozialverhaltens im virtuellen Raum zu strukturieren und damit für analytische Betrachtungen greifbar zu machen.
+Dabei hat sich gezeigt, dass deren Reichhaltigkeit eine Vielzahl von Beobachtungs- und Deutungsmöglichkeiten zulässt.
+Doch selbst eine streng wissenschaftliche Näherung wird gelegentlich im Angesicht der Merkwürdigkeit mancher Zusammenhänge ratlos bleiben.
 
-* stoppwörter entfernen
-* auch für andere große sprachcommunities
-- Sprachcommunities: DE, FR, ES
-- obwohl topic model erstaunlich gut für 256 themen: tuning

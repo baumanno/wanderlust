@@ -68,9 +68,7 @@ Bei der Analyse der größten Topics fällt auf, dass sich auch nach Entfernung 
 Betrachtet man jedoch die Wörter im Kontext, in dem sie stehen, zeichnen sich erste Tendenzen ab.
 In Topic 235 etwa stehen Begriffe wie "subreddit" und "sub" in Nachbarschaft von "like", "go" und "see"; vermutlich ist dieses Topic stark von der Autoreferentialität von Reddit geprägt, ein Umstand, auf den in der Diskussion der Ergebnisse in Kapitel\ \@ref(diskussion) noch näher eingegangen wird.  
 Ähnlich verhält es sich mit den übrigen Topics, die hier angesprochen wurden: Topic 122 scheint sich mit Gesuchen nach Hilfe bzw. Ratschlägen zu befassen ("can", "anyone", "need", "know", "question"), Topic 69 mit Berichten über positive Ereignisse bzw. Errungenschaften ("first", "new", "today", "got", "made", "love", "finally"), und Topic 194 schließlich scheint sich mit offiziellen Bekanntmachungen zu beschäftigen ("new", "now", "update", "official", "news", "release", "team").
-
 Trotz dieser Erkenntnisse bleiben diese Topics einigermaßen schwierig einzuordnen, zumal sich erst in der nachträglichen Bearbeitung "echte" Topics herauskristallisierten.
-Im weiteren Verlauf der Analyse werden daher diese vier Topics -- 235, 122, 69, 194 -- mit Vorsicht behandelt und hinter andere gestellt, die sich klarer abzeichnen; wo erforderlich wird auf die Ausführungen dieses Abschnitts zurückgegriffen.
 
 Abschließend sei auf einige interessante Topics hingewiesen, die sich aus Tabelle \@ref(tab:app-top-words-tab) im Anhang ablesen lassen.
 Topic 210 lässt wenig Zweifel an politischen Ausrichtung des Inhalts, mit Schwerpunkt auf US-amerikanischen Themen ("trump", "president", "donald", "bill", "american").  

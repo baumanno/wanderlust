@@ -294,7 +294,7 @@ katz_powell_plot <- function(graph_data) {
 
 # Order of topical subgraph -----------------------------------------------
 
-toical_subgraph_order <- function(graph_topical_subgraph) {
+topical_subgraph_order <- function(graph_topical_subgraph) {
   graph_topical_subgraph %>%
     mutate(size_diff = vvcount(graph) - vvcount(topical_subgraph)) %>%
     ggplot(mapping = aes(x = date, y = nodes, colour = graph)) +
@@ -324,7 +324,16 @@ toical_subgraph_order <- function(graph_topical_subgraph) {
       date_minor_breaks = "3 month",
       date_labels = "%Y"
     ) +
-    theme(axis.text.x = element_text(angle = 90),
+    labs(
+      x = "",
+      y = "Knoten"
+    ) +
+    scale_colour_discrete(
+      name = "Graph",
+      breaks = c("G", "G'", "G - G'")
+      
+    ) +
+    theme(axis.text.x = element_text(angle = 0),
           legend.position = "bottom")
 }
 
@@ -338,14 +347,20 @@ topic_subgraph_reciprocity <- function(graph_topical_subgraph) {
     ggplot(mapping = aes(x = date, y = nodes, colour = graph)) +
     geom_line(mapping = aes(y = kp_full, colour = "G")) +
     geom_line(mapping = aes(y = kp_topical, colour = "G'")) +
-    geom_line(mapping = aes(y = kp_topical - kp_full, colour = "G' - G'")) +
-    geom_smooth(mapping = aes(y = kp_topical - kp_full, colour = "G'- G")) +
+    geom_line(mapping = aes(y = kp_topical - kp_full, colour = "G' - G")) +
+    geom_smooth(mapping = aes(y = kp_topical - kp_full, colour = "G' - G")) +
     scale_x_date(
       date_breaks = "1 year",
       date_minor_breaks = "3 month",
       date_labels = "%Y"
     ) +
-    theme(axis.text.x = element_text(angle = 90),
+    labs(x = "",
+         y = expression(rho[KP])) +
+    scale_colour_discrete(
+      name = "Graph",
+      breaks = c("G", "G'", "G' - G")
+    ) +
+    theme(axis.text.x = element_text(angle = 0),
           legend.position = "bottom")
 }
 
@@ -445,20 +460,20 @@ subgraph_reciprocity_single_topic <-
 total_comments_smooth <- function(ego_proportions, cols) {
   ego_proportions %>%
     group_by(date) %>%
-    # mutate(sum = sum(num_posts)) %>%
+    mutate(sum = sum(num_posts)) %>%
     group_by(topic) %>%
     filter(sum(num_posts) > 1) %>%
     ggplot(mapping = aes(x = date, y = num_posts, colour = topic)) +
     geom_smooth() +
     # geom_point(alpha = .5) +
-    # geom_smooth(
-    #   mapping = aes(y = sum),
-    #   colour = "red",
-    #   size = .3,
-    #   linetype = "dashed"
-    # ) +
+    geom_smooth(
+      mapping = aes(y = sum),
+      colour = "red",
+      size = .3,
+      linetype = "dashed"
+    ) +
     labs(x = "",
-         y = "Posts") +
+         y = "Kommentare") +
     theme(axis.text.x = element_text(angle = 0),
           legend.position = "bottom") +
     scale_x_date(

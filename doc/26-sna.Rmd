@@ -27,8 +27,6 @@ Knoten $v$ in einem gerichteten Graphen besitzen einen Ausgangsgrad $d^{+}(v)$, 
 Der Grad eines Knotens gibt im Kontext sozialer Netzwerke Aufschluss über die Zahl der Beziehungen, die ein Akteur zu anderen ausbildet, und kann daher als Maß für die Aktivität des Akteurs gesehen werden (vgl. [@Wasserman1994] S.100).
 In dieser Arbeit werden Betrachtungen des Knotengrads angestellt, um festzustellen, wie aktiv ein Nutzer sich mit anderen in derselben Community austauscht.
 
-\todo{Beispielgraph, butterfly oder so}
-
 #### Egozentrische Netzwerke
 Wird anstatt das Netzwerk *in toto* zu betrachten die Sichtweise eines einzelnen Akteurs eingenommen, spricht man von egozentrischen oder einfach Ego-Netzwerken.
 Diese bestehen aus einem zentralen Knoten *Ego*, dessen Nachbarn oder *Alteri*, sowie den Beziehungen der Alteri untereinander.
@@ -107,70 +105,3 @@ Dadurch lässt sich beispielsweise untersuchen, ob ein Ego in einem Netz, das me
 Abschließend sei darauf hingewiesen, dass diese Arbeit eine Longitudinalstudie der in diesem Kapitel beschriebenen Maße darstellt.
 Indem die Veränderung bspw. des Knotengrads über die Zeit betrachtet wird, lässt sich feststellen, ob ein Nutzer eher in seinem Kommunikationsverhalten aktiver wird (Grad nimmt zu), oder ob er dieses eher einschränkt.
 
-<!--
-----------------------
-
-zudem betrachten wir veränderungen struktureller eigenschafte über die zeit hinweg
-
-katz-powell $\rho_{KP}$, to measure the tendency for actors in a group to reciprocate choices mroe freqeuently than would occur simply by chance; dimensionslos, 0 und 1 als benchmarks; 0: keine reziprocitat, 1, alle kanten reziprok); kleienr 0: zu wenige gegenseitige dyaden (mutual dyads), "less than chance tendency toward reciprocation", negative "tendencies away from mutual dyads toward asymmetric and nulls"
-
-fiexed choice, free choice, kommt auf design der datenerhebung an; in usnerem fall keine auskunft von akteur (ego), daher freie wahl
-
-formel (Wf 517)
-
---------------------
-
-Die soziale Netzwerkanalyse betrachtet Beziehungen zwischen Akteuren 
-Beziehungen als Verbindungen zwischen Einheiten sind Bestandteil von Netzwerktheorie
-Betrachtungseinheit ist nicht das Individuum, sondern eine Menge von Individuen und deren VErbindung untereinander
-
-"The task is to understand properties of the social (economic or political) structural environment, and how these structural properties influence observerd characteristics and associations among characteristics" (WassermanFaust, S.8)
-
-"auxiliary network studies": network theories and measurements become explanatory factors or variables in understanding individual behavior (WF, S. 9)
-
-betrachtet muster in beziehungen die sich zwischen akteuren ausbilden
-
-Moreno und das Sozogramm als beginn der soziometrie (Moreno 1934)
-
-alternative betrachtugnsweise zum unabhängigen individuum
-
-matheamtische Grundlagen: graphentheorie, wahrscheinlichkeitstheorie, algebren (algebraische modelle)
-
-graphentheorie bietet angemessene darstellung eines sozialen entzwerks sowie konzepte die genutzt werden können, eigenschaften sozialer entzwerke zu untersuchen
-
-neben graph-darstellung auch sociometric notation (sociomatrix, zeilen und spalten sind akteure)
-
-graph, knoten, kanten
-
-kanten gerichtet, ungerichtet
-
-Brandes:
-Graph menge an Kanten und Knoten, blabla
-
-soziales netzwerk besteht aus endlicher zahl an akteuren und deren beziehungen zueinander. 
-
-Akteur, endpuntke von beziehungen; individuelle oder kollektive einheiten
-
-graph darstellung entspricht den konzepten von akteuren und deren verbindung und liefert mathematsich begründete und erprobte verfahren, um strukturelle eigenschaften zu messen
-
-one-mode (unimodal) wenn alle akteure gleicher art sind (nutzer eines OSN)
-
-Knotengrad, Eingang, Ausgang
-
-mean degree? 2L/g
-
-egozentrische oder ego-netzwerke, zentraler akteur "ego", "alteri" zu denen er beziehungen pflegt, sowie beziehungen der alteri untereinander
-
-heissen auch "personal network"
-
-dyade, dyadische beziehung, zwei akteure
-
-
-
-da egonetz, hauptsächlich untersuchung von dyaden
-
-drei typen von dyaden: mutual (gegenseitig, i->j und j->i)
-asymmetrisch, i->j oder j->i
-null-dyade, keine verbindung; alteri untereinander
-
--->

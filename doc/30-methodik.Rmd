@@ -185,7 +185,7 @@ Die kleinste Aktivitätsspanne in dieser neuen Verteilung liegt bei `r min_age_i
 Dies entspricht einer Überschneidung mit dem gesamten Untersuchungszeitraum zu ca. `r round(min_age_in_sample / length(date_range) * 100)`%; die Kennzahlen dieser Verteilung sind Tabelle\ \@ref(tab:activity-summary-cut) im Anhang zu entnehmen.  
 Da eine Analyse aller in dieser Stichprobe enthaltenen Nutzer aus Zeitgründen nicht möglich war, wurden drei zufällig ausgewählt und in einer Fallstudie näher betrachtet.
 
-## Topic-Modelle
+## Topic-Modelle {#meth-lda}
 Um zu einer Zuordnung von Subreddits zu Themenkomplexen zu gelangen, wird mittels Latent Dirichlet Allocation ein Topic-Modell erstellt und ausgewertet.
 Dadurch können Communities, die ähnliches Vokabular benutzen, unter einem Topic zusammengefasst werden.
 

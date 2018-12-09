@@ -82,7 +82,16 @@ Obgleich es sich um Stoppwörter handelt, lassen sich hinter diesen Topics eigen
 Ohne diese Analyse zu tief geraten zu lassen, lässt sich festhalten, dass die Topics des erstellten LDA-Modells hinreichend gut abgeschlossene Themenkomplexe identifiziert haben, die man auch in einem OSN wie Reddit vermuten würde: Hilfe/Selbsthilfe, Selbstdarstellung, Politik, Wissenschaft und Technik, sowie individuelle Communities, die in ihrer Landessprache kommunizieren.
 Dies alles ist umso bemerkenswerter, als dass es sich hier "nur" um ein mit statistischen Methoden erstelltes Modell menschlicher Sprache handelt, das überdies keine Kenntnis über die Themenverteilung besitzt.
 
+\clearpage
+
 ## Fallstudie
 
 Die folgenden drei Abschnitte befassen sich jeweils mit einem individuellen Nutzer, der aus dem Long Tail der Aktivitätsverteilung für Nutzer gezogen wurde.
 Für alle drei wurde die Themenhistorie über den gesamten Untersuchungszeitraum von November 2007 bis Februar 2018 erstellt, ebenso wie die zugehörigen Interaktionsgraphen, in denen die Kommunikation mit anderen Nutzern abgebildet ist.
+
+```{r plotting-functions, cache=FALSE}
+
+source("plotting.R")
+
+```
+

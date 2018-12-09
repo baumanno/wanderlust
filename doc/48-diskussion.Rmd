@@ -10,3 +10,7 @@
 - wortwahl beim thema "Topic-Bezug" war vorsichtig; es handelt sich doch immer um nur um Modelle, menschliches Verständnis nötig um klar sagen zu können, um was es geht
 
 - sublineares wachstum von ego-alter-plot
+
+- cavedave: topic und alteri anteile von 239 schwinden: nutzer verlässt community und tritt auch nicht mit mitgleidern in kontakt: communities sind abgeschlossen, einmal raus trifft man sich nur selten wieder
+
+- attraktivität: burstiness nicht genau zu klären, da auch user-anteile aufgrund der user dahinter schwanken können; alteri bleiben nicht fix; kann man einschränken und beobachten

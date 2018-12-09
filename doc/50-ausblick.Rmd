@@ -2,13 +2,24 @@
 
 # Zusammenfassung und Ausblick {#zusammenfassung}
 
+In dieser Arbeit wurde der Frage nachgegangen, ob das virtuelle soziale Umfeld eines Nutzers Einfluss hat auf seine Interessen sowie sein Interaktionsverhalten.
+Statistische Topic-Modelle und soziale Netzwerkanalyse wurden dazu genutzt, zwei komplexe Sachverhalte systematisch zu strukturieren und zu vereinfachen, um sie untersuchen und zu einem Gesamtbild zusammen setzen zu können.
+
+Debi wurde ein umfangreicher Datensatz an Reddit-Kommentaren genutzt, um die Interaktionen von Nutzern dieses Online Social Network 
+
+Dabei wurde festgestellt, dass eine direkte Abhängigkeit besteht zwischen den thematischen Communities, in denen ein Nutzer Inhalte verfasst, und den Communities, in denen seine virtuellen sozialen Kontakte hauptsächlich aktiv sind.
+In welche Richtung diese Abhängigkeit gilt, ob also das Umfeld den Nutzer beeinflusst oder *vice versa* konnte dabei nicht geklärt werden.
+*Peer pressure* ist jedoch ein anerkanntes Forschungsthema, auch in Online Social Networks.
+Doch auch der Einfluss des Einzelnen auf die Gruppe, das *Influencing*, kann als Seite der selben Münze gesehen werden.
+Im Kern geht es immer darum, 
+
 Gemeinsam ist diesen qualitativen Werkzeugen, dass es Menschen selbst sind, die Auskunft über ihre sozialen Handlungen und Beziehungen geben.
 Problematisch kann dabei die Subjektivität der Ergebnisse sein.
 Beispielsweise kann es vorkommen, dass beim Ausfüllen von Fragebögen eher Antworten gegeben werden, die in Richtung der (vermuteten) Mehrheit tendieren, oder dass Interviewer (bewusst oder unbewusst) Einfluss auf die Antworten ihrer Gesprächspartner nehmen.
 
 Quantitative Methoden hingegen sehen sich dieser Subjektivität nicht ausgesetzt, beobachten sie doch nur das, was objektiv messbar ist.
 Dabei stellen sie keineswegs die Panazee soziologischer Forschung dar.
-Im Gegenteil ist vieles von dem, was quantitative messbar ist, ohne qualitative Ergänzung sozusagen nur "die halbe Wahrheit".
+Im Gegenteil ist vieles von dem, was quantitativ messbar ist, ohne qualitative Ergänzung sozusagen nur "die halbe Wahrheit".
 
 ## Future Work
 - ldatuning: griffiths metrik

@@ -1,14 +1,9 @@
-```{r}
-knitr::opts_chunk$set(
-  cache = FALSE
-)
-```
 
 ### monocasa
-
+\FloatBarrier
 Der Nutzer mit dem Namen "monocasa" ist im betrachteten Ausschnitt aus dem Datensatz in 119 Monaten enthalten und hat insgesamt 7996 Kommentare erstellt, was im Mittel `r fmt(round(7996 / 119, 2))` Kommentaren pro Monat entspricht.
 
-```{r monocasa-setup, cache=FALSE}
+```{r monocasa-setup}
 user <- "monocasa"
 date_range_full_start <- "2007-01-01"
 date_range_full_end <- "2018-02-01"
@@ -93,7 +88,7 @@ Wie bereits weiter oben festgestellt, handelt es sich bei Topic 239 um technisch
 Die weitere Analyse wird sich vor allem auf diese großen Topics stützen, da sie zum einen trennscharf abgegrenzt werden können, und zudem die meiste Aktivität des Nutzers auf sich vereinen.
 
 (ref:monocasa-topic-distribution) Verteilung von Kommentaren über Topics.
-```{r monocasa-topic-distribution, fig.cap="monocasa-topic-distribution",cache=FALSE}
+```{r monocasa-topic-distribution, fig.cap="monocasa-topic-distribution"}
 comment_dist_boxplot(ego_proportions_full)
 ```
 
@@ -128,7 +123,7 @@ Zunächst soll betrachtet werden, wie das Kommentar-Verhalten von Ego mit der Zu
 Die Vermutung dabei ist, dass ein höherer Anteil Alteri eines Topics dazu führt, dass auch Ego vermehrt in diesem Topic aktiv ist, bzw. Ego, basierend auf seinen Interessen, sein Umfeld auswählt.
 
 (ref:monocasa-prob-corr) Die beiden Anteile an Topic-Zugehörigkeit, gegeneinander aufgetragen. Die x-Achse zeigt den relativen Anteil Kommentare, die Ego in einem Topic verfasst, die y-Achse den Anteil Alteri, der sich diesem Topic hauptsächlich widmet. Spearman's rho zeigt die Stärke der Korrelation ($^{*}p\le0.05$, $^{**}p\le0.01$, $^{***}p\le0.001$).
-```{r monocasa-prob-corr, fig.cap = "(ref:monocasa-prob-corr)", cache=FALSE}
+```{r monocasa-prob-corr, fig.cap = "(ref:monocasa-prob-corr)"}
 distr_correlation(ego_proportions_full, alters_proportions_full, date_range_cut_start, date_range_cut_end, cols)
 ```
 
@@ -300,8 +295,7 @@ graph_topical_subgraph %>%
 #### Größe der Teilgraphen
 
 Die abschließende Betrachtung gilt der Anzahl an Knoten und Kanten in den jeweiligen Teilgraphen.
-Mittels der Zahl der Knoten kann festgestellt werden, mit wie vielen Alteri der Nutzer kommuniziert, die Zahl der Kanten gibt Aufschluss darüber, wie viele Interaktionen stattfinden.
-
+Mittels der Zahl der Knoten kann festgestellt werden, mit wie vielen Alteri der Nutzer kommuniziert, die Zahl der Kanten gibt Aufschluss darüber, wie viele Interaktionen stattfinden. 
 Abbildung \@ref(fig:monocasa-subgraph-per-topic) zeigt diese beiden Maße für jedes Topic, in Abbildung \@ref(fig:monocasa-subgraph-one-topic) wird speziell Topic 239 in den Fokus gerückt.
 
 
@@ -400,11 +394,3 @@ ggplot(data = na.omit(kpdata), mapping = aes(x = date, y = kp, colour = topic)) 
   scale_colour_discrete(name = "Topic") +
   facet_wrap( ~ topic)
 ```
-
-```{r}
-knitr::opts_chunk$set(
-  cache = TRUE
-)
-```
-
-\clearpage

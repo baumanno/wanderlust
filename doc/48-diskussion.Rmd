@@ -1,6 +1,9 @@
 \cleardoublepage
 ## Diskussion {#diskussion}
 
+In den vorangegangenen beiden Kapiteln wurde eine Fallstudie für zwei Nutzer vorgestellt, deren Ergebnisse hier noch einmal diskutiert und interpretiert werden sollen.
+Zudem werden mögliche Ansätze für weitere Forschungsarbeit aufgezeigt.
+
 ### Topic-Model
 
 - Selbst-Referenzierung von Reddit, c.f. [@Singer2014]
@@ -14,3 +17,14 @@
 - cavedave: topic und alteri anteile von 239 schwinden: nutzer verlässt community und tritt auch nicht mit mitgleidern in kontakt: communities sind abgeschlossen, einmal raus trifft man sich nur selten wieder
 
 - attraktivität: burstiness nicht genau zu klären, da auch user-anteile aufgrund der user dahinter schwanken können; alteri bleiben nicht fix; kann man einschränken und beobachten
+
+## Future Work
+- ldatuning: griffiths metrik
+Aufgrund der hohen Zahl an Dokumenten und damit der vergleichsweise langen ist eine Evaluierung verschiedener *k*-Parameter nicht möglich, da jede 
+Da sich eine Evaluation verschiedener *k*-Parameter wegen der hohen Zahl an Dokumenten als schwierig herausstellte, wurde die Zahl der zu bestimmenden Topics auf 256 festgelegt.
+Unklar ist, ob diese Zahl in der Nähe eines Optimums liegt; dies festzustellen wird jedoch nicht Gegenstand dieser Arbeit sein.
+
+* stoppwörter entfernen
+* auch für andere große sprachcommunities
+- Sprachcommunities: DE, FR, ES
+- obwohl topic model erstaunlich gut für 256 themen: tuning

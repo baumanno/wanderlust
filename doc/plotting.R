@@ -133,7 +133,7 @@ distr_correlation <-
           x = 0,
           y = Inf,
           label = paste(
-            "italic(r) == ",
+            "italic(rho) == ",
             round(r, 2),
             ifelse(
               p <= 0.001,
@@ -403,8 +403,7 @@ subgraph_reciprocity_all <-
   function(graph_single_topic_subgraph) {
     graph_single_topic_subgraph %>%
       mutate(kp = katz_powell_mutuality(topic_graph)) %>%
-      ggplot(data = na.omit(.),
-             mapping = aes(x = date, y = kp, colour = topic)) +
+      ggplot(mapping = aes(x = date, y = kp, colour = topic)) +
       geom_line() +
       geom_smooth() +
       scale_x_date(

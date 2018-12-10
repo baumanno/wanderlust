@@ -1,0 +1,5 @@
+This directory contains all helper scripts that were implemented
+at the beginning using Python.
+
+These are mainly scripts for wrangling the Baumgartner-corpus and
+querying Reddit for subreddits.

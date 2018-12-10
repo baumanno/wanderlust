@@ -1,16 +1,16 @@
 \cleardoublepage
 
 # Methodik {#methodik}
-Nachdem in den vorangegangen Kapitel die für diese Arbeit relevanten Grundlagen erläutert wurden und eine Einordnung in den bestehenden Forschungsstand erfolgte, bietet dieses Kapitel einen Überblick über die Forschungsmethodik.  
+Nachdem in den vorangegangen Kapiteln die für diese Arbeit relevanten Grundlagen erläutert wurden und eine Einordnung in den bestehenden Forschungsstand erfolgte, bietet dieses Kapitel einen Überblick über die Forschungsmethodik.  
 Zunächst wird der verwendete Datensatz kritisch präsentiert.
 Anschließend folgt ein Überblick über die Erstellung der Topic-Modelle sowie die Vorbereitung der Netzwerkanalyse.
 Die dazu verwendete Software wird am Ende des Kapitels aufgeführt.
 
 ## Datensatz
 Die Grundlage der Analyse bildet ein frei zugänglicher Datensatz mit Reddit-Kommentaren.
-Jason Baumgartner, der unter dem Pseudonym *stuck_in_the_matrix*^[https://www.reddit.com/user/stuck_in_the_matrix] selbst auf Reddit aktiv ist, unterhält monatliche Schnappschuss-Datensätze mit allen Beiträgen und Nutzerkommentaren.
+Jason Baumgartner, der unter dem Pseudonym *stuck_in_the_matrix*^[https://www.reddit.com/user/stuck_in_the_matrix] selbst auf Reddit aktiv ist, unterhält monatliche Datensätze mit allen Beiträgen und Nutzerkommentaren.
 Er verwendet die Reddit-API, um diese Inhalte systematisch zu archivieren und bietet sie zum Download an [@Baumgartner].
-Der Zeitraum der Daten umfasst derzeit Dezember 2005 bis Oktober 2018.
+Der Zeitraum der zur Verfügung gestellten Daten umfasst derzeit Dezember 2005 bis Oktober 2018.
 
 ```{r importantkeys}
 knitr::kable(
@@ -60,7 +60,7 @@ Jason Baumgartner hat als Folge der Veröffentlichung von Gaffney und Matias ang
 
 ## Stichprobe von Nutzern {#stichprobe}
 
-Für die angesetzte Fallstudie wird für den Beobachtungszeitraum eine zufällige Auswahl an drei Nutzern getroffen.
+Für die angesetzte Fallstudie werden für den Beobachtungszeitraum zwei Nutzer zufällig ausgewählt.
 Im Folgenden werden die Kriterien für die Ziehung dieser Stichprobe erläutert, die aus der Verteilung der Aktivität der Nutzer abgeleitet werden.
 
 ```{r db-months-active}
@@ -166,7 +166,7 @@ top_active_users <-
   count(active)
 ```
 
-```{r sample-users-hist, fig.cap="Verteilung der Aktivität nach vorgenommener Einschränkung auf obere 10.000 Nutzer mit mindestens 50 Kommentaren je Monat."}
+```{r sample-users-hist, fig.cap="Verteilung der Aktivität nach Einschränkung auf die oberen 10.000 Nutzer mit jeweils mindestens 50 Kommentaren je Monat."}
 top_active_users %>%
   ggplot() +
   geom_col(
@@ -183,7 +183,7 @@ Diese müssen zudem über ihren Aktivitätszeitraum hinweg pro Monat mindestens 
 Abbildung \@ref(fig:sample-users-hist) zeigt die dadurch erhaltene Verteilung der Aktivitätsklassen als Histogramm.
 Die kleinste Aktivitätsspanne in dieser neuen Verteilung liegt bei `r min_age_in_sample` Monaten.
 Dies entspricht einer Überschneidung mit dem gesamten Untersuchungszeitraum zu ca. `r round(min_age_in_sample / length(date_range) * 100)`%; die Kennzahlen dieser Verteilung sind Tabelle\ \@ref(tab:activity-summary-cut) im Anhang zu entnehmen.  
-Da eine Analyse aller in dieser Stichprobe enthaltenen Nutzer aus Zeitgründen nicht möglich war, wurden drei zufällig ausgewählt und in einer Fallstudie näher betrachtet.
+Da eine Analyse aller in dieser Stichprobe enthaltenen Nutzer aus Zeitgründen nicht möglich war, wurden exemplarisch zwei Nutzer zufällig ausgewählt und in einer Fallstudie näher betrachtet.
 
 ## Topic-Modelle {#meth-lda}
 Um zu einer Zuordnung von Subreddits zu Themenkomplexen zu gelangen, wird mittels Latent Dirichlet Allocation ein Topic-Modell erstellt und ausgewertet.
@@ -336,7 +336,7 @@ Da mehrere Interaktionen zwischen denselben Partnern möglich und erlaubt sind, 
 Da ausgehend von einem Nutzer dessen unmittelbare Kontakte erfasst werden, spricht man hier zudem von egozentrischen Netzwerken.
 Dabei ist zu beachten, dass abweichend von gängigen Definitionen des Begriffs (etwa [@Wasserman1994, S. 42], [@Wolf2010]) in dieser Arbeit keine Strukturen zwischen den Alteri erfasst werden, sondern nur zwischen Ego und Alteri.
 
-Für die drei in Abschnitt \@ref(stichprobe) ausgewählten Nutzer werden monatliche Interaktionsgraphen erstellt.
+Für die beiden in Abschnitt \@ref(stichprobe) ausgewählten Nutzer werden monatliche Interaktionsgraphen erstellt.
 Da diese einen zeitlich abgegrenzten Ausschnitt aus dem gesamten sozialen Netzwerk eines Nutzers darstellen, werden sie im Folgenden auch als Snapshot-Graphen bezeichnet.
 
 ## Verwendete Software {#software}

@@ -1,1 +1,57 @@
 ## Verwandte Arbeiten {#relatedwork}
+
+Diese Arbeit reiht sich ein in bestehende Forschung zu Online Social Networks, Topic- und Inhaltsanalyse sowie sozialer Netzwerkanalyse.
+Insbesondere Reddit zieht vermehrt das Interesse der Wissenschaft auf sich.
+Dies bringt sowohl Untersuchungen zur Struktur der Plattform hervor, als auch Studien zum Nutzungsverhalten.
+
+So untersuchen etwa Singer et al. [@Singer2014], wie sich die Inhalte verändert haben, die Nutzer auf Reddit erstellen.
+Sie kommen zu dem Schluss, dass Nutzer vermehrt *self posts* erstellen, anstatt -- wie zu den Anfängen der Plattform üblich -- Links zu von anderen erstellten Inhalten.
+Zudem stellen sie eine strukturelle Diversifizierung der Subreddits fest, also eine wachsende Zahl immer neuer Subreddits, eine Entwicklung, die sie als von Nutzern positiv angenommen erachten.
+Sie vermuten, dass Nutzer von Reddit sich nicht zwingend auf die populärsten Communities beschränken, sondern ihre Interessen selbst einer Diversifizierung unterziehen.
+Die vorliegende Arbeit baut auf diesen Erkenntnissen auf, indem sie davon ausgeht, dass Nutzer in Communities aktiv sind, die zwar möglicherweise Partikularinteressen bedienen, sich jedoch durchaus wieder zu größeren Einheiten "zusammensetzen" lassen; diese Synthese wird hier in Form eines LDA-Topic-Modells geleistet, das auf Inhalten von Subreddits bestimmt wurde.
+
+Auch Hessel et al. [@Hessel2016] nähern sich dem Thema der zunehmenden Zahl an Subreddits und stellen fest, dass manche dieser Communities durch Affixe im Namen thematische Ähnlichkeit kommunizieren.
+Sie führen hierzu einige Beispiele an, etwa das Affix "ask" und die Subreddits /r/science und /r/askscience.
+Für 99 Affixe finden sie 572 Subreddit-Paare, die sich thematisch stark gleichen und eins dieser Affixe im Namen tragen.
+Für Subreddits, die hauptsächlich Links enthalten, bestimmen sie Ähnlichkeit über die Jaccard-Distanz.
+Communities, die hauptsächlich Text-Beiträge enthalten, messen sie deren Ähnlichkeit über die Jensen-Shannon-Divergenz der Topic-Verteilungen dieser Beiträge; diese Verteilungen wurden zuvor aus einem Topic-Modell bestimmt.
+Hessel et al. nutzen den Kommentar-Korpus von Jason Baumgartner.
+Die vorliegende Arbeit bestimmt ebenfalls Topic-Modelle auf Subreddit-Inhalten, allerdings nicht, um deren Ähnlichkeit zu messen, sondern um mithilfe der gefundenen Topics direkt eine Gruppierung vorzunehmen.
+Zu klären bleibt, ob die von Hessel et al. identifizierten ähnlichen Subreddits in dieser Arbeit auch im gleichen Topic enthalten sind.
+
+Buntain und Golbeck [@Buntain2014] untersuchen auf Reddit Rollenmuster, die Nutzer in ihrer Kommunikation ausbilden.
+Insbesondere suchen sie auf Reddit die Rolle der "answer person", die hauptsächlich Fragen anderer Nutzer beantwortet, und sich eher nicht in eine Diskussionskultur einfügt.
+Sie konstruieren dazu für bestimmte Subreddits anhand von Kommentaren gewichtete, gerichtete Graphen, die Nutzer miteinander verbinden, wenn sie auf einen Kommentar bzw. Beitrag eines anderen selbst einen Kommentar verfassen.
+Diese Ego-Netzwerke analysieren sie visuell und identifizieren dadurch das gesuchte Rollenmuster.
+Es gelingt ihnen zudem, einen Entscheidungsbaum zu trainieren, der die Rolle eines Nutzers korrekt aus der Struktur seines sozialen Umfelds vorhersagt.  
+Die Konstruktion der Graphen in Buntain und Golbeck findet auf nahezu identische Weise auch in dieser Arbeit Anwendung.
+
+Doch auch andere Online Social Networks eignen sich für Untersuchungen zum Kommunikationsverhalten der Nutzer.
+De Choudhury et al. [@DeChoudhury2016] beobachten beispielsweise Twitter-Nutzer, um aus deren Kommunikation Anzeichen für mögliche depressive Störungen abzuleiten.
+Neben einer sprachlichen Analyse untersuchen sie auch strukturelle Eigenschaften der Ego-Netzwerke von Nutzern, etwa Ein- und Ausgangsgrad, Dichte des Graphen, sowie Reziprozität, die sie als Mittelwert des Verhältnisses von ausgehenden zu eingehenden Kanten definieren.
+Anders als bei De Choudhury et al. wird in der vorliegenden Arbeit Reziprozität nicht als Verhältnis von eingehenden zu ausgehenden Kanten betrachtet, sondern mithilfe des Katz-Powell-Index $\rho_{KP}$.
+Dies hat den Vorteil, dass auch Tendenzen zu asymmetrischen Beziehungen abgebildet werden können und vermeidet Division durch 0, wenn keine eingehenden Kanten vorhanden sind. 
+
+Im Kontext der Dynamik in Communities suchen Dror et al. [@Dror2012] auf der Plattform "Yahoo! Answers" nach Indikatoren dafür, wann Nutzer die Community wieder verlassen.
+"Yahoo! Answers" ist ein Portal, auf dem Nutzer Fragen stellen, die von anderen beantwortet werden. 
+Sie stellen fest, dass Nutzer, die viele Antworten erstellen, eine geringere Wahrscheinlichkeit des Austritts aufweisen.
+Ebenso wirken sich positive und negative Bewertungen der gegebenen Antworten wie erwartet auf diese Wahrscheinlichkeit aus; positive Bewertungen halten den Nutzer eher auf der Plattform als negative.
+Überraschenderweise stellen sie fest, dass Eigenschaften auf Ebene der Fragen wie etwa durchschnittliche Bewertung, durchschn. Länge, durchschn. Anzahl Antworten, positiv mit der Austrittswahrscheinlichkeit korreliert sind.
+Sie führen an, dass Nutzer möglicherweise von der Popularität dieser Beiträge und dem damit einhergehenden Ansturm vor allem neuer Mitglieder abgeschreckt werden.  
+In der vorliegenden Arbeit werden keine Merkmale auf Beitrags-, sprich Kommentarebene erhoben und betrachtet, da einzig die Interaktion von thematischem Interesse und sozialem Graph eines Nutzers betrachtet werden soll.
+Da Reddit jedoch auch für Kommentare eine Bewertungsfunktion anbietet, ist dieser Ansatz nicht grundsätzlich von der Hand zu weisen, wird an dieser Stelle jedoch nicht geleistet.
+
+Tan und Lee [@Tan2015] schließlich gehen der Frage nach, wie sich Nutzer auf Multi-Community-Plattformen wie Reddit bewegen und greifen dazu auf den Baumgartner-Korpus zurück.
+Insbesondere analysieren sie, in welcher Abfolge Nutzer in verschiedenen Communities aktiv sind, welche Sprache sie dort nutzen, und welche Rückmeldung sie dort von anderen erhalten.
+Dazu vergleichen sie Reddit und das Digital Bibliography & Library Project (DBLP); die Communities sind damit gegeben durch Subreddits und Konferenzen.
+Für beide Umgebungen stellen sie fest, dass Nutzer etwa alle 10 Beiträge in 2.5 neuen Communities aktiv werden und dabei kleinere und sich einander weniger gleichende Gemeinschaften aufsuchen.
+Es scheint also durchaus die Regel zu sein, dass Nutzer in mehreren teils unterschiedlichen Communities aktiv sind, und diese insbesondere auch wechseln.
+Dabei stellen Tan und Lee ebenfalls fest, dass Nutzer, welche die Plattform gänzlich verlassen, weniger erkundungsfreudig sind als solche, die lange auf der Plattform aktiv bleiben.
+Zudem gehen sie der Frage nach, was Nutzer dazu bewegt, nach nur wenigen Beiträgen die Community wieder zu verlassen.
+Sie stellen fest, dass eine hohe Bewertung -- im Fall von Reddit die Differenz von Up- und Downvotes -- des ersten Beitrags, den der Nutzer in einer neuen Community erstellt, dazu führt, dass er zu dieser Community im Lauf der Zeit zurückkehrt.  
+Da die vorliegende Arbeit ebenfalls der Frage nachgeht, warum ein Nutzer eine Community verlässt und eine andere betritt, ist die Arbeit von Tan und Lee in mehreren Aspekten relevant.
+Einerseits stellen sie fest, dass Wanderungen zwischen Communities durchaus normal sind für Multi-Community-Plattformen, hier also kein abnormes Phänomen beobachtet wird; andererseits untersuchen sie bzgl. möglicher Gründe des Verlassens Eigenschaften der Beiträge, etwa der Bewertung.
+Diese Arbeit wählt jedoch den Ansatz einer netzwerkanalytischen Betrachtung, um Gründe für ein Verlassen aufzuspüren.
+
+Sowohl soziale Netzwerkanalyse, als auch Community-Analyse und inhaltsanalytische Verfahren finden breite Anwendung in existierender Literatur.
+Diese Arbeit vereint die drei Ansätze und leistet somit einen Beitrag zur Erforschung von Online Communities, der sich in bestehende Literatur einfügt. 

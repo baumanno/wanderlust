@@ -2,7 +2,7 @@
 
 # Area plot comments ------------------------------------------------------
 
-area_plot_posts <- function (data,
+area_plot_posts <- function(data,
                              cut_start = NA,
                              cut_end = NA) {
   area_chart(data) +
@@ -19,11 +19,9 @@ area_plot_posts <- function (data,
       )
     ) +
     geom_vline(aes(xintercept = as.Date(cut_start)),
-               linetype = "dotted",
-               size = 0.2) +
+               linetype = "dotted") +
     geom_vline(aes(xintercept = as.Date(cut_end)),
-               linetype = "dotted",
-               size = 0.2) +
+               linetype = "dotted") +
     # ggplot2::annotate(
     #   "rect",
     #   xmin = as.Date(cut_start),
@@ -191,12 +189,12 @@ attractivity <- function(ego_proportions_full,
     filter(sum(pa_pe) > 0) %>%
     ggplot(mapping = aes(x = date, y = pa_pe, colour = topic)) +
     geom_line() +
-    geom_smooth(size = .25, method = "loess") +
-    labs(x = "", y = expression("italic(g)")) +
-    theme(axis.text.x = element_text(angle = 45),
+    geom_smooth(size = .25) +
+    labs(x = "", y = "Anziehungskraft (g)") +
+    theme(axis.text.x = element_text(angle = 0),
           legend.position = "none") +
-    scale_x_date(date_breaks = "1 years",
-                 date_labels = "%Y") +
+    scale_x_date(date_breaks = "2 years",
+                 date_labels = "'%y") +
     scale_colour_manual("topic",
                         values = cols) +
     facet_wrap(topic ~ .)

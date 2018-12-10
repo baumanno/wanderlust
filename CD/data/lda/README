@@ -1,0 +1,4 @@
+This directory should hold the results of an LDA-run, namely:
+ - model-final.phi
+ - model-final.theta
+ - wordmap.txt

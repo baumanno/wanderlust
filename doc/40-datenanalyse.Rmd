@@ -17,7 +17,7 @@ Als *Stoppwort* werden Wörter bezeichnet, die in einem Dokument besonders häuf
 Dazu zählen etwa bestimmte und unbestimmte Artikel, Konjunktionen und Präpositionen.  
 Tabelle \@ref(tab:topics-with-stopwords) enthält eine Aufstellung der häufigsten Wörter für die vier größten Subreddits.
 
-(ref:topics-with-stopwords) Häufigste Wörter der vier größten LDA-Topics. Die Spalten enthalten Topic-ID, Anzahl zugeordneter Subreddits und die 15 häufigsten Wörter.
+(ref:topics-with-stopwords) Häufigste Wörter der vier größten LDA-Topics. Die Spalten enthalten die Topic-ID, die Anzahl zugeordneter Subreddits *n* sowie die 15 häufigsten Wörter.
 ```{r topics-with-stopwords}
 tribble(
   ~Topic, ~n, ~Wörter,
@@ -38,7 +38,7 @@ tribble(
 ```
 
 Diese Verteilung ist wenig informativ in Bezug auf den Inhalt der Topics.
-Allerdings lässt sich hier erkennen, dass eine große Zahl von Subreddits durch Inhalte geprägt ist, die sich nicht durch Schlagworte voneinander abgrenzen lassen.
+Vielmehr lässt sich hier erkennen, dass eine große Zahl von Subreddits durch Inhalte geprägt ist, die sich nicht durch Schlagworte voneinander abgrenzen lassen.
 Es sei darauf hingewiesen, dass sich auch in klarer definierten Topics Stoppwörter in den vorderen Rängen finden, allerdings in Nachbarschaft durchaus informativer Begriffe; die häufigsten fünf Wörter für Topic 131 (1.166 Subreddits) etwa sind "food, and, with, chicken, recipe", was auf einen Bezug zum Thema "Essen" bzw. "Kochen" schließen lässt.
 
 In der Nachbereitung des Topic-Modells wurde aus der Wort-Topic-Verteilung eine Liste an Stoppwörtern der englischen Sprache entfernt; diese Liste entstammt dem R-Package *tm*\ [@R-tm].
@@ -64,8 +64,8 @@ tribble(
   )
 ```
 
-Bei der Analyse der größten Topics fällt auf, dass sich auch nach Entfernung der Stoppwörter nur schwer über einzelne Wörter auf den Inhalt schließen lässt.
-Betrachtet man jedoch die Wörter im Kontext, in dem sie stehen, zeichnen sich erste Tendenzen ab.
+Bei der Analyse der größten Topics fällt auf, dass sich auch nach Entfernung der Stoppwörter nur schwer über einzelne Wörter auf die thematische Ausrichtung schließen lässt.
+Betrachtet man jedoch die Wörter in ihrem Kontext, zeichnen sich erste Tendenzen ab.
 In Topic 235 etwa stehen Begriffe wie "subreddit" und "sub" in Nachbarschaft von "like", "go" und "see"; vermutlich ist dieses Topic stark von der Autoreferentialität von Reddit geprägt, ein Umstand, auf den in der Diskussion der Ergebnisse in Kapitel\ \@ref(diskussion) noch näher eingegangen wird.  
 Ähnlich verhält es sich mit den übrigen Topics, die hier angesprochen wurden: Topic 122 scheint sich mit Gesuchen nach Hilfe bzw. Ratschlägen zu befassen ("can", "anyone", "need", "know", "question"), Topic 69 mit Berichten über positive Ereignisse bzw. Errungenschaften ("first", "new", "today", "got", "made", "love", "finally"), und Topic 194 schließlich scheint sich mit offiziellen Bekanntmachungen zu beschäftigen ("new", "now", "update", "official", "news", "release", "team").
 Trotz dieser Erkenntnisse bleiben diese Topics einigermaßen schwierig einzuordnen, zumal sich erst in der nachträglichen Bearbeitung "echte" Topics herauskristallisierten.

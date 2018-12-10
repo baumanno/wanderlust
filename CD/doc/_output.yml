@@ -1,0 +1,11 @@
+bookdown::pdf_book:
+  includes:
+    in_header: latex/preamble.tex
+    before_body: latex/before_body.tex
+  latex_engine: pdflatex
+  citation_package: biblatex
+  keep_tex: true
+  toc_depth: 3
+  toc_bib: true
+  toc_unnumbered: false
+  fig_caption: true

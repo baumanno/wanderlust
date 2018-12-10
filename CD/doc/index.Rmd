@@ -1,0 +1,91 @@
+--- 
+bibliography:
+- bibliography.bib
+- packages.bib
+classoption: twoside
+# documentclass: book
+documentclass: article
+fontsize: 11pt
+geometry: "left=2.5cm,right=3.5cm,top=83.75pt,textheight=24.35cm,textwidth=15cm,a4paper,headheight=13.6pt,twoside=true"
+link-citations: yes
+papersize: a4
+subparagraph: true
+site: bookdown::bookdown_site
+---
+\cleardoublepage
+<!-- Arabische Seitenzahlen -->
+\pagenumbering{arabic}
+\setcounter{page}{1}
+<!-- Geändertes Format für Seitenränder, arabische Seitenzahlen -->
+\fancyhead[LE,RO]{\rightmark}
+\fancyhead[LO,RE]{\leftmark}
+\fancyfoot[LE,RO]{\thepage}
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(glue)
+library(DBI)
+library(R.utils)
+library(data.table)
+library(RColorBrewer)
+library(lubridate)
+library(igraph)
+library(ggrepel)
+library(tm)
+
+# External functions
+oldwd <- setwd("/home/oliver/Masterarbeit/")
+source("R/topic_distributions/plot.R")
+source("R/reading_data/read_snapshots.R")
+source("R/topic_distributions/proportions.R")
+source("R/network_construction/build_from_edgelist.R")
+source("R/network_measures/katz_powell.R")
+source("R/network_construction/filter_graph.R")
+setwd(oldwd)
+
+# ignore chunk output
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  out.width = "80%",
+  fig.align = "center",
+  cache = TRUE
+)
+
+# automatically create a bib database for R packages
+knitr::write_bib(c(.packages(), 'bookdown', 'knitr', 'rmarkdown'),
+                 'packages.bib')
+```
+
+```{r geom-defaults, cache=FALSE}
+
+theme_set(theme_gray(base_size = 13))
+# color scheme
+# 3 Class RdBu
+# red = #ef8a62
+# beige = #f7f7f7
+# blue = #67a9cf (used in bar plots)
+update_geom_defaults("bar",
+                     list(
+                       fill = "#67a9cf",
+                       alpha = .8,
+                       colour = "black",
+                       size = .2
+                     ))
+update_geom_defaults("point",
+                     list(
+                       colour = "#67a9cf",
+                       alpha = 1
+                     ))
+update_geom_defaults("col",
+                     list(
+                       fill = "#67a9cf",
+                       alpha = .8
+                     ))
+```
+
+```{r helper-funcs, cache=FALSE}
+source("helpers.R")
+```

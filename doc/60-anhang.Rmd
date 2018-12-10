@@ -13,7 +13,7 @@ kableExtra::kable_styling(
     align = c("l", "c", "c", "c", "c", "c", "c", "c"),
     booktabs = TRUE,
     format.args = list(big.mark = ".", decimal.mark = ","),
-    caption = "(ref:summary-age-lab)"
+    caption = "Kennzahlen der Altersverteilung"
   ),
   latex_options = "hold_position"
 )
@@ -29,7 +29,7 @@ kableExtra::kable_styling(
   align = c("l", "c", "c", "c", "c", "c", "c", "c"),
   booktabs = TRUE,
   format.args = list(big.mark = ".", decimal.mark = ","),
-  caption = "(ref:summary-age-lab)"
+  caption = "Kennzahlen der Altersverteilung, nach Einschränkung"
   ),
   latex_options = "hold_position"
   )
@@ -87,7 +87,32 @@ knitr::kable(
   align = c("c", "r", " >{\\raggedright\\arraybackslash}p{0.8\\textwidth}" ),
   caption = "(ref:app-top-words-lab)"
 )
+options(knitr.table.midrule = "\\midrule")
 ```
 
+\clearpage
+
+# Inhalt der CD
+
+(ref:app-cd-lab) Inhalt der beigelegten CD-ROM
+```{r app-cd}
+kableExtra::kable_styling(
+knitr::kable(
+  tribble(
+    ~Verzeichnis, ~Beschreibung,
+    "data", "Enthält die Datengrundlage der Analyse",
+    "doc", "Ausarbeitung in bookdown",
+    "figs", "Von R-Skripten erzeugt Plots",
+    "interactive", "R-Notebooks zur interaktiven Daten-Analyse",
+    "output", "Zwischenspeicher für Berechnungen",
+    "Python", "Scripts zur Datensammlung",
+    "R", "Scripts zur Datenanalyse"
+  ),
+  booktabs = TRUE,
+  caption = "(ref:app-cd-lab)"
+),
+  latex_options = "hold_position"
+  )
+```
 
 \cleardoublepage

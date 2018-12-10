@@ -1,0 +1,59 @@
+\cleardoublepage
+
+# Einleitung {#einleitung}
+\epigraphhead[50]{\epigraph{\textit{The world is a thing of utter inordinate complexity and richness and strangeness that is absolutely awesome.}}{\textsc{Douglas Adams}}}
+\vspace{1.5cm}
+
+Diese Antwort gab der Schriftsteller seinem Freund Richard Dawkins auf die Frage, was an der Wissenschaft sein Blut so richtig in Wallung bringe [@Dawkins2004, S. 170].
+Diese Trias -- komplex, reichhaltig, seltsam -- aufzubrechen, haben sich die verschiedenen wissenschaftlichen Fakultäten zum Ziel gemacht.
+Wissenschaft versucht, mit den ihr zur Verfügung stehenden Mitteln die komplexen Verhältnisse zu simplifizieren, zu entwirren;
+die reichhaltigen auszudünnen, auf das Wesentliche zu destillieren; und die seltsamen zu verstehen und ihnen Sinn zu geben.
+
+Dies trifft auch auf die Soziologie zu, die das Handeln des Individuums in einem sozialen Kontext verstehen möchte.
+Eine solcher sozialer Kontext kann verschiedene Formen annehmen; man denke an die vielen Arten sozialer Gruppen, in denen wir uns bewegen:
+Familie, Freundeskreis, Arbeitskollegen, aber auch religiöse Gruppen, Vereine, oder schlicht "Interessengemeinschaften".
+Als "soziales Handeln" können dabei alle Akte des Einzelnen angesehen werden, die willentlich geschehen und sich am Handeln anderer orientiert [vgl. @Dimbath2016].
+Betrachtet man soziale Handlungen in einer Gruppe, also die Aktion des Einen und die mögliche Reaktion der Anderen, lässt sich daraus ein Geflecht an zwischenmenschlichen Beziehungen ableiten.
+
+Beziehungen lassen sich soziologisch erforschen, beispielsweise hinsichtlich ihrer Quantität und Qualität.
+Zu den Methoden qualitativer Forschung zählen etwa Fragebögen, Leitfadeninterviews oder Gruppendiskussionen, bzw. allgemein Ansätze, in denen Menschen Auskunft über ihr Handeln oder das anderer geben.  
+Anders verhält es sich mit quantitativen Fragestellungen.
+Sie versuchen, Phänomene zu erfassen und zu erklären, die numerisch messbar sind und sich mit statistischen Methoden untersuchen lassen.
+Die Beobachtung richtet sich sozusagen "von außen" auf soziale Situationen, ohne auf Kenntnis interner Prozesse angewiesen zu sein.
+
+Ein wichtiges Werkzeug quantitativer Sozialforschung stellt die soziale Netzwerkanalyse dar.
+Hier werden Beziehungsgeflechte zwischen Personen als Netzwerke mit Knoten und Kanten gesehen.
+Ein Knoten stellt dabei meist einen *Akteur* dar, eine Kante zwischen Akteuren kennzeichnet eine Beziehung beliebiger Art.
+Wählt man als Knoten etwa die Mitglieder eines Freundeskreises können Kanten eine "kennt"-Beziehung darstellen.
+Die Modellierung sozialer Beziehungen als Netzwerk ermöglicht es, diese mit den Methoden der Graphentheorie, einem Teilgebiet der Mathematik, zu analysieren.
+Um ein solches Netzwerk zu konstruieren, können qualitativ erhobene Daten herangezogen werden, etwa Antworten auf die Frage "Mit wem haben Sie in der vergangenen Woche telefoniert?".
+Sammelt man die Antworten aller Befragten, erhält man neben einem Ausschnitt des Telefonnetzes auch Auskunft darüber, welche Personen sich untereinander kennen.
+
+Seit dem Aufstieg partizipativer Online Communities wie Facebook, Twitter und Reddit findet soziales Handeln jedoch nicht mehr ausschließlich in der physischen Welt statt.
+Auch in der virtuellen Sphäre vernetzen sich Menschen, kommunizieren, interagieren und tauschen Informationen aus.
+Das bereits angesprochene Geflecht an Beziehungen, das soziale Netzwerk, geht auf in einem "Online Social Network".
+Und ebenso wie die klassische Soziologie eher kleinere Konstellationen mit oft wenigen hundert Akteuren untersucht, lassen sich diese Strukturen qualitativ und quantitativ analysieren, nun jedoch auf einer globalen Ebene.
+Denn im Unterschied zu Handlungen in der realen Welt sind Mitglieder virtueller Gemeinschaften in ihren Handlungen zeitlich und räumlich unabhängig.
+Zudem wird außer einem Internetzugang und einem Benutzerkonto nichts weiter benötigt, um Zugang zu diesen Online Communities zu erhalten; reale Treffen zum gegenseitigen Kennenlernen können entfallen.
+Diese niedrige Beitrittshürde sowie die ubiquitäre Nutzung des Internets ermöglichen soziales Handeln mit einer Bandbreite und Geschwindigkeit, die in der realen Welt nur schwer zu erreichen wären.
+Die Daten, die bei dieser Form der Onlinekommunikation generiert werden, sind oft so zahlreich und reichhaltig, dass eine maschinelle Auswertung unumgänglich ist.
+Das Gebiet der *Computational Social Science* nutzt daher computergestützte Methoden, um sozialwissenschaftliche Problemstellungen zu behandeln, und erweitert damit die Möglichkeiten klassischer soziologischer Forschung im Zeitalter von "Big Data".
+
+Auch die vorliegende Arbeit thematisiert eine im Kern soziologische Fragestellung indem sie die Frage aufwirft, welchen Einfluss Interessen und soziale Kontakte der Nutzer von Online Communities aufeinander ausüben.
+Damit folgt sie sowohl medien- als auch netzwerkanalytischen Ansätzen um zu klären, zu welchen Themen Inhalte verfasst werden und welche strukturellen Merkmale die sozialen Beziehungen prägen, die Nutzer on Online Social Networks (OSN) untereinander aufbauen.
+Als soziales Feld für diese Untersuchung wählt sie die Plattform "Reddit", deren Nutzer in thematisch eigenständigen Untergruppen, sogenannten "Subreddits", Inhalte erstellen und kommentieren.
+In einem ersten Schritt werden diese Subreddits über ein computergeneriertes Topic-Modell jeweils einem Themenkomplex zugeordnet.
+Für alle von einem Nutzer erstellten Kommentare lässt sich daraus eine Themenhistorie ableiten, die zeigt, für welche Themen er sich im Verlauf der Zeit interessiert.
+Weiterhin werden aus Reddit-Kommentaren Interaktionsgraphen abgeleitet, die einen Blick auf die sozialen Onlinekontakte eines Nutzers ermöglichen.
+Die Verknüpfung dieser beiden Betrachtungen findet schließlich Anwendung in einer Fallstudie dreier Nutzer, die über einen langen Zeitraum auf Reddit aktiv sind.
+
+Diesen einleitenden Worten folgt in Kapitel\ \@ref(grundlagen) eine Erläuterung der grundlegenden Konzepte und Verfahren. 
+Hier wird die Plattform Reddit vorgestellt, die Idee der Topic-Analyse sowie das verwendete Verfahren "Latent Dirichlet Allocation" (*LDA*) detailliert besprochen und eine Übersicht über die Methoden der sozialen Netzwerkanalyse, die in dieser Arbeit Anwendung finden, geboten.
+Das Kapitel schließt mit einer Einordnung der Arbeit in die bestehende Forschung zu sozialen Netzwerken und medialer Inhaltsanalyse.  
+Kapitel\ \@ref(methodik) erläutert das methodische Vorgehen.
+Es beginnt mit einer kritischen Betrachtung des verwendeten Datensatzes und legt Kriterien für die Ziehung einer Stichprobe von Nutzern dar.
+Ebenfalls diesem Kapitel zu entnehmen ist Methodik der Aufbereitung der Daten für Topic- bzw. Netzwerkanalyse.  
+In Kapitel\ \@ref(datenanalyse) werden die Ergebnisse der Datenanalyse präsentiert.
+Zunächst wird das Topic-Modell kritisch vorgestellt und interpretiert.
+Anschließend folgen die individuellen Analysen der für die Fallstudie ausgewählten Nutzer.
+Eine Diskussion der Ergebnisse rundet diesen Teil ab, bevor Kapitel\ \@ref(zusammenfassung) mit einem Ausblick auf mögliche weitere Forschungsarbeit schließt.

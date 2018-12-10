@@ -45,7 +45,7 @@ Als soziales Feld für diese Untersuchung wählt sie die Plattform "Reddit", der
 In einem ersten Schritt werden diese Subreddits über ein computergeneriertes Topic-Modell jeweils einem Themenkomplex zugeordnet.
 Für alle von einem Nutzer erstellten Kommentare lässt sich daraus eine Themenhistorie ableiten, die zeigt, für welche Themen er sich im Verlauf der Zeit interessiert.
 Weiterhin werden aus Reddit-Kommentaren Interaktionsgraphen abgeleitet, die einen Blick auf die sozialen Onlinekontakte eines Nutzers ermöglichen.
-Die Verknüpfung dieser beiden Betrachtungen findet schließlich Anwendung in einer Fallstudie dreier Nutzer, die über einen langen Zeitraum auf Reddit aktiv sind.
+Die Verknüpfung dieser beiden Betrachtungen findet schließlich Anwendung in einer Fallstudie zweier Nutzer, die über einen langen Zeitraum auf Reddit aktiv sind.
 
 Diesen einleitenden Worten folgt in Kapitel\ \@ref(grundlagen) eine Erläuterung der grundlegenden Konzepte und Verfahren. 
 Hier wird die Plattform Reddit vorgestellt, die Idee der Topic-Analyse sowie das verwendete Verfahren "Latent Dirichlet Allocation" (*LDA*) detailliert besprochen und eine Übersicht über die Methoden der sozialen Netzwerkanalyse, die in dieser Arbeit Anwendung finden, geboten.

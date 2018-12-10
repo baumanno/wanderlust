@@ -1,0 +1,82 @@
+\usepackage{booktabs}
+\usepackage[ngerman,english]{babel} % deutsche Trennregeln, "Inhaltsverzeichnis" etc.
+%\usepackage{mathptmx} % Times-Roman-Schrift (auch für mathematische Formeln)
+
+\usepackage[labelfont=bf]{caption}
+\usepackage[strict]{changepage}
+\usepackage{placeins}
+
+\usepackage{array}
+\usepackage{calc}
+\usepackage{epigraph}
+\renewcommand{\epigraphsize}{\small}
+\setlength{\epigraphwidth}{.6\textwidth}
+
+% custom imports
+% multirows für Tabellen
+% \usepackage{multirow}
+% nice quotes
+\usepackage[autostyle=true,german=quotes]{csquotes}
+
+\usepackage[onehalfspacing]{setspace} % 1,5facher Zeilenabstand
+
+% Zum Setzen von URLs
+\usepackage{color}
+\definecolor{darkred}{rgb}{0.25,0,0}
+\definecolor{darkgreen}{rgb}{0,0.2,0}
+\definecolor{darkmagenta}{rgb}{0.2,0,0.2}
+\definecolor{darkcyan}{rgb}{0,0.15,0.15}
+
+\usepackage{fancyhdr} % Positionierung der Seitenzahlen
+
+\renewcommand{\headrulewidth}{0pt}
+
+% Korrektes Format für Nummerierung von Abbildungen (figure) und
+% Tabellen (table): <Kapitelnummer>.<Abbildungsnummer>
+\makeatletter
+\@addtoreset{figure}{section}
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\@addtoreset{table}{section}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+\makeatother
+
+% include bibliography in ToC - special case for biblatex (bookdown doesn't handle this atm)
+\let\oldpb\printbibliography
+\renewcommand{\printbibliography}{\oldpb[heading=bibintoc,title=Referenzen]}
+
+\let\oldpar\paragraph
+\renewcommand{\paragraph}{\oldpar*}
+
+\let\oldsubpar\subparagraph
+\renewcommand{\subparagraph}{\oldsubpar*}
+
+
+\newlength{\bcorlength}
+\setlength{\bcorlength}{12mm}              % binding correction
+\newlength{\lmuprintspace}
+\setlength{\lmuprintspace}{5mm}            % additional margin for title pages
+
+\newcommand{\lmuemptypage}[1]{%
+   \begin{adjustwidth}{-\oddsidemargin-1in+\lmuprintspace+\bcorlength}{-\evensidemargin-1in+\lmuprintspace}
+      \vspace*{-\topmargin}\vspace{-1in}%
+      \vspace{-\headheight}\vspace{-\headsep}%
+      \vspace{-\topskip}%
+      \vspace{+\lmuprintspace}
+      \parbox[t][\textheight][t]{\linewidth}{%
+         \parbox[t][\paperheight-3\baselineskip-\parskip][t]{\linewidth}{%
+            \setlength{\parskip}{0pt}%
+            \setlength{\parindent}{0pt}%
+            \setlength{\parfillskip}{0pt plus 1fil}
+            #1
+          }%
+      }%
+      
+   \end{adjustwidth}
+}
+
+\newcommand{\todo}[1]{{\textcolor{red}{\textbf{TODO:}~#1}}}
+\usepackage{layout}
+% römische numerale für Inhaltsverzeichnis; wird in index.Rmd zurückgesetzt
+\fancyhead[LE,RO,LO,RE]{}
+\fancyfoot[CE,CO,RE,LO]{}
+\fancyfoot[LE,RO]{\roman{page}}

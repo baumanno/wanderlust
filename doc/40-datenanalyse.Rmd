@@ -82,8 +82,8 @@ Dies alles ist umso bemerkenswerter, als dass es sich hier "nur" um ein mit stat
 
 ## Fallstudie
 
-Die folgenden drei Abschnitte befassen sich jeweils mit einem individuellen Nutzer, der aus dem Long Tail der Aktivitätsverteilung für Nutzer gezogen wurde.
-Für alle drei wurde die Themenhistorie über den gesamten Untersuchungszeitraum von November 2007 bis Februar 2018 erstellt, ebenso wie die zugehörigen Interaktionsgraphen, in denen die Kommunikation mit anderen Nutzern abgebildet ist.
+Die folgenden zwei Abschnitte befassen sich jeweils mit einem individuellen Nutzer, der aus dem Long Tail der Aktivitätsverteilung für Nutzer gezogen wurde.
+Für beide wurde die Themenhistorie über den gesamten Untersuchungszeitraum von November 2007 bis Februar 2018 erstellt, ebenso wie die zugehörigen Interaktionsgraphen, in denen die Kommunikation mit anderen Nutzern abgebildet ist.
 
 ```{r plotting-functions, cache=FALSE}
 

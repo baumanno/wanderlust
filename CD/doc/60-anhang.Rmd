@@ -1,0 +1,118 @@
+\cleardoublepage
+
+# (PART\*) Anhang {-}
+# (APPENDIX) Anhang {-}
+
+# Tabellen
+```{r activity-summary-full}
+
+kableExtra::kable_styling(
+  knitr::kable(
+    summary_age,
+    digits = 2,
+    align = c("l", "c", "c", "c", "c", "c", "c", "c"),
+    booktabs = TRUE,
+    format.args = list(big.mark = ".", decimal.mark = ","),
+    caption = "(ref:summary-age-lab)"
+  ),
+  latex_options = "hold_position"
+)
+```
+
+```{r activity-summary-cut}
+kableExtra::kable_styling(
+  knitr::kable(
+    left_join(top_age, total_posts, by = c("author" = "username")) %>%
+    filter(total_count / active >= thresh_posts) %>%
+      makeSummary(top_active_users$active),
+  digits = 2,
+  align = c("l", "c", "c", "c", "c", "c", "c", "c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "(ref:summary-age-lab)"
+  ),
+  latex_options = "hold_position"
+  )
+```
+
+```{r lda-params}
+kableExtra::kable_styling(
+knitr::kable(
+  tribble(~ Parameter, ~ Wert,
+          #-----------------#
+          "$\\alpha$", round(0.195312, 3),
+          "$\\beta$", 0.100000,
+          "k", "256",
+          "niter", "2000"),
+  escape = FALSE,
+  align = c("c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "Startparameter des LDA-Algorithmus"
+),
+  latex_options = "hold_position"
+  )
+```
+
+(ref:topic-assignments-summary-lab) Kennzahlen der Topic-Verteilung
+```{r topic-assignments-summary}
+kableExtra::kable_styling(
+knitr::kable(
+  sub_topic_summary,
+  digits = 2,
+  align = c("l", "c", "c", "c", "c", "c", "c", "c"),
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  caption = "(ref:topic-assignments-summary-lab)"
+),
+  latex_options = "hold_position"
+  )
+```
+
+\clearpage
+
+# Wort-Topic-Verteilungen
+
+(ref:app-top-words-lab) Charakteristische Wörter der größten Topics. Aufgeführt sind jeweils die Topic-ID, die Anzahl an zugeordneten Subreddits ($n$, mit der Einschränkung $n \ge 500$) sowie die 25 häufigsten Wörter in dem jeweiligen Topic. Englische Stoppwörter wurden in der Nachbereitung entfernt.
+```{r app-top-words-tab, cache=FALSE}
+
+options(knitr.table.midrule = "\\midrule\\endhead")
+top_words <- read.csv("../data/lda/largest_topics_top_words.csv")
+
+knitr::kable(
+  top_words,
+  longtable = TRUE,
+  booktabs = TRUE,
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  align = c("c", "r", " >{\\raggedright\\arraybackslash}p{0.8\\textwidth}" ),
+  caption = "(ref:app-top-words-lab)"
+)
+options(knitr.table.midrule = "\\midrule")
+```
+
+\clearpage
+
+# Inhalt der CD
+
+(ref:app-cd-lab) Inhalt der beigelegten CD-ROM
+```{r app-cd}
+kableExtra::kable_styling(
+knitr::kable(
+  tribble(
+    ~Verzeichnis, ~Beschreibung,
+    "data", "Enthält die Datengrundlage der Analyse",
+    "doc", "Ausarbeitung in bookdown",
+    "figs", "Von R-Skripten erzeugt Plots",
+    "interactive", "R-Notebooks zur interaktiven Daten-Analyse",
+    "output", "Zwischenspeicher für Berechnungen",
+    "Python", "Scripts zur Datensammlung",
+    "R", "Scripts zur Datenanalyse"
+  ),
+  booktabs = TRUE,
+  caption = "(ref:app-cd-lab)"
+),
+  latex_options = "hold_position"
+  )
+```
+
+\cleardoublepage

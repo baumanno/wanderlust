@@ -1,0 +1,34 @@
+\cleardoublepage
+
+# Zusammenfassung und Ausblick {#zusammenfassung}
+
+In dieser Arbeit wurde der Frage nachgegangen, ob das virtuelle soziale Umfeld eines Nutzers Einfluss auf seine Interessen sowie sein Interaktionsverhalten hat.
+Statistische Topic-Modelle und soziale Netzwerkanalyse wurden dazu genutzt, zwei komplexe Sachverhalte systematisch zu strukturieren und zu vereinfachen, um sie untersuchen und zu einem Gesamtbild zusammen setzen zu können.
+
+Mittels Latent Dirichlet Allocation wurde zuerst ein Topic-Modell für Subreddits erstellt, um diese zu größeren thematischen Communities zusammen fassen zu können.
+Dazu wurde auf den Inhalten des "Top"-Listings der beliebtesten Beiträge der Subreddits ein LDA-Modell mit 256 Topics berechnet.
+Dieses Modell zeigt durchaus trennscharfe Communities, wie man sie auf Plattformen wie Reddit erwarten würde.
+So konnten etwa Themenkomplexe wie (US-)Politik, Wissenschaft, Technologie und IT identifiziert werden, aber auch Communities, die in ihrer Muttersprache kommunizieren, etwa Deutsch, Französisch oder Spanisch.
+Eine Betrachtung der Topic-Historien zweier Nutzer zeigte, dass deren Interessen keineswegs auf ein Topic fixiert, sondern vielmehr über ein Spektrum verschiedener Themen verteilt sind.
+Dadurch lassen sich auch Phasen des Übergangs zwischen Topic-Communities erkennen.
+
+Mögliche Gründe für eine Wanderungen zwischen Communities wurden in der Struktur des sozialen Netzwerks der Nutzer vermutet
+Um dieser Vermutung nachzugehen, wurde ein umfangreicher Datensatz an Reddit-Kommentaren ausgewertet.
+Für jeden Nutzer wurde ein lokales, egozentrisches Netzwerk erstellt, in dem die Interaktionen mit anderen abgebildet sind.
+Durch Analyse der Struktur und Größe dieser Netzwerke konnte festgestellt werden, dass Phasen des Umbruchs oft einhergehen mit markanten strukturellen Eigenschaften der Interaktionsgraphen.
+Beispielsweise kommt es vor, dass ein Nutzer vor dem Verlassen einer Community wenig wechselseitige Interaktionen mit anderen Mitgliedern derselben Community pflegt.
+Ebenfalls wurde beobachtet, dass ein Nutzer nicht nur eine Community, sondern die Plattform als ganzes verlassen hat.
+Diese Zäsur war jedoch zeitlich stark begrenzt, was extrinsische Gründe nahe legt.
+
+Denn obgleich die hier angestellten Analysen interessante Zusammenhänge offenbart haben, darf nicht außer Acht gelassen werden, dass man am Ende doch menschliches Verhalten beobachtet, das bekanntermaßen von vielen Faktoren beeinflusst wird.
+Um Entwicklungen wie das Verlassen von oder Eintreten in Communities sinnvoll erklären zu können, genügt daher ein überwiegend quantitatives Vorgehen wie es für diese Arbeit gewählt wurde, unter Umständen nicht.
+Vielmehr sollte mit Methoden qualitativer Sozialforschung ergänzt werden.
+Denn vieles, was quantitativ messbar ist, bleibt ohne qualitative Ergänzung sozusagen nur "die halbe Wahrheit".
+
+Im Fall des Nutzers, der Reddit zu einem Zeitpunkt komplett verlassen hatte, könnten sich durch direkte Befragung des Nutzers neue Sichtweisen ergeben.
+Möglicherweise war ein Urlaub oder Umzug der Grund für seine Abwesenheit; oder aber es kam zu einer Auseinandersetzung mit anderen Nutzern, die ihn abgeschreckt hat, in welchem Fall eine Analyse der eigentlichen Kommentarinhalte aufschlussreich sein könnte.
+
+Um auf die einleitenden Worte Douglas Adams' zurück zu kommen, wurde in dieser Arbeit der Versuch unternommen, die komplexen Zusammenhänge menschlichen Sozialverhaltens im virtuellen Raum zu strukturieren und damit für analytische Betrachtungen greifbar zu machen.
+Dabei hat sich gezeigt, dass deren Vielfältigkeit eine Vielzahl von Beobachtungs- und Deutungsmöglichkeiten zulässt.
+Doch selbst eine streng wissenschaftliche Annäherung wird den Forscher gelegentlich im Angesicht der Merkwürdigkeit mancher Zusammenhänge ratlos zurücklassen.
+

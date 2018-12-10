@@ -1,0 +1,320 @@
+### cavedave
+\FloatBarrier
+Im vorherigen Kapitel wurde exemplarisch für einen Nutzer eine Analyse der Topic-Historie sowie der Interaktionsgraphen unternommen.
+Die dort unternommenen Gedankengänge werden hier für einen weiteren Nutzer fortgeführt.
+
+#### Zahl der Kommentare
+Der Nutzer "cavedave" ist im Datensatz über den gesamten zeitlichen Verlauf von 124 Monaten enthalten.
+Er hat insgesamt `r fmt(7734)` Kommentare erstellt, also `r fmt(round(7734 / 124, 2))` im monatlichen Mittel.
+
+```{r cavedave-setup}
+user <- "cavedave"
+date_range_start <- "2007-11-01"
+date_range_end <- "2018-02-01"
+
+date_range <-
+  seq.Date(as.Date(date_range_start),
+           as.Date(date_range_end),
+           by = "1 month")
+
+ego_topics <-
+  read_ego_topics(user = user, date = date_range)
+alters_topics <-
+  read_alters_topics(user = user, date = date_range)
+
+ego_proportions <- post_proportions(ego_topics)
+alters_proportions <- user_proportions(alters_topics)
+
+topics_present <-
+  union(ego_proportions$topic, alters_proportions$topic)
+cols <- fill_colours(topics_present)
+
+edgelists <-
+  read_edgelist(user, date = date_range) %>%
+  select(-year, -month, edgelist = data)
+
+topics_of_alters <-
+  read_alters_topics(user, date = date_range) %>%
+  select(-year, -month, topics = data)
+
+# df <-
+#   left_join(ego_proportions,
+#             alters_proportions,
+#             by = c("date", "topic")) %>%
+#   rename(prop_ego = prop.x, prop_alters = prop.y)
+
+# identify the single top topic of ego for a month in the dataset
+ego_top_topics <-
+  ego_proportions %>%
+  group_by(date) %>%
+  summarize(user = user,
+            topic = topic[which.max(prop)]) %>%
+  select(date, user = user, topic)
+
+vertex_data <-
+  topics_of_alters %>%
+  unnest() %>%
+  select(date, user = author1, topic) %>%
+  rbind(ego_top_topics) %>%
+  group_by(date) %>%
+  nest() %>%
+  rename(topics = data)
+
+graph_data <-
+  left_join(edgelists, vertex_data, by = "date") %>%
+  mutate(graph = map2(edgelist, topics, egonet_from_edgelist)) %>%
+  select(date, graph)
+
+graph_single_topic_subgraph <-
+  ego_proportions %>%
+  rename("prop_ego" = prop) %>% 
+  left_join(graph_data, by = "date") %>%
+  left_join(alters_proportions, by = c("date", "topic")) %>% 
+  rename("prop_alters" = prop) %>% 
+  mutate(
+    topic_graph = map2(graph, topic, filter_graph_wrapper)
+    )
+```
+
+(ref:cavedave-total-posts) Anzahl Kommentare je Topic über die Zeit aufgetragen. Dargestellt sind LOESS-Regressionen über die Zahl der je Monat erstellten Kommentare; die gestrichelte rote Linie stellt die Summe aller Kommentare eines Monats dar.
+```{r cavedave-total-posts, fig.cap="(ref:cavedave-total-posts)", cache=FALSE}
+total_comments_smooth(ego_proportions, cols)
+```
+
+Die Dynamik des Kommentarverhaltens zeigt Abbildung \@ref(fig:cavedave-total-posts).
+Die Summe aller in einem Monat erstellten Kommentare (rot gestrichelte Linie) fällt bereits, als der Beobachtungszeitraum einsetzt.
+Sie besitzt zudem mehrere lokale Minima und Maxima sowie zu Beginn des Jahres 2013 ein globales Minimum; das globale Maximum erreicht sie am äußersten rechten Rand, dem Ende des Untersuchungszeitraums im Februar 2018.  
+Unterhalb der Linie, die die Summe aller Kommentare abbildet, sind die Topics im Einzelnen aufgeschlüsselt.
+Hier zeigt sich, dass auch innerhalb der Topics eine gewisse Fluktuation herrscht.
+So fällt etwa die dunkelrote Linie, die Topic 239 darstellt, ebenfalls am Beginn des Zeitraums und verlässt im weiteren Verlauf den Bereich um die 0 nicht mehr.
+Hervorzuheben ist auch die Kreuzung der beiden Linien für Topic 219 und 235 um den Beginn des Jahres 2013 herum.
+Während cavedave weniger Kommentare in Topic 219 verfasst, nimmt seine Aktivität in 235 allmählich zu und erreicht ab Mitte 2013 sogar das einstweilige Maximum im Vergleich zu allen anderen Topics.
+Es sieht so aus, als "rette" Topic 235 noch einmal die allgemein fallende Tendenz, auf Reddit Kommentare zu erstellen.  
+Im weiteren Verlauf wird daher ein besonderer Fokus auf den Zeitraum zwischen Januar 2012 und Januar 2014 gelegt, da sich hier die größte Dynamik im Kommentarverhalten zeigt.
+Anders als bei der vorherigen Betrachtung von monocasa wird hier der Beobachtungszeitraum nicht weiter eingeschränkt.
+
+#### Verteilung der Kommentare
+
+(ref:cavedave-topic-distribution) Verteilung von Kommentaren über Topics.
+```{r cavedave-topic-distribution, fig.cap="(ref:cavedave-topic-distribution)"}
+comment_dist_boxplot(ego_proportions)
+```
+
+Eine Sicht auf die Verteilung innerhalb der Topics bietet Abbildung \@ref(fig:cavedave-topic-distribution).
+Nochmals deutlicher als in der vorherigen Abbildung treten hier die Topics 210, 219 und 235 als Hauptinteresse des Nutzers hervor.
+Bei allen drei liegt der Median um 12,5 Kommentare, die Extrema von 219 und 235 übersteigen mit `r max(subset(ego_proportions, topic == 219, num_posts))` bzw. `r max(subset(ego_proportions, topic == 235, num_posts))` Kommentaren deutlich das monatliche Mittel von `r fmt(round(7734 / 124, 2))`.
+Allerdings ist darauf zu achten, dass Inhalte von Topic 235 hauptsächlich auf Reddit selbst bezogen zu sein scheinen; dies macht eine Analyse von Nutzerinteressen schwierig, da nicht erkennbar ist, was hier konkret thematisiert wird.
+Die beiden anderen Topics lassen sich in ihrer Ausrichtung deutlich trennschärfer als politisch (210) und wissenschaftlich (219) geprägt klassifizieren.
+Dennoch ist der Effekt, dass Topic 235 für den Nutzer in einem Zeitraum interessant wird, in dem seine Aktivität allgemein eher abnimmt, und sein Kommentarverhalten später sogar dominiert, so bemerkenswert, dass es bei der Analyse nicht außer Acht gelassen wird.
+
+#### Topic-Historie für Ego und Alteri
+
+Neben der absoluten Zahl der Kommentare bietet es sich an, relative Anteile dieser Topics an den Kommentaren, aber auch an den Kontakten des Nutzers zu betrachten.
+
+(ref:cavedave-area-chart-comms-full) Topic-Verteilung von Egos Kommentaren. Dargestellt sind die relativen Anteile eines Topics an allen Kommentaren, die Ego in einem gegebenen Monat erstellt.
+```{r cavedave-area-chart-comms-full, fig.cap="(ref:cavedave-area-chart-comms-full)"}
+area_plot_posts(ego_proportions)
+```
+
+In Abbildung \@ref(fig:cavedave-area-chart-comms-full) ist der Verlauf der Topic-Anteile an den Kommentaren von cavedave dargestellt.
+Auch hier zeigt sich, dass der Anteil von Topic 219 an der Kommunikation des Nutzers zugunsten von Topic 235 abnimmt.
+Bislang verborgen geblieben ist allerdings die Tatsache, dass der Nutzer in Topic 239, das sich mit technischen Themen auseinandersetzt, zu Beginn des Zeitraums durchaus aktiv war, diese Aktivität nach einem kurzen letzten "Aufbäumen" Mitte 2011 jedoch so gut wie eingestellt hat.
+Um möglichen Gründen für dieses Ausscheiden nachzugehen, wird auch Topic 239 bei der weiteren Untersuchung berücksichtigt.
+
+(ref:cavedave-area-chart-alters-full) Topic-Verteilung der Alteri im lokalen Netzwerk. Dargestellt ist der Anteil der Alteri, deren Hauptinteresse in dem jeweiligen Monat dem dargestellten Topic gilt.
+```{r cavedave-area-chart-alters-full, fig.cap="(ref:cavedave-area-chart-alters-full)"}
+area_plot_alters(alters_proportions, date_range_start, date_range_end)
+```
+
+Abbildung \@ref(fig:cavedave-area-chart-alters-full) zeigt den Verlauf der Zugehörigkeit der Alteri zu einem Topic.
+Alle Alteri der monatlich erstellten Ego-Netzwerke werden auf das Topic reduziert, in dem sie zu diesem Zeitpunkt die meisten Kommentare verfasst haben. Die Darstellung zeigt den Anteil, den die Nutzer eines Topics am lokalen Netzwerk von cavedave haben.  
+Auffällig ist, dass sich Topic 219 nur wenige Alteri widmen, obwohl anfänglich ein großer Teil von Egos Kommunikation darauf entfällt.
+Der Abwärtstrend von Topic 239 spiegelt sich auch in dieser Darstellung wider; scheinbar unterlässt der Nutzer nicht nur die aktive Beteiligung an dieser Community, sondern auch den Kontakt zu deren Mitgliedern.
+
+Die weitere Betrachtung wird sich wegen der hier dargestellten Beobachtungen hauptsächlich den Topics 219, 235 und 239 widmen, im Falle von 219 und 235 dabei vor allem dem Übergangszeitraum zwischen Januar 2012 und Januar 2014.
+
+#### Korrelation der Anteile
+
+Die Vermutung, dass die beiden Topic-Anteile von Kommentaren bzw. Nutzern positiv korreliert sind, wurde bereits für monocasa zumindest für die Topics bestätigt, denen der Nutzer einen Großteil seiner Aktivität widmet.
+
+(ref:cavedave-prob-corr) Die beiden Anteile an Topic-Zugehörigkeit, gegeneinander aufgetragen. Die x-Achse zeigt den relativen Anteil Kommentare, die Ego in einem Topic verfasst, die y-Achse den Anteil Alteri, der sich diesem Topic hauptsächlich widmet. Spearmans $\rho$ zeigt die Stärke der Korrelation ($^{*}p\le0.05$, $^{**}p\le0.01$, $^{***}p\le0.001$, $^{n.s}$nicht signifikant).
+```{r cavedave-prob-corr, fig.cap = "(ref:cavedave-prob-corr)"}
+distr_correlation(ego_proportions, alters_proportions, date_range_start, date_range_end, cols)
+```
+
+Die Streudiagramme in Abbildung \@ref(fig:cavedave-prob-corr) zeigen ähnliche Ergebnisse für cavedave.
+Mit Ausnahme der Topics 122 und 89 sind alle Korrelationen statistisch signifikant, für Korrelationen mit $\textit{r} = 1$ liegen jedoch in diesem Fall zu wenig Datenpunkte mit Werten größer Null vor.
+Bei Topic 219 fällt zudem auf, dass sich die Regressionsgerade unterhalb der Diagonalen bewegt.
+Hier erstellt Ego also mitunter einen hohen Anteil an Kommentare, obwohl der Anteil der Alteri an diesem Topic eher gering ausfällt (meist weniger als 25%).
+
+#### Attraktivität von Topics
+
+Im vorherigen Kapitel wurde bereits die Idee der Attraktivität eines Topics erwähnt und versucht, diese über Wahrscheinlichkeiten auf Kommentaren bzw. Alteri zu definieren; dieser Ansatz wird auch hier verfolgt.
+
+(ref:cavedave-attractivity) Attraktivität angetragen über den zeitlichen Verlauf. Die gepunktete Linie kennzeichnet den Zeitpunkt des Verlassens von Topic 239. In dieser Darstellung enthalten sind alle Topics, deren Attraktivität in Summe echt größer 0 ist.
+```{r cavedave-attractivity, fig.cap="(ref:cavedave-attractivity)", cache=FALSE}
+attractivity(ego_proportions, alters_proportions, date_range_end, date_range_start, cols)
+```
+
+Der Wert für die Attraktivität eines Topics  ist in Abbildung \@ref(fig:cavedave-attractivity) für jedes Topic über die Zeit angetragen.
+Der Bereich zwischen den gepunkteten Linien bei Topic 219 und 235 stellt den Übergangszeitraum dar.
+Wenig überraschend sinkt die Attraktivität von 219, während die von 235 ansteigt.
+Vor allem für Topic 235 schwankt die Anziehungskraft stark und fällt gelegentlich auf 0 ab.
+Möglicherweise ist dieses Schwanken ein Indiz für einen angestrebten, aber nicht erfolgreichen Ausgleich zwischen den beiden Kräften: steigert Ego den Anteil seiner Kommentare in einem Thema, erreicht damit aber nicht den Ausbau seiner Interaktionen mit anderen Nutzern des Themas, fährt er unter Umständen seine Anstrengungen zurück.
+Andererseits kann ein bestimmter Anteil an Alteri, die in einem Topic aktiv sind, das lokale Netzwerk wieder verlassen, wenn Ego nicht auf sie eingeht.  
+Indes deckt sich die Anziehungskraft von Topic 239 mit der bisherigen Analyse: das Topic übt initial geringe Attraktivität aus, verliert aber selbst diese nach dem ersten Drittel, und erlangt sie auch nicht zurück.
+
+#### Analyse des Ego-Netzwerks
+
+(ref:cavedave-network-structure) Zahl der Knoten sowie Kanten des lokalen sozialen Netzwerks, angetragen über die Zeit.
+```{r cavedave-network-structure, fig.cap="(ref:cavedave-network-structure)"}
+network_structure(graph_data) +
+  geom_vline(mapping = aes(xintercept = as.Date("2012-01-01")), linetype = "dotted") +
+    geom_vline(mapping = aes(xintercept = as.Date("2014-01-01")), linetype = "dotted")
+```
+
+Die bisherige Betrachtung galt in erster Linie der Topic-Historie von Ego und Alteri.
+Dieser nächste Teil widmet sich nun der Analyse der Interaktionsgraphen des Nutzers.  
+Dazu soll der Blick zuerst auf die Entwicklung der Größe dieser Graphen gerichtet werden, um ein Gefühl dafür zu bekommen, ob der Nutzer seine Interaktionen mit der Zeit eher ausbaut oder verringert.
+
+Abbildung \@ref(fig:cavedave-network-structure) visualisiert die zeitliche Entwicklung der Zahl der Knoten und Kanten der monatlichen Snapshot-Interaktionsgraphen.
+Die gepunkteten Linien markieren wie zuvor den Zeitraum des Übergangs zwischen 219 und 235.
+Dabei fällt auf, dass in diesem Zeitraum die Zahl der Knoten abnimmt und zeitweise auf unter 25 fällt, wie auch die Zahl der Kanten.
+Zur Erinnerung: die Zahl der Kanten entspricht den Kommunikationsakten, egal in welcher Richtung (Ego richtet Kommentar an Alteri bzw. *vice versa*).
+Offenbar ist die markierte Periode von einem Zeitraum allgemein geringer Aktivität gekennzeichnet; ein Aufschwung ist erst wieder im ersten Quartal von 2014 zu beobachten.
+
+#### Reziprozität
+
+(ref:cavedave-katz-powell) Katz-Powell-Index $\rho_{KP}$ angetragen über die gesamte Zeit.
+```{r cavedave-katz-powell, fig.cap="(ref:cavedave-katz-powell)"}
+
+katz_powell_plot(graph_data) +
+  geom_vline(mapping = aes(xintercept = as.Date("2012-01-01")), linetype = "dotted") +
+    geom_vline(mapping = aes(xintercept = as.Date("2014-01-01")), linetype = "dotted")
+```
+
+Die Entwicklung der Reziprozität zeigt Abbildung \@ref(fig:cavedave-katz-powell) anhand des Index $\rho_{KP}$.
+Auch hier ersichtlich, dass der markierte Zeitraum von hoher Dynamik geprägt ist.
+Die Regressionskurve markiert zwar einen Abschnitt hoher Tendenz zu wechselseitigen Kanten; allerdings liegen hier auch das globale Maximum und Minimum.
+Werden noch im Juni 2013 fast alle Kanten erwidert ($\rho_{KP} =$ `r graph_data %>% filter(date == "2013-06-01") %>% mutate(kp = katz_powell_mutuality(graph)) %>% select(kp) %>% unlist() %>% round(., 2)`), ist diese Tendenz drei Monate später nahezu nicht mehr vorhanden ($\rho_{KP} =$ `r graph_data %>% filter(date == "2013-09-01") %>% mutate(kp = katz_powell_mutuality(graph)) %>% select(kp) %>% unlist() %>% round(., 2)`).
+
+(ref:cavedave-subgraph-rec-all) Katz-Powell-Index des thematischen Teilgraphen im zeitlichen Verlauf, je Topic. Die Graphen sind Sichten auf den gesamten Graph, die nur Nutzer eines einzelnen Topics enthalten.
+```{r cavedave-subgraph-rec-all, fig.cap="(ref:cavedave-subgraph-rec-all)", cache=FALSE}
+filtered_topics <- graph_single_topic_subgraph %>% 
+  filter(topic %in% c(239, 219, 235))
+
+subgraph_reciprocity_all(filtered_topics) +
+  geom_vline(mapping = aes(xintercept = as.Date("2012-01-01")), linetype = "dotted") +
+  geom_vline(mapping = aes(xintercept = as.Date("2014-01-01")), linetype = "dotted")
+```
+
+Diese globale Sicht auf den gesamten Graphen ist nicht ideal, um Entwicklungen einzelner Topics zu betrachten.
+Daher ist in Abbildung \@ref(fig:cavedave-subgraph-rec-all) die zeitliche Entwicklung für die drei Topics dargestellt, die genauer betrachtet werden sollen.
+
+Für Topic 239, in dem cavedave bis Mitte 2011 noch aktiv war, zeigt sich ein Abwärtstrend der wechselseitigen Beziehungen, bzw. treten ab 2011 vermehrt Löcher in der grafischen Darstellung auf, die darauf zurückzuführen sind, dass keine Alteri vorhanden sind, die dieses Topic teilen.
+Bei Topic 219 fällt auf, dass der Wert des Index einige Male ins Negative fällt, bevor der Nutzer anfängt, hier seine Aktivität einzuschränken; zudem treten in der Kurve für dieses Topic ebenfalls markante Löcher auf.
+Gleichzeitig steigt der Index für Topic 235, welches 219 sozusagen "ablöst", im markierten Zeitraum noch einmal an.
+Diese Entwicklung könnte ein Indiz dafür sein, dass wechselseitige Kanten Einfluss darauf haben, ob ein Nutzer in einem Topic aktiv bleibt oder es verlässt, bzw. analog für das "Betreten" eines neuen Topics;
+die Korrelation des Katz-Powell-Index und des Anteils an Kommentaren fällt indes durchweg eher schwach aus, wie Abbildung \@ref(fig:cavedave-reciprocity-special-topics) verdeutlicht.
+
+(ref:cavedave-reciprocity-special-topics) Korrelation von $\rho_{KP}$ und dem Anteil der Kommentare je Topic. Spearmans $\rho$ zeigt die Stärke der Korrelation ($^{*}p\le0.05$, $^{**}p\le0.01$, $^{***}p\le0.001$)
+```{r cavedave-reciprocity-special-topics, fig.cap = "(ref:cavedave-reciprocity-special-topics)"}
+foo <- graph_single_topic_subgraph %>% 
+  mutate(kp = katz_powell_mutuality(topic_graph))
+
+coeffs <- foo %>%
+  group_by(topic) %>% 
+  drop_na() %>% 
+  filter(n() > 2) %>% 
+      summarise(
+        r = cor.test(kp, prop_ego, method = "spearman")$estimate,
+        p = cor.test(kp, prop_ego, method = "spearman")$p.value
+      )
+
+foo %>%
+  ggplot(mapping = aes(x = kp, y = prop_ego, colour = topic)) +
+  geom_point(alpha = 0.5) +
+      geom_smooth(method = "lm", size = .8) +
+      labs(x = expression(rho[KP]),
+           y = "Anteil Kommentare") +
+      scale_colour_manual("topic",
+                          values = cols) +
+      facet_wrap( ~ topic) +
+      geom_text(
+        data = coeffs %>% drop_na(),
+        mapping = aes(
+          x = -Inf,
+          y = Inf,
+          label = paste(
+            "italic(r) == ",
+            round(r, 2),
+            ifelse(
+              p <= 0.001,
+              "*plain('***')",
+              ifelse(
+                p <= 0.01,
+                "*plain('**')",
+                ifelse(p <= 0.05, "*plain('*')", "^plain('n.s.')")
+              )
+            )
+          )
+        ),
+        parse = TRUE,
+        colour = "black",
+        size = 3,
+        hjust   = -.05,
+        vjust   = 1.5
+      ) +
+      theme(axis.text.x = element_text(angle = 0),
+            legend.position = "none")
+
+
+```
+
+#### Struktur thematischer Teilgraphen
+
+(ref:cavedave-topical-subgraph) Ordnung des gesamten Graphen $G$ und des thematischen Teilgraphen $G'$,sowie deren Differenz $|G| - |G|'$. Die angetragenen Regressionsgeraden verdeutlichen das Wachstum der Größen.
+```{r cavedave-topical-subgraph, fig.cap="(ref:cavedave-topical-subgraph)"}
+# TODO: Filter topical subgraphs, then compute weighted degree
+
+graph_topical_subgraph <-
+  graph_data %>%
+  left_join(ego_topics, by = c("date")) %>%
+  mutate(topical_subgraph = map2(graph, data, function(graph, df) {
+    filter_graph(graph, unique(df$topic))
+  }))
+
+topical_subgraph_order(graph_topical_subgraph)
+
+```
+
+Schließlich soll wie bei monocasa auch die Struktur der thematischen Teilgraphen betrachtet werden.
+Diese werden gebildet, indem für alle Alteri vorausgesetzt wird, dass sie in einem Topic aktiv sind, in dem auch Ego aktiv ist.
+"Monothematisch" Teilgraphen sind hier solche, bei denen auch Ego auf das Topic festgelegt wird, in dem er am aktivsten ist.  
+Für (mono-)thematische Teilgraphen $G'$ lässt sich untersuchen, wie hoch ihre Überdeckung mit dem Gesamtgraphen $G$ ist.
+Dazu bilden wir schlicht die Differenz der beiden Ordnungen $|G|$ und $|G'|$; Abbildung \@ref(fig:cavedave-topical-subgraph) zeigt dies im zeitlichen Verlauf für den schwächer definierten Teilgraphen, bei dem Alteri eines der fünf Topics von Ego teilen.
+Dabei fällt auf, dass die Differenz nahezu konstant bleibt und sowohl der Graph als auch der thematische Teilgraph annähernd gleich stark wachsen.
+Trotz lokaler Schwankungen gelingt es dem Nutzer, eine konstante Zusammensetzung seiner Alteri zu erreichen und beizubehalten; es sei darauf hingewiesen, dass cavedave für alle 124 Monate im Datensatz enthalten ist, also durchaus als "Langzeitnutzer" bezeichnet werden kann.
+Unter Umständen ist diese konstante Entwicklung eine Ursache für langanhaltende Identifikation mit der Plattform.
+
+(ref:cavedave-topical-subgraph-reciprocity) Katz-Powell-Index für den monothematischen Teilgraphen der entsteht, wenn man Ego und Alteri auf ihr aktivstes Topic reduziert und nur Kanten zwischen Nutzern mit gleichen Topics zulässt. Ebenfalls dargestellt ist die Differenz der beiden Größen, die 0 wird, wenn beide Graphen gleich reziprok sind, gegen -1 geht wenn der Gesamtgraph eher wechselseitig und gegen +1 wenn der Teilgraph eher symmetrisch angelegt ist.
+```{r cavedave-topical-subgraph-reciprocity, fig.cap="(ref:cavedave-topical-subgraph-reciprocity)"}
+
+graph_topical_subgraph <-
+  graph_data %>% 
+  left_join(ego_top_topics, by = c("date")) %>%
+  mutate(topical_subgraph = map2(graph, topic, function(graph, t) {
+    filter_graph(graph, t)
+  }))
+
+topic_subgraph_reciprocity(graph_topical_subgraph)
+```
+
+Für die monothematischen Teilgraphen, in denen nur die Alteri enthalten sind, die Egos aktivstes Topic teilen, wird schließlich ebenfalls der Katz-Powell-Index berechnet.
+Abbildung \@ref(fig:cavedave-topical-subgraph-reciprocity) zeigt diesen für den gesamten Graph $G$, für den Teilgraph $G'$, sowie deren Differenz.
+Hier sind zwei Beobachtungen von besonderem Interesse; zum Einen nimmt die Differenz des Index zumeist negative Werte an, im Gesamtgraph werden Kanten also eher erwidert.
+Zum Anderen existiert zwischen Januar und August 2013 ein Loch in der Kurve des Teilgraphen und der Differenz, der monothematische Teilgraph ist in diesem Zeitraum also leer.
+Anders gesagt gibt es keine Alteri, die in dieser Zeit hauptsächlich in dem Topic aktiv sind, in dem auch Ego aktiv ist.
+Diese Phase ist es auch, die vom Umbruch zwischen Topic 219 und 235 gekennzeichnet ist.
+Möglicherweise ist das Fehlen von Kontakten mit demselben Interesse eine Ursache hierfür, denn nach diesem Zeitraum beginnt die Differenz der Reziprozitätsmaße zu steigen, der Teilgraph tendiert also vermehrt dazu, Kanten zu erwidern.
+Zudem schwankt der Index ab etwa Januar 2014 merklich weniger als noch in den Monaten zuvor, die thematische Ausrichtung von Ego und Alteri hat sich "eingependelt".

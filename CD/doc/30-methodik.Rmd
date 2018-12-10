@@ -1,0 +1,349 @@
+\cleardoublepage
+
+# Methodik {#methodik}
+Nachdem in den vorangegangen Kapiteln die für diese Arbeit relevanten Grundlagen erläutert wurden und eine Einordnung in den bestehenden Forschungsstand erfolgte, bietet dieses Kapitel einen Überblick über die Forschungsmethodik.  
+Zunächst wird der verwendete Datensatz kritisch präsentiert.
+Anschließend folgt ein Überblick über die Erstellung der Topic-Modelle sowie die Vorbereitung der Netzwerkanalyse.
+Die dazu verwendete Software wird am Ende des Kapitels aufgeführt.
+
+## Datensatz
+Die Grundlage der Analyse bildet ein frei zugänglicher Datensatz mit Reddit-Kommentaren.
+Jason Baumgartner, der unter dem Pseudonym *stuck_in_the_matrix*^[https://www.reddit.com/user/stuck_in_the_matrix] selbst auf Reddit aktiv ist, unterhält monatliche Datensätze mit allen Beiträgen und Nutzerkommentaren.
+Er verwendet die Reddit-API, um diese Inhalte systematisch zu archivieren und bietet sie zum Download an [@Baumgartner].
+Der Zeitraum der zur Verfügung gestellten Daten umfasst derzeit Dezember 2005 bis Oktober 2018.
+
+```{r importantkeys}
+knitr::kable(
+  tribble(
+    ~Feld, ~Wert,
+    "author", "Nutzername des Kommentar-Autors",
+    "id", "eindeutige ID des Kommentars",
+    "parent_id", "eindeutige ID des Elements, auf das sich der Kommentar bezieht",
+    "subreddit", "Name des Subreddits, in dem der Kommentar erstellt wurde"
+  ),
+  booktabs = TRUE,
+  caption = "Verwendete Metadaten zu Kommentaren"
+) %>% 
+ kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+#### Struktur
+Die monatlichen Schnappschüsse liegen in Form strukturierter Textdateien vor.^[Die nachfolgenden Ausführungen beziehen sich ausschließlich auf den Kommentar-Datensatz, Bezüge zu Beiträgen werden explizit hervorgehoben.]
+Diese enthalten neben dem Inhalt des Kommentars auch Metadaten wie Verfasser oder Datum.
+Die für diese Arbeit relevanten Metadatenfelder sind in Tabelle \@ref(tab:importantkeys) aufgeführt.
+Zu beachten ist hier insbesondere, dass der eigentliche Textinhalt des Kommentars für diese Auswertung nicht genutzt wird.
+Das maschinenlesbare JSON-Format, in dem die Daten abgelegt sind, ermöglicht die effiziente computergestützte Auswertung.
+
+
+#### Kohärenz
+Im März 2018 haben Gaffney und Matias [@Gaffney2018] eine Analyse des gesamten Baumgartner-Korpus vorgelegt.
+Sie kommen zu dem Schluss, dass die Erfassung sowohl der Beiträge als auch der Kommentare Lücken aufweist, also Elemente gänzlich nicht im Datensatz vorhanden sind.
+Für diese Arbeit ist dies insofern problematisch, da fehlende Kommentare die Themenhistorie von Nutzern verzerren können.
+Auch Gaffney und Matias stellen fest, dass Studien, welche auf die vollständigen Verläufe von Nutzern zugreifen, dem höchsten Risiko ausgesetzt sind, lückenhafte Daten zu betrachten [@Gaffney2018].
+
+Das von Baumgartner eingesetzte System nutzt aus, dass jedem Kommentar auf Reddit eine eindeutige und sequentiell ansteigende numerische ID zugewiesen ist.
+Geht man davon aus, dass diese ID-Sequenz bei null beginnt und bei jedem neuen Kommentar um eins erhöht wird, sollte einer Folge von $n$ Zahlen eine Menge von $n$ Kommentaren zugeordnet sein.
+Auf diese Weise arbeitet auch Baumgartners Software, die zusammenhängende Blöcke von jeweils 100 solcher IDs wählt und versucht, die zugehörigen Kommentare über die Reddit-API^[https://api.reddit.com/] aufzulösen [@Baumgartner2018a]. 
+Da die API auch Anfragen nach gelöschten Elementen beantwortet und hier lediglich die Felder Autor und Inhalt mit dem speziellen Wert "[deleted]" versieht, sollte ein Bereich von 100 sequentiellen IDs auch vollständig im Datensatz abgebildet sein.
+Gaffney und Matias stellen jedoch für den Zeitraum Dezember 2005 bis Februar 2016 fest, dass 943.755 Kommentar- und 1.539.583 Beitrags-IDs nicht in den Datensätzen enthalten sind.
+Sie nennen dafür dreierlei mögliche Gründe: sog. "dangling references", also Verweise, bei denen das Element, auf das verwiesen wird, nicht auffindbar ist; öffentlich zugängliche Daten, die aus unbekanntem Grund nicht von Reddit an Baumgartners System übertragen wurden; oder Daten aus als privat eingestuften Communities, die nicht öffentlich sondern nur von Mitgliedern mit Zugangsberechtigung einsehbar sind [@Gaffney2018].
+
+(ref:gf4cap) Anteil fehlender Kommentare. Die hellblauen Quadrate (obere Linie) stellen den gleitenden Mittelwert fehlender Kommentare in Prozent dar, die mittelblauen Punkte (mittlere Linie) den prozentualen Anteil fehlender Kommentare, und die dunkelblauen Kreuze (untere Linie)  die kumulierte Gesamtzahl fehlender Kommentare [Abbildung aus @Gaffney2018]
+```{r gf4, fig.cap='(ref:gf4cap)'}
+knitr::include_graphics("./images/gaffneymatias_fig4.eps")
+```
+
+In Abbildung \@ref(fig:gf4) stellen die mittelblauen Punkte bzw. die anfangs mittlere der drei Linien den Anteil fehlender Kommentare in Prozent dar.
+Ab April 2007 beginnt dieser Anteil zu sinken, fällt ab etwa August 2007 stark ab und stabilisiert sich ab November 2007 im niedrigen einstelligen Bereich.
+Um den Einfluss fehlender Kommentare so gering wie möglich zu halten, setzt die Auswertung der Daten im November 2007 an und erstreckt sich bis Februar 2018.  
+Jason Baumgartner hat als Folge der Veröffentlichung von Gaffney und Matias angekündigt, fehlende Kommentare und Beiträge nachträglich zu erfassen [@Baumgartner2018].
+
+## Stichprobe von Nutzern {#stichprobe}
+
+Für die angesetzte Fallstudie werden für den Beobachtungszeitraum zwei Nutzer zufällig ausgewählt.
+Im Folgenden werden die Kriterien für die Ziehung dieser Stichprobe erläutert, die aus der Verteilung der Aktivität der Nutzer abgeleitet werden.
+
+```{r db-months-active}
+# only read the entire table if no result exists yet
+if (!(exists("res") && is.data.frame(res) && nrow(res) > 0)) {
+  con <-
+    dbConnect(RSQLite::SQLite(),
+              "/run/media/oliver/Elements SE/reddit.db")
+  
+  res <- dbGetQuery(con, glue_sql("SELECT * FROM `months_active` WHERE `author` != '[deleted]'", .con = con))
+  
+  dbDisconnect(con)
+}
+
+res_counted <- res %>% 
+  count(active)
+
+num_users <- nrow(res)
+summary_age <-
+  res %>% 
+  summarise(
+    N = n(),
+    "arithm. Mittel" = mean(active),
+    SD = sd(active),
+    Min = min(active),
+    Q1 = quantile(active, .25),
+    Median = median(active),
+    Q3 = quantile(active, .75),
+    Max = max(active)
+  )
+```
+
+Für den Beobachtungszeitraum von 124 Monaten liegen etwa 3,6 Milliarden `r # fmt(3615667286)` Kommentare vor, verfasst von ca. 28 Millionen `r # fmt(num_users)` Nutzern.
+Für jeden dieser Nutzer wurde bestimmt, in wie vielen Monaten er im Datensatz enthalten ist.
+Diese Aktivitätsspanne reicht von nur einem Monat bis zur Gesamtzeit von 124 Monaten.
+Die Hälfte der Nutzer ist zwischen einem und sechs Monaten auf Reddit aktiv; Tabelle \@ref(tab:activity-summary-full) im Anhang enthält die wichtigsten Kennzahlen der Aktivitätsverteilung.
+
+Stellt man diese Verteilung wie in Abbildung\ \@ref(fig:age-distribution-1) als Histogramm dar, fällt die hohe Häufung eher kurzer Aktivität auf.
+Abbildung \@ref(fig:age-distribution-2) wählt für dieselbe Verteilung eine logarithmische Darstellung, die einen besseren Blick in den "Long Tail" der Verteilung bietet.
+Auffällig ist bei der logarithmischen Darstellung der Ausschlag am äußersten rechten Rand.
+Der Unterschied zwischen den beiden längsten Aktivitätsklassen beträgt `r subset(res_counted, active == 124, n) - subset(res_counted, active == 123, n)` Nutzer.
+```{r age-distribution-1, fig.cap="Verteilung der Aktivität"}
+ggplot(data = res_counted) +
+  geom_col(
+    mapping = aes(x = active, y = n / sum(n)),
+    stat = "identity"
+  ) +
+  labs(x = "Aktivität in Monaten",
+       y = "Anteil Nutzer") +
+  scale_x_continuous(breaks = seq(0, 124, by = 12)) +
+  scale_y_continuous(labels = scales::percent_format(decimal.mark = ",", accuracy = 1))
+```
+
+```{r age-distribution-2, fig.cap="Verteilung der Aktivität, logarithmische Darstellung."}
+ggplot(data = res_counted) +
+  geom_col(
+    mapping = aes(x = active, y = n),
+    stat = "identity"
+  ) +
+  labs(x = "Aktivität in Monaten",
+       y = "Anzahl Nutzer") +
+  scale_x_continuous(breaks = seq(0, 124, by = 12)) +
+  scale_y_log10(label = scales::comma_format(decimal.mark = ",", big.mark = "."))
+```
+
+```{r sample-users}
+thresh_size <- 10000
+thresh_posts <- 50
+
+# cut off the `thresh_size` oldest users
+top_age <- res[order(res$active, decreasing = TRUE)[1:thresh_size], ]
+
+min_age_in_sample <- min(top_age$active)
+date_range <-
+  seq.Date(
+    from = as.Date("2007-11-01"),
+    to = as.Date("2018-02-01"),
+    by = "1 month"
+  )
+
+if (!(exists("total_posts") && nrow(total_posts) > 0)) {
+  con <-
+    dbConnect(
+      RSQLite::SQLite(),
+      "/run/media/oliver/Elements SE/posts_per_month_and_totals.db"
+    )
+  
+  total_posts <-
+    dbGetQuery(
+      con,
+      glue_sql(
+        "SELECT * FROM posts ORDER BY months_active DESC LIMIT {thresh_size}",
+        .con = con
+      )
+    )
+  
+  dbDisconnect(con)
+}
+
+top_active_users <-
+  left_join(top_age, total_posts, by = c("author" = "username")) %>%
+  filter(total_count / active >= thresh_posts) %>%
+  count(active)
+```
+
+```{r sample-users-hist, fig.cap="Verteilung der Aktivität nach Einschränkung auf die oberen 10.000 Nutzer mit jeweils mindestens 50 Kommentaren je Monat."}
+top_active_users %>%
+  ggplot() +
+  geom_col(
+    mapping = aes(x = active, y = n),
+    stat = "identity"
+  ) +
+  labs(
+    x = "Aktivität in Monaten",
+    y = "Anzahl Nutzer"
+  )
+```
+Um sicherzustellen, dass die Historien der Nutzer möglichst frei von Lücken sind, erfolgt die Auswahl aus den `r fmt(thresh_size)` am längsten aktiven Nutzern.
+Diese müssen zudem über ihren Aktivitätszeitraum hinweg pro Monat mindestens `r thresh_posts` Kommentare erstellt haben, um aussagekräftige Interaktionsgraphen generieren zu können.
+Abbildung \@ref(fig:sample-users-hist) zeigt die dadurch erhaltene Verteilung der Aktivitätsklassen als Histogramm.
+Die kleinste Aktivitätsspanne in dieser neuen Verteilung liegt bei `r min_age_in_sample` Monaten.
+Dies entspricht einer Überschneidung mit dem gesamten Untersuchungszeitraum zu ca. `r round(min_age_in_sample / length(date_range) * 100)`%; die Kennzahlen dieser Verteilung sind Tabelle\ \@ref(tab:activity-summary-cut) im Anhang zu entnehmen.  
+Da eine Analyse aller in dieser Stichprobe enthaltenen Nutzer aus Zeitgründen nicht möglich war, wurden exemplarisch zwei Nutzer zufällig ausgewählt und in einer Fallstudie näher betrachtet.
+
+## Topic-Modelle {#meth-lda}
+Um zu einer Zuordnung von Subreddits zu Themenkomplexen zu gelangen, wird mittels Latent Dirichlet Allocation ein Topic-Modell erstellt und ausgewertet.
+Dadurch können Communities, die ähnliches Vokabular benutzen, unter einem Topic zusammengefasst werden.
+
+#### Korpus
+
+Für alle Nutzer, deren Aktivität über dem Gesamtdurchschnitt von `r round(subset(summary_age, TRUE, "arithm. Mittel"), 2)` Monaten liegt, werden die Subreddits erfasst, in denen sie Kommentare erstellen.
+Durch diese Einschränkung wird verhindert, dass Subreddits in das Topic-Modell eingehen, die ausschließlich von Nutzern aufgesucht werden, die die Plattform nach kurzer Aktivität verlassen.
+
+```{r sub-topic-mapping}
+library("R.utils")
+library("tidyverse")
+nsubs <- countLines("../data/subreddits/subreddits_unique.txt")
+
+subreddits <- readLines("../data/lda/the_subreddits.dat")
+# first line contains total count of subreddits
+subreddits <- subreddits[-1]
+
+topics <- readLines("../data/lda/model-final.theta") %>% 
+  str_split(" ") %>% 
+  map_int(which.max)
+
+subreddit_topic_mapping <- tibble(sub = subreddits, topic = factor(topics))
+
+```
+
+Für diese Subreddits wurden über die Reddit-API jeweils maximal 50 Beiträge aus dem Listing "Top" abgerufen.
+Dieses Listing liefert eine Sortierung der Beiträge mit der besten Gesamtwertung (*Score*), also der Differenz aus Up- und Downvotes [@RedditSrc].
+In der Folge erhält man so diejenigen Beiträge, die von der Community am besten bewertet wurden.
+In dieser Arbeit wird davon ausgegangen, dass ein Beitrag mit hohem Score auch repräsentativ für die Inhalte der Community ist.
+
+Die Titel der abgerufenen Beiträge wurden konkateniert, zu Kleinbuchstaben normalisiert, Satzzeichen und Ziffern sowie redundante Leerzeichen entfernt; Stoppwörter wurden nicht entfernt und Zeichenketten mit weniger als 300 Zeichen verworfen.
+Damit entspricht jedes Subreddit einem Dokument, dessen Inhalt die Titel der Top-Beiträge bilden.
+Die so aufbereiteten 207.056 Dokumente bilden den Eingabe-Korpus für ein LDA-Modell.
+
+#### Verteilung der Topics {#topicverteilung}
+Der Algorithmus zur Erstellung eines LDA-Modells ist parametrisiert durch die Zahl der zu bestimmenden Topics $k$ sowie der Dichte der Topic-Wort- (Parameter $\beta$) bzw. der Dokument-Topic-Verteilung (Parameter $\alpha$).
+Die beiden Parameter $\alpha$ und $\beta$ werden üblicherweise so gewählt, dass die entstehenden Verteilungen dünn besetzt sind, also Dokumente aus wenigen Topics und Topics aus wenigen Wörtern bestehen.
+Der optimale Wert für $k$ variiert zwischen verschiedenen Korpora und lässt sich empirisch ermitteln.
+Wegen der hohen Zahl an Dokumenten und damit einhergehenden Zeitaufwands wurde dies jedoch unterlassen und stattdessen $k = 256$ gewählt.
+Ob sich diese Zahl an Topics für die betrachteten Subreddits bzw. Reddit allgemein in der Nähe eines Optimums befindet, bleibt zu klären.
+Die Start-Parameter des Algorithmus sind in Tabelle\ \@ref(tab:lda-params) im Anhang aufgeführt.
+
+Latent Dirichlet Allocation beruht auf der Annahme, dass jedes Dokument aus verschiedenen latenten Themen zusammengesetzt wird.
+Das Modell liefert für jedes Dokument eine Wahrscheinlichkeitsverteilung über die zu bestimmenden Topics.
+Für die weitere Analyse in dieser Arbeit wird aus dieser Verteilung von Topic-Wahrscheinlichkeiten eine Zuordnung von Subreddits zu Topics abgeleitet, indem für jedes Dokument das Topic als charakteristisch angesehen wird, dem der Algorithmus die höchste Wahrscheinlichkeit zuweist.
+
+```{r topic-assignments}
+sub_topic_hist <-
+  subreddit_topic_mapping %>% 
+  count(topic) %>% 
+  mutate(rel = n/sum(n))
+
+sub_topic_summary <-
+  sub_topic_hist %>% 
+  summarise(
+    N = n(),
+    "arithm. Mittel" = mean(n),
+    SD = sd(n),
+    Min = min(n),
+    Q1 = quantile(n, .25),
+    Median = median(n),
+    Q3 = quantile(n, .75),
+    Max = max(n)
+  )
+```
+
+(ref:topic-assignments-total-lab) Anzahl der Zuordnungen von Subreddits zu Topics. Jede Säule entlang der x-Achse entspricht einem der 256 Topics. Hervorgehoben sind die 10 größten Topics mit den meisten Zuordnungen.
+```{r topic-assignments-total, fig.cap="(ref:topic-assignments-total-lab)"}
+sub_topic_hist %>% 
+ggplot() +
+  geom_col(
+    aes(topic, n)
+  ) +
+  labs(
+    x = "Topic",
+    y = "Anzahl Subreddits"
+  ) +
+  geom_text_repel(data = sub_topic_hist %>% top_n(10), mapping = aes(topic, n, label = topic)) +
+  scale_y_continuous(labels = scales::comma_format(big.mark = ".", decimal.mark = ",")) +
+  scale_x_discrete(breaks = NULL, expand = expand_scale(mult = 0.05))
+  #scale_x_discrete(breaks = seq(0, 256, 50), expand = expand_scale(mult = 0.05))
+  #scale_x_discrete(breaks = (sub_topic_hist %>% top_n(10))$topic, expand = expand_scale(mult = 0.05))
+```
+
+
+Abbildung \@ref(fig:topic-assignments-total) stellt die Zuordnung von Subreddits zu Topics als Histogramm dar.
+Auf einen großen Teil der Topics entfallen vergleichsweise wenig Subreddits: der Hälfte aller Topics sind weniger als neun Subreddits zugeordnet (Median: 9), das obere Quartil liegt bei 97.5 Subreddits, das Maximum bei 45.577; Tabelle\ \@ref(tab:topic-assignments-summary) im Anhang enthält die Kennzahlen dieser Verteilung.
+Offensichtlich gibt es zusätzlich zu großen bis sehr großen Topics auch eine hohe Anzahl an Nischenthemen mit weniger als 100 zugeordneten Subreddits.
+
+(ref:topic-assignments-top-lab) Anzahl der Zuordnungen von Subreddits zu Topics. Dargestellt sind alle Topics, denen 500 oder mehr Subreddits zugeordnet wurden. Die Sortierung erfolgt analog zu Abbildung \@ref(fig:topic-assignments-total) nach Anzahl Zuordnungen in absteigender Folge.
+```{r topic-assignments-top, include=FALSE, fig.cap="(ref:topic-assignments-top-lab)", fig.height=5.5}
+large_topics <- subset(sub_topic_hist, n >= 500) 
+
+large_topics %>%
+ggplot() +
+  geom_point(
+    mapping = aes(reorder(topic, n), n)
+  ) +
+  labs(
+    x = "Topic",
+    y = "Anzahl Subreddits"
+  ) +
+  scale_y_continuous(labels = scales::comma_format(big.mark = ".", decimal.mark = ","), limits = c(500, 50000), breaks = c(500, 10000, 20000, 30000, 40000, 50000)) +
+  coord_flip()
+```
+
+```{r top-words}
+# this chunk is used merely to generate the top 25 words in the largest topics.
+# this data will be used later on in the appendix to generate a table containing the topics and words.
+trim <- function(x) gsub("^\\s+|\\s+$", "", x)
+
+large_topics <- large_topics[order(large_topics$n, decreasing = TRUE), ]
+
+top_words <- read.csv("../data/lda/top_words.csv")
+top_words <- top_words[as.integer(large_topics$topic), ]
+
+c <- VCorpus(DataframeSource(data.frame(doc_id = large_topics$topic, text = apply(top_words, 1, paste, collapse = " "), stringsAsFactors = FALSE)))
+c <- tm_map(c, content_transformer(removeWords), stopwords("en"))
+c <- tm_map(c, content_transformer(stripWhitespace))
+c <- tm_map(c, content_transformer(trim))
+
+c <- tm_map(c, content_transformer(function(x) {
+  a <- str_split(x, " ", simplify = TRUE)
+  paste(a[1:25], collapse = ", ")
+}))
+
+top_words_pretty <- tibble(
+  Topic = large_topics$topic,
+  n = large_topics$n,
+  Wörter = unlist(sapply(c, `[`, "content"))
+)
+
+write.csv(x = top_words_pretty, file = "../data/lda/largest_topics_top_words.csv", row.names = FALSE)
+
+```
+
+## Interaktionsgraphen aus Kommentaren {#interaktionsgraphen}
+
+Die Kommentarverläufe von Reddit lassen sich als Interaktionsgraphen modellieren.
+Jeder Knoten in einem solchen Graph stellt einen Akteur in einem sozialen Netzwerk dar.
+Zwischen Akteuren manifestieren sich gerichtete Kanten, wenn sie miteinander interagieren, in diesem Fall in Form von Kommentaren auf Reddit.
+Die Richtung der Kanten gibt dabei an, welcher Nutzer den Kommentar verfasst hat (Quelle) bzw. an welchen Nutzer der Kommentar gerichtet ist (Senke).
+Im Datensatz sind Kanten über die Beziehung zwischen den *id*- bzw. *parent_id*-Attributen realisiert.
+Seien dazu $U, V$ Akteure im sozialen Netzwerk und $K_U, K_V$ von $U$ resp. $V$ verfasste Reddit-Kommentare.
+Zwischen $U$ und $V$ wird eine gerichtete Kante $(u,v)$ eingefügt, wenn gilt:
+$K_{U}.parent\_id = K_{V}.id$.  
+Da mehrere Interaktionen zwischen denselben Partnern möglich und erlaubt sind, handelt es sich bei den hier verwendeten Interaktionsgraphen um Multigraphen.
+Da ausgehend von einem Nutzer dessen unmittelbare Kontakte erfasst werden, spricht man hier zudem von egozentrischen Netzwerken.
+Dabei ist zu beachten, dass abweichend von gängigen Definitionen des Begriffs (etwa [@Wasserman1994, S. 42], [@Wolf2010]) in dieser Arbeit keine Strukturen zwischen den Alteri erfasst werden, sondern nur zwischen Ego und Alteri.
+
+Für die beiden in Abschnitt \@ref(stichprobe) ausgewählten Nutzer werden monatliche Interaktionsgraphen erstellt.
+Da diese einen zeitlich abgegrenzten Ausschnitt aus dem gesamten sozialen Netzwerk eines Nutzers darstellen, werden sie im Folgenden auch als Snapshot-Graphen bezeichnet.
+
+## Verwendete Software {#software}
+
+Um die Inhalte der Subreddits über die Reddit-API abzurufen, wurde die Python-Bibliothek *PRAW*\ [@PRAW] verwendet, ein API-Client speziell für Reddit.  
+Die Vorbereitung der Textkorpora für die Topic-Analyse wurde mit dem Text-Mining-Package *tm*\ [@R-tm] in R realisiert.  
+Für die LDA selbst wurde wegen der hohen Zahl an Inhalten eine effiziente Implementierung benötigt, die in akzeptabler Zeit ein Topic-Model berechnet. Die Wahl fiel dabei auf *GLDA*\ [@Lu2013], das sich die hohe Rechenleistung moderner Grafikkarten zunutze machen kann; die Software stellt eine Weiterentwicklung von *GibbsLDA++*\ [@Phan2007] dar.  
+Die Datenanalyse erfolgt in R mit einschlägigen Bibliotheken, größtenteils aus dem *tidyverse*\ [@R-tidyverse]; Visualisierungen wurden mit *ggplot2*\ [@R-ggplot2] erstellt.  
+Die Modellierung der Interaktionsgraphen wurde mit der R-Bibliothek *igraph*\ [@R-igraph] realisiert, die neben der Konstruktion auch Funktionalität zur Analyse von Netzwerken bietet.  
+Die Arbeit selbst wurde mit *bookdown*\ [@R-bookdown] angefertigt, das es ermöglicht, Dokumente im Markdown-Format zu verfassen, Codeblöcke im Text zu definieren und deren Ausgabe direkt in den Text zu integrieren.
